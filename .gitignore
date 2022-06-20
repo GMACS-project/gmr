@@ -3,6 +3,5 @@
 .RData
 .Ruserdata
 
-Work_on_gmr.R
-NEWS.Rmd
-README.Rmd
+*.R
+*.Rmd
