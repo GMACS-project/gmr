@@ -23,10 +23,10 @@ navbar:
     - home
     - reference
     - articles
-    - help
+    - GMACS
+    - news
     - contribute
     - issue
-    - news
     right:
     - github
     - Twitter
@@ -41,8 +41,8 @@ navbar:
       icon: far fa-file-code fa-lg
       href: reference/index.html
 
-    help:
-      text: About GMAS
+    GMACS:
+      text: About GMACS
       href: https://github.com/GMACS-project/User-manual
       icon: fas fa-book fa-lg
 
@@ -81,8 +81,8 @@ navbar:
       href: articles/index.html
       icon: fas fa-file-contract fa-lg
       menu:
-      - test: Run GMACS
-        href: articles/001_Use_gmr_to_Run_GMACS.html
+      - text: Run GMACS
+        href: articles/001_UseGmrToRunGMACS
 
 search:
   exclude: news/index.html
