@@ -1,7 +1,8 @@
 -   [gmr](#gmr)
     -   [Installation](#installation)
 
-![GitHub release (latest by date)](/github/v/release/GMACS-project/gmr)
+[![GitHub release (latest by
+date)](https://img.shields.io/github/release/GMACS-project/gmr)](https://github.com/GMACS-project/gmr/releases)
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
