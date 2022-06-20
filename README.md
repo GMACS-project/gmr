@@ -1,3 +1,5 @@
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
 # gmr
 
 Working with A Generalized size-structured Model for Assessing
@@ -6,7 +8,8 @@ Crustaceans.
 `gmr` is an R package providing tools to work with
 *[GMACS](https://github.com/GMACS-project/GMACS_Assessment_code/tree/main/GMACS/Latest_Version)*,
 a generalized size-structured assessment model for Crustaceans.
-Specifically, it includes an extensive library of functions to plot
+Specifically, it includes an extensive library of functions developed to
+build and run GMACS for one or several crustacean stock(s) and to plot
 outputs of the model.
 
 ## Installation

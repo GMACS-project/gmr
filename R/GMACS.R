@@ -2,42 +2,42 @@
 #'
 #' @description For each stock and version considered in the analysis, this function
 #' realizes  the analysis based on the choice of the user, i.e: compiles the model,
-#' runs the model, and/or establishes comparison between versions. This is the core 
+#' runs the model, and/or establishes comparison between versions. This is the core
 #' version to work with GMACS in `R`.
 #'
-#' @param Spc vector of strings specifying the name(s) of the stock 
+#' @param Spc vector of strings specifying the name(s) of the stock
 #' considered in the analysis.
-#' @param GMACS_version vector of strings holding the name(s) of the 
+#' @param GMACS_version vector of strings holding the name(s) of the
 #' GMACS versions that is/are used in the analysis.
-#' @param ASS Logical. If TRUE, the outputs of the last assessment will be compared 
+#' @param ASS Logical. If TRUE, the outputs of the last assessment will be compared
 #' to the GMACS version(s) currently used in this analysis.
 #' @param AssMod_names vector of strings specifying the names of the models used
 #' in the last assessment (e.g., model_16_0)
-#' @param Dir vector of strings containing the directories for all 
+#' @param Dir vector of strings containing the directories for all
 #' \code{GMACS_version} used in this analysis
-#' @param compile (0/1). If 0, GMACS is not compiled. This assumes that an 
+#' @param compile (0/1). If 0, GMACS is not compiled. This assumes that an
 #' executable already exists in the directory of the version(s) used in the analysis.
 #' If 1, the code will be compiled before a new run.
 #' @param run Logical. If TRUE the model will be executed.
 #' @param LastAssDat Logical. If TRUE, the latest available data will be used for
-#' the analysis i.e. the model will be executed using the data stored in the 
+#' the analysis i.e. the model will be executed using the data stored in the
 #' the "Assessment_data" folder.
-#' @param ADMBpaths string name of 2-column text file that details the relevant 
+#' @param ADMBpaths string name of 2-column text file that details the relevant
 #' paths for the R variables admbpath, gccpath, and editor.
-#' @param make.comp Logical. If TRUE, comparisons will be made between the various 
+#' @param make.comp Logical. If TRUE, comparisons will be made between the various
 #' \code{GMACS_version} considered in the analysis.
-#' @inheritParams .buildGMACS
+#' @inheritParams PBSadmb::convAD
 #'
 #' @seealso \code{\link{Do_GMACS}}, \code{\link{.buildGMACS}} for
 #' building the executable.
-#' 
-#' 
+#'
+#'
 #' @export
 #'
 #' @examples
 #' \dontrun{
 #' }
-#' 
+#'
 GMACS <- function(Spc = NULL,
                   GMACS_version = NULL,
                   Dir = NULL,
@@ -66,26 +66,26 @@ GMACS <- function(Spc = NULL,
       )
     nam.Spc <- sort(Spc)
     Spc <- Spc[order(match(Spc, nam.Spc))]
-    
+
     if (which(Spc == "AIGKC") > 0) {
       Spc <-
         c(paste(Spc[which(Spc == "AIGKC")], c("/EAG", "/WAG"), sep = ""), Spc[-1])
     }
   }
-  
+
   for (nm in 1:length(Spc)) {
     if (Spc[nm] == "WAG" ||
         Spc[nm] == "EAG")
       Spc[nm] <- paste0("AIGKC/", Spc[nm])
   }
-  
+
   cat("\nThis analysis includes the following species:",
       paste0(Spc, collapse = ", "),
       "\n")
   cat("\n")
-  
+
   # 2. Check for consistency between options----
-  
+
   if (is.null(GMACS_version)) {
     cat("\nPlease provide the name of the GMACS version(s) you want to use in the analysis.\n")
     stop("The 'GMACS_version' argument in the GMACS() function is empty.\n")
@@ -100,7 +100,7 @@ GMACS <- function(Spc = NULL,
     cat("The number of directory does not match the number of version you specified\n")
     stop("Please give a directory for each version of GMACS you defined.")
   }
-  
+
   if (is.null(make.comp)) {
     cat("\nNo comparison will be establish in this analysis.\n")
     make.comp <- FALSE
@@ -117,7 +117,7 @@ GMACS <- function(Spc = NULL,
         )
       stop("The 'AssMod_names' argument in the GMACS() function is empty\n.")
       }
-  
+
   if (length(compile) != length(Dir)) {
     cat("\nPlease precise if you want to compile or not each GMACS version.\n")
     stop(
@@ -128,7 +128,7 @@ GMACS <- function(Spc = NULL,
     cat("\nGMACS will not be compiled in this analysis.\n")
     compile <- rep(o, length(Dir))
   }
-  
+
   if (is.null(run)) {
     cat("\nGMACS will not be executed in this analysis.\n")
     run <- FALSE
@@ -144,22 +144,22 @@ GMACS <- function(Spc = NULL,
          You can use this script to make comparisons afterwords with the last evaluation but without running GMACS for the latter."
     )
   }
-  
+
   if (is.null(LastAssDat)) {
     cat("\nThe latest assessment data will not be used in this analysis.\n")
     LastAssDat <- FALSE
     # LastAssDat <- rep(0, length(Spc))
   }
-  
+
 
   if (make.comp && length(GMACS_version) == 1) {
     cat("\nYou have specified only one version of GMACS - no comparison can be made.\n")
     stop("Provide several versions of GMACS that you wish to compare\n")
   }
-  
-  
+
+
   # 3. Realize the analysis----
-  
+
   if (run && !ASS) {
     Do_GMACS(
       Spc = Spc,
