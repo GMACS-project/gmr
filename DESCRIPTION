@@ -2,6 +2,10 @@ Package: gmr
 Type: Package
 Title: A Generalized size-structured Model for Assessing Crustaceans in R
 Version: 0.1.1.9000
+Description: gmr is an R package providing tools to work with *GMACS*, a 
+    Generalized size-structured Assessment Model for Crustaceans. Specifically, 
+    it includes an extensive library of functions developed to build and run GMACS
+    within R and to plot outputs of the model.
 Authors@R: c(
     person("Matthieu", "Veron", role = c("aut", "cre"),email = "mveron@uw.edu"),
     person("Cody", "Szuwalski", role = c("aut", "ctb"),email = "cody.szuwalski@noaa.gov"),
@@ -11,10 +15,8 @@ Authors@R: c(
     person("Jim", "Ianelli", role = "ctb",email = "jim.ianelli@noaa.gov"))
 Author: Matthieu Veron [aut, cre], Cody Szuwalski [aut, ctb], Andre Punt [ctb],Darcy Webber [ctb], Steve Martell [ctb],  Jim Ianelli [ctb]
 Maintainer: Matthieu Veron <mveron@uw.edu>
-Description: gmr is an R package providing tools to work with *GMACS*, a 
-    Generalized size-structured Assessment Model for Crustaceans. Specifically, 
-    it includes an extensive library of functions developed to build and run GMACS
-    within R and to plot outputs of the model.
+URL: https://gmacs-project.github.io/gmr/, https://github.com/GMACS-project/gmr
+BugReports: https://github.com/GMACS-project/gmr/issues
 License: What license is it under?
 Encoding: UTF-8
 LazyData: true
@@ -23,3 +25,4 @@ Suggests:
     knitr,
     rmarkdown
 VignetteBuilder: knitr
+ByteCompile: TRUE
