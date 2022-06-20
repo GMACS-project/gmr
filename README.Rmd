@@ -1,10 +1,17 @@
 ---
 output:
   md_document:
+    toc: yes
+    toc_depth: 3
     variant: markdown_github
 ---
 
 [GMACS]: https://github.com/GMACS-project/GMACS_Assessment_code/tree/main/GMACS/Latest_Version
+
+
+[![GitHub release (latest by
+date)](https://img.shields.io/github/release/GMACS-project/gmr)](https://github.com/GMACS-project/gmr/releases)
+
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
