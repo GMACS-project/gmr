@@ -1,3 +1,8 @@
+-   [gmr](#gmr)
+    -   [Installation](#installation)
+
+![GitHub release (latest by date)](/github/v/release/GMACS-project/gmr)
+
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
 # gmr
