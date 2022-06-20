@@ -7,3 +7,11 @@ ignores <- c(
   "NEWS.RMD"
 )
 usethis::use_git_ignore(ignores, directory = ".")
+
+
+# Build vignette
+usethis::use_vignette("001_Use_gmr_to_Run_GMACS")
+
+
+# Build web site
+pkgdown::build_site()
