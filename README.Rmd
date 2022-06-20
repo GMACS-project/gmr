@@ -1,8 +1,6 @@
 ---
 output:
   md_document:
-    toc: yes
-    toc_depth: 3
     variant: markdown_github
 ---
 
