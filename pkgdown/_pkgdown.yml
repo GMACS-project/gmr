@@ -1,0 +1,202 @@
+title: gmr
+
+template:
+  params:
+    bootstrap: 5
+    bootswatch: yeti
+    docsearch:
+      index_name: gmr
+
+development:
+  mode: auto
+
+deploy:
+  install_metadata: yes
+
+navbar:
+  type: inverse
+
+  title: gmr
+
+  structure:
+    left:
+    - home
+    - reference
+    - articles
+    - help
+    - contribute
+    - issue
+    - news
+    right:
+    - github
+    - Twitter
+
+  components:
+    home:
+      icon: fa-home fa-lg
+      href: index.html
+
+    reference:
+      text: Functions
+      icon: far fa-file-code fa-lg
+      href: reference/index.html
+
+    help:
+      text: About GMAS
+      href: https://github.com/GMACS-project/User-manual
+      icon: fas fa-book fa-lg
+
+    contribute:
+      text: Contribute
+      href: ~
+      icon: fa fa-university
+
+    issue:
+      text: Issues
+      icon: fas fa-question-circle fa-lg
+      href: https://github.com/GMACS-project/gmr/issues
+
+    news:
+      text: News
+      icon: fa fa-check-square
+      menu:
+        - text: Changelog
+          href: news/index.html
+        - text: "gmr V 0.1.1.0"
+          href: https://github.com/GMACS-project/gmr/releases/tag/V0.1.1.0
+        - text: "gmr V 0.1.0.0"
+          href: https://github.com/GMACS-project/gmr/releases/tag/V0.1.0.0
+
+    github:
+      text: Source Code
+      icon: fa-github
+      href: https://github.com/GMACS-project/gmr
+
+    Twitter:
+      icon: fa-twitter
+      aria-label: Twitter
+
+    articles:
+      text: Vignettes
+      href: articles/index.html
+      icon: fas fa-file-contract fa-lg
+      menu:
+      - test: Run GMACS
+        href: articles/001_Use_gmr_to_Run_GMACS.html
+
+search:
+  exclude: news/index.html
+
+footer:
+  structure:
+    left: developed_by
+    right: built_with
+
+reference:
+- title: Run GMACS
+  desc: >
+    Set of functions for working GMACS while selecting specific work (building the gmacs executable, running a stock assessment for one or several stocks, making comparisons between different versions of GMACS).
+  contents:
+  - gmr-package
+  - GMACS
+  - Do_GMACS
+  - Do_Comp
+  - .GetGmacsExe
+- title: Manipulating outputs from the GMACS function
+  desc: >
+    The following functions allow to read GMACS outputs and manipulate the results. These functions are called in the graphical functions.
+- subtitle: Read GMACS outputs
+  contents:
+  - read_admb
+  - read_fit
+  - read_rep
+  - read_psv
+  - read_ctl
+  - read.OUT
+- subtitle: Manipulate GMACS results
+  contents:
+  - .get_cpue_df
+  - .get_catch_df
+  - .get_gi_df
+  - .get_F_df
+  - .get_dynB0_df
+  - .get_length_weight_df
+  - .get_maturity_df
+  - .get_mnLen_df
+  - .get_molt_prob_df
+  - .get_M_df
+  - .get_numbers_df
+  - .get_recruitment_df
+  - .get_recruitment_size_df
+  - .get_selectivity_df
+  - .get_sizeComps_df
+  - .get_ssb_df
+- title: Making results tables
+  desc: >
+    The following functions can be used to create tables of catches, likelihoods and reference points
+  contents:
+  - table_catch
+  - table_likelihoods
+  - table_penalties
+  - table_priors
+  - table_spr
+- title: Creating plots
+  desc: >
+    The following functions are awesome for creating plots of data and model fits, model outputs estimates (biological, fisheries and, demographic parameters), model residuals and, stock status.
+- subtitle: Do all plots from gmr
+  contents:
+  - plot_gmr
+  - shiny_gmacs
+- subtitle: Plotting Data used and model fits
+  contents:
+  - plot_datarange
+  - plot_cpue
+  - plot_catch
+  - plot_size_comps
+  - plot_size_ridges
+- subtitle: Plotting Biological parameters
+  contents:
+  - plot_growth_inc
+  - plot_growth
+  - plot_length_weight
+  - plot_length_maturity
+  - plot_molt_prob
+  - plot_growth_transition
+  - plot_size_transition
+- subtitle: Plotting Fisheries parameters
+  contents:
+  - plot_F
+  - plot_fishing_mortality
+  - plot_selectivity
+  - plot_selectivity_3d
+- subtitle: Plotting Demographic parameters
+  contents:
+  - plot_dynB0
+  - plot_natural_mortality
+  - plot_numbers
+  - plot_recruitment
+  - plot_recruitment_size
+  - plot_models_recruitment
+  - plot_ssb
+- subtitle: Plotting Model residuals
+  contents:
+  - plot_cpue_res
+  - plot_size_comps_res
+- subtitle: Plotting Stock Status
+  contents: plot_kobe
+- title: Terminals
+  desc: >
+    These functions allow the user to launch a scpecific command in a R Terminal.
+  contents: .CallTerm
+- title: Plotting options and ggplot utilities
+  desc: >
+    Set of functions for settings the type of plot, the rezolution,  the size and disposition of the graphics as well as the colors.
+  contents:
+  - .gmr_options
+  - .cbPalette1
+  - .cbPalette2
+  - set_ggtheme
+  - plot_type
+  - multiplot
+  - plot_multiple
+

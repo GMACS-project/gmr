@@ -1,6 +1,3 @@
--   [gmr](#gmr)
-    -   [Installation](#installation)
-
 [![GitHub release (latest by
 date)](https://img.shields.io/github/release/GMACS-project/gmr)](https://github.com/GMACS-project/gmr/releases)
 
@@ -8,8 +5,8 @@ date)](https://img.shields.io/github/release/GMACS-project/gmr)](https://github.
 
 # gmr
 
-Working with A Generalized size-structured Model for Assessing
-Crustaceans.
+**Working with A Generalized size-structured Model for Assessing
+Crustaceans**
 
 `gmr` is an R package providing tools to work with
 *[GMACS](https://github.com/GMACS-project/GMACS_Assessment_code/tree/main/GMACS/Latest_Version)*,
