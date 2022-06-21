@@ -4,18 +4,17 @@
 #' @return kable of catches per year and fleet
 #' @author SJD Martell, DN Webber
 #' @export
-#' 
+#'
 table_catch<-function(M)
 {
-#==get catch 
+#==get catch
 mdf <- .get_catch_df(M)
 
 #==massage catch
-library(reshape2)
-casted = dcast( mdf , year~fleet )
+casted = reshape2::dcast( mdf , year~fleet )
 
 #==table catch
-kable(casted) 
+knitr::kable(casted)
 }
 
 

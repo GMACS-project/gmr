@@ -7,6 +7,8 @@
 plot_multiple(..., plotlist = NULL, file, cols = 1, layout = NULL)
 }
 \arguments{
+\item{...}{Numeric, complex, or logical vectors.}
+
 \item{plotlist}{ggplot objects}
 
 \item{file}{does nothing (yet)}

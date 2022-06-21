@@ -1,12 +1,12 @@
 #' Get recruitment data
-#' 
+#'
 #' Extracts predicted recruitment and approximate asymptotic error-bars
 #'
 #' @param M list object(s) created by read_admb function
 #' @return dataframe of recruitment
 #' @author SJD Martell, DN Webber
 #' @export
-#' 
+#'
 .get_recruitment_df <- function(M)
 {
     n <- length(M)
@@ -45,12 +45,12 @@
 
 
 #' Get recruitment size distribution data
-#' 
+#'
 #' @param M list object(s) created by read_admb function
 #' @return dataframe of recruitment size distribution
 #' @author DN Webber
 #' @export
-#' 
+#'
 .get_recruitment_size_df <- function(M)
 {
     n <- length(M)
@@ -83,7 +83,7 @@
 #' @return Plot of predicted recruitment
 #' @author SJD Martell, DN Webber
 #' @export
-#' 
+#'
 plot_recruitment <- function(M, xlab = "Year", ylab = "Recruitment (millions of individuals)")
 {
     xlab <- paste0("\n", xlab)
@@ -93,27 +93,27 @@ plot_recruitment <- function(M, xlab = "Year", ylab = "Recruitment (millions of 
 
     if(length(M) == 1 && length(unique(mdf$sex)) == 1)
     {
-    p <- p + geom_line(aes(x = year, y = exp(log_rec))) 
+    p <- p + geom_line(aes(x = year, y = exp(log_rec)))
       #geom_ribbon(aes(x = year, ymax = ub, ymin = lb), alpha = alpha)
-    } else if (length(M) != 1 && length(unique(mdf$sex)) == 1) 
+    } else if (length(M) != 1 && length(unique(mdf$sex)) == 1)
     {
-    p <- p + geom_line(aes(x = year, y = exp(log_rec), col = Model)) 
-        #geom_ribbon(aes(x = year, ymax = ub, ymin = lb, fill = Model), alpha = alpha) 
-    } else if (length(M) == 1 && length(unique(mdf$sex)) != 1) 
+    p <- p + geom_line(aes(x = year, y = exp(log_rec), col = Model))
+        #geom_ribbon(aes(x = year, ymax = ub, ymin = lb, fill = Model), alpha = alpha)
+    } else if (length(M) == 1 && length(unique(mdf$sex)) != 1)
     {
       p <- p + geom_line(aes(x = year, y = exp(log_rec), col = sex))  #+
-      #geom_ribbon(aes(x = year, ymax = ub, ymin = lb, fill = sex), alpha = alpha) 
+      #geom_ribbon(aes(x = year, ymax = ub, ymin = lb, fill = sex), alpha = alpha)
     }  else
     {
-      
+
     }
-    
-    
+
+
     p <- p + labs(x = xlab, y = ylab)
     if (!.OVERLAY) p <- p + facet_wrap(~Model)
     if (length(unique(mdf$sex)) > 1) p <- p + facet_wrap(~sex, ncol = 1)
-    
-    
+
+
     # if (length(M) == 1)
     # {
     #     p <- ggplot(mdf, aes(x = year, y = exp(log_rec)/1e+06)) +
@@ -125,9 +125,9 @@ plot_recruitment <- function(M, xlab = "Year", ylab = "Recruitment (millions of 
     #         geom_bar(stat = "identity", alpha = 0.4, aes(fill = Model), position = "dodge") +
     #         geom_pointrange(aes(year, exp(log_rec)/1e+6, col = Model, ymax = ub/1e+06, ymin = lb/1e+06), position = position_dodge(width = 0.9))
     # }
-    # 
-    
-    
+    #
+
+
     print(p + .THEME)
 }
 
@@ -140,9 +140,10 @@ plot_recruitment <- function(M, xlab = "Year", ylab = "Recruitment (millions of 
 #' @return plot of recruitment size distribution
 #' @author DN Webber
 #' @export
-#' 
+#'
 plot_recruitment_size <- function(M, xlab = "Mid-point of size class (mm)", ylab = "Proportion recruiting")
 {
+  rec_sdd <- NULL
     xlab <- paste0("\n", xlab)
     ylab <- paste0(ylab, "\n")
     mdf <- .get_recruitment_size_df(M)
@@ -155,13 +156,13 @@ plot_recruitment_size <- function(M, xlab = "Mid-point of size class (mm)", ylab
     } else
     {
         p <- p + geom_line(aes(col = Model)) + geom_point(aes(col = Model))
-    } 
-    
+    }
+
     if (!.OVERLAY) p <- p + facet_wrap(~Model)
     if (length(unique(mdf$sex)) > 1) p <- p + facet_wrap(~sex, ncol = 1)
     print(p + .THEME)
-    
-    
+
+
 }
 
 
@@ -172,21 +173,21 @@ plot_recruitment_size <- function(M, xlab = "Mid-point of size class (mm)", ylab
 #' @return Plot of predicted recruitment compared across models
 #' @author Cole Monnahan Kelli Johnson
 #' @export
-#' 
+#'
 plot_models_recruitment <- function(data, modnames = NULL)
 {
   if (is.null(modnames))
     modnames = paste("Model ",1:length(data))
-  if (length(data)!=length(modnames)) 
-    stop("Holy moly, unequal object lengths") 
+  if (length(data)!=length(modnames))
+    stop("Holy moly, unequal object lengths")
 
-  recs <- lapply(data, get_recruitment)
+  recs <- lapply(data, .get_recruitment_df)
   df <- do.call("rbind", Map(cbind, recs, modname = modnames))
 
-  p <- ggplot(df,aes(x=factor(year),y=exp(log_rec), group=modname, colour=modname))
-  p <- p + geom_line(stat = "identity", alpha=0.4)
-  p <- p + geom_pointrange(aes(factor(year),exp(log_rec),ymax=ub,ymin=lb))
-  p <- p + labs(x="Year", y="Recruitment")
-  pRecruitment <- p + ggtheme
+  p <- ggplot2::ggplot(df,ggplot2::aes(x=factor(year),y=exp(log_rec), group=modname, colour=modname))
+  p <- p + ggplot2::geom_line(stat = "identity", alpha=0.4)
+  p <- p + ggplot2::geom_pointrange(ggplot2::aes(factor(year),exp(log_rec),ymax=ub,ymin=lb))
+  p <- p + ggplot2::labs(x="Year", y="Recruitment")
+  pRecruitment <- p
   return(pRecruitment)
 }

@@ -2,32 +2,29 @@
 #' @title .GetGmacsExe
 #'
 #' @description Function used when updating and releasing a new version of GMACS.
-#' It uses the (\code{\link{write_TPL}}) function to editate the new
-#' gmacs.tpl, compiles the model and uses the (\code{\link{.buildGMACS}})
+#' It uses the (\code{write_TPL}) function to editate the new
+#' gmacs.tpl, compiles the model and uses the (\code{.buildGMACS})
 #' function to provide a new executable.
-#' 
+#'
 #' @return the new GMACS executable
-#' 
+#'
 #' @export
 #'
-#' @examples
-#' \dontrun{
-#' }
-#' 
+#'
 .GetGmacsExe <- function() {
   # Define directory
   Dir <-  paste0(getwd(), "/Dvpt_Version/")
-  
+
   # Need to conpile the model?
   # vector of length(.GMACS_version)
   # 0: GMACS is not compiled. This assumes that an executable exists in the directory of the concerned version.
   # 1: GMACS is compiles
   # compile <- 1
-  
+
   # Names of the GMACS version to consider
   GMACS_version <- "Dvpt_Version"
   vv <- 1
-  
+
   # Check directories for ADMB
   # Define the name of the file containing the different pathways needed to build
   # the GMACS executable
@@ -39,27 +36,27 @@
     stop(
       "The definition of the pathways to locate ADMB,the C/C++ compiler and/or the editer are wrong.\nPlease check the ADMBpaths file."
     )
-  
+
   cat("\n# ------------------------------------------------------------------- #\n")
   cat("# ------------------------------------------------------------------- #\n")
   cat("        Now building GMACS for the ", GMACS_version[vv], " \n")
   cat("# ------------------------------------------------------------------- #\n")
   cat("# ------------------------------------------------------------------- #\n")
-  
+
   # 1.Get an executable for GMACS ----
   setwd(Dir[vv])
   # Clean directory from previous version
   gmr::.CallTerm(command = "clean_root.bat",
                  .Dir = Dir[vv],
                  verbose = FALSE)
-  
+
   #  Create gmacs.tpl from gmacsbase.tpl and personal.tpl
   cat("Now writing gmacs.tpl\n")
-  gmr::write_TPL(vv = vv,
+  write_TPL(vv = vv,
                  Dir = Dir[vv],
                  .update = TRUE)
   # cat("\n")
-  
+
   # Copy files from lib\
   libFiles <-
     dir(paste0(Dir[vv], "/lib/"),
@@ -67,8 +64,8 @@
         ignore.case = TRUE,
         all.files = TRUE)
   file.copy(file.path(paste0(Dir[vv], "/lib/"), libFiles), Dir[vv], overwrite = TRUE)
-  args <- gmr::get_nam(libFiles)
-  
+  args <- get_nam(libFiles)
+
   # .tpl to .cpp
   cat("\nNow converting gmacs.tpl to gmacs.cpp ...\n")
   PBSadmb::convAD(
@@ -81,7 +78,7 @@
   )
   cat("OK after convertion from .tpl to .cpp ...\n")
   cat("\n")
-  
+
   # Compile files
   compFiles <- c("gmacs", libFiles)
   for (nm in 1:length(compFiles)) {
@@ -96,10 +93,10 @@
     )
   }
   cat("OK after compilation ...\n")
-  
+
   # Build GMACS
   cat("\nNow building gmacs executable ...\n")
-  gmr::.buildGMACS(
+  .buildGMACS(
     prefix = "gmacs",
     raneff = FALSE,
     safe = TRUE,

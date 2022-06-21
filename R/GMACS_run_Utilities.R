@@ -5,12 +5,12 @@
 # @param filenames Name of file
 #
 # @return character string: the file name
-# 
+#
 #
 # @examples
 # \dontrun{
 # }
-# 
+#
 # Get file names without extension
 get_nam <- function(filenames) {
   tmp <- c()
@@ -33,7 +33,7 @@ get_nam <- function(filenames) {
 # @examples
 # \dontrun{
 # }
-# 
+#
 # as.numeric()
 .an <- function(x) {
   return(as.numeric(x))
@@ -49,14 +49,14 @@ get_nam <- function(filenames) {
 #
 # @param path Character string: directory and name of the gmacs.dat file
 #
-# @return list containing the names of the input files for GMACS 
+# @return list containing the names of the input files for GMACS
 # (.dat, .ctl and .prj)
-# 
+#
 #
 # @examples
 # \dontrun{
 # }
-# 
+#
 # Get file names without extension
 read_GMACS.dat <- function(path) {
   tmp <- readLines(path)
@@ -76,20 +76,16 @@ read_GMACS.dat <- function(path) {
 #
 # @description Calls a R terminal to run the GMACS executable
 #
-# @param command Character string: the name of the GMACS executable 
+# @param command Character string: the name of the GMACS executable
 # ("gmacs.exe")
 # @param .Dir Character string: the directory of the executable
-# @param verbose Logical: if TRUE, report the shell call an its messages 
+# @param verbose Logical: if TRUE, report the shell call an its messages
 # to the R console.
 #
 # @return the (unique) terminal identifier
-# 
 #
-# @examples
-# \dontrun{
-# }
-# 
-# 
+#
+#
 GMACS_term <-
   function(command = "gmacs.exe",
            .Dir = NULL,
@@ -110,18 +106,15 @@ GMACS_term <-
 #'
 #' @param command Character string: name of the command to run (.exe)
 #' @param .Dir Character string: the directory of the executable
-#' @param verbose Logical: if TRUE, report the shell call an its messages 
+#' @param verbose Logical: if TRUE, report the shell call an its messages
 #' to the R console.
 #'
 #' @return the (unique) terminal identifier
-#' 
+#'
 #' @export
 #'
-#' @examples
-#' \dontrun{
-#' }
-#' 
-#' 
+#'
+#'
 .CallTerm <-
   function(command = command,
            .Dir = NULL,

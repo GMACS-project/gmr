@@ -12,12 +12,10 @@
 #
 # @return vector of matching line indices
 #
-# @examples
-# \dontrun{
-# }
-# 
+#
 MatchTable<-function(Table,Char1=NULL,Char2=NULL,Char3=NULL,Char4=NULL,Char5=NULL,Char6=NULL)
 {
+  AAA <- NULL
   ii <- rep(T,length(Table[,1]))
   if (!is.null(Char1)) ii <- ii & (Table[,1]==Char1)
   if (!is.null(Char2)) ii <- ii & (Table[,2]==Char2)

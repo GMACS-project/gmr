@@ -82,7 +82,7 @@ navbar:
       icon: fas fa-file-contract fa-lg
       menu:
       - text: Run GMACS
-        href: articles/001_UseGmrToRunGMACS
+        href: articles/001_UseGmrToRunGMACS.html
 
 search:
   exclude: news/index.html

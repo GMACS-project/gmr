@@ -1,10 +1,11 @@
-#' Plot data range by fleet and year 
+#' Plot data range by fleet and year
 #'
 #' @param M a list of lists object created by the read_admb function
-#' @return plot of data range 
+#' @param verbose (Logical); if TRUE, the table of the results is printed
+#' @return plot of data range
 #' @author Ian Taylor, Huihua Lee, Jim Ianelli, D'Arcy N. Webber
 #' @export
-#' 
+#'
 plot_datarange <- function(M, verbose = FALSE)
 {
     n <- length(M)
@@ -16,16 +17,16 @@ plot_datarange <- function(M, verbose = FALSE)
         repfile   <- A$run_name
         if (verbose) print(repfile)
         narepfile <- strsplit(scan(repfile,what="character",flush=TRUE,blank.lines.skip=FALSE,quiet=TRUE)[1:4],':')
-    
+
         startyr       <- A$mod_yrs[1]
         endyr         <- A$mod_yrs[length(A$mod_yrs)]
         nfleets       <- length(narepfile[[2]]) + length(narepfile[[4]])
-        nfishfleets   <- length(narepfile[[2]]) 
+        nfishfleets   <- length(narepfile[[2]])
         fleetnames    <- c(narepfile[[2]], narepfile[[4]])
-    
+
         df <- as.data.frame(A$dCatchData)
         colnames(df)<- c("year","seas","fleet","sex","obs","cv","type","units","mult","effort","discard_mort")
-        
+
         retainedcatch <- df[df$type==1,]
         discards <- df[df$type==2,]
         cpue <- as.data.frame(A$dSurveyData)
@@ -37,10 +38,10 @@ plot_datarange <- function(M, verbose = FALSE)
                               "discards",      "Discards",
                               "cpue",          "Abundance indices",
                               "size",          "Size compositions"), ncol = 2, byrow = TRUE)
-    
+
         typenames <- typetable[,1]
         typelabels <- typetable[,2]
-    
+
         # loop over types to make a database of years with comp data
         ntypes <- 0
         # replace typetable object with empty table
@@ -58,7 +59,7 @@ plot_datarange <- function(M, verbose = FALSE)
                     allyrs <- NULL
                     # identify years from different data types
                     #if(typename=="catch" & ifleet<=nfishfleets) allyrs <- dat$Yr[dat[,ifleet]>0]
-                    if(typename %in% c("retainedcatch","discards") & ifleet<=nfishfleets) 
+                    if(typename %in% c("retainedcatch","discards") & ifleet<=nfishfleets)
                     {
                         allyrs <- dat$year[dat$fleet==ifleet]
                     }
@@ -79,10 +80,10 @@ plot_datarange <- function(M, verbose = FALSE)
         ntypes <- max(typetable$itype)
         fleets <- sort(unique(typetable$fleet))
     }
-    
+
     plotdata <- function()
     {
-        margins=c(5.1,2.1,4.1,8.1)  
+        margins=c(5.1,2.1,4.1,8.1)
         par(mar=margins) # multi-panel plot
         xlim <- c(-1,1)+range(typetable$yr,na.rm=TRUE)
         yval <- 0
@@ -128,10 +129,10 @@ plot_datarange <- function(M, verbose = FALSE)
             yval <- yval+1
             if(itype!=1) abline(h=yval,col='grey',lty=3)
             text(mean(xlim),yval-.3,typelabels[typenames==typename],font=2)
-        }        
+        }
         axis(4,at=axistable$yval,labels=fleetnames[axistable$fleet],las=1)
         box()
-        axis(1,at=xticks)        
+        axis(1,at=xticks)
     }
     pdatarange <- plotdata()
     if (verbose) return(pdatarange)

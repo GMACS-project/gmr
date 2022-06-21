@@ -17,12 +17,29 @@ Author: Matthieu Veron [aut, cre], Cody Szuwalski [aut, ctb], Andre Punt [ctb],D
 Maintainer: Matthieu Veron <mveron@uw.edu>
 URL: https://gmacs-project.github.io/gmr/, https://github.com/GMACS-project/gmr
 BugReports: https://github.com/GMACS-project/gmr/issues
-License: What license is it under?
+License: GPL-2
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.1.2
+Depends:
+    R (>= 4.1.1)
+Imports: 
+    ggplot2,
+    utils,
+    shiny,
+    gdata,
+    reshape2,
+    dplyr,
+    fs,
+    stringr,
+    tidyr,
+    PBSadmb,
+    PBSmodelling,
+    rstudioapi,
+    svDialogs,
+    ggridges,
+    magrittr
 Suggests: 
     knitr,
     rmarkdown
 VignetteBuilder: knitr
-ByteCompile: TRUE

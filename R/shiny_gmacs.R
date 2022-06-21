@@ -1,13 +1,13 @@
 #' Plot Gmacs on shiny app
 #'
-#' @param replist List object created by read_admb function
+#' @param gmrep List object created by read_admb function
 #' @export
 shiny_gmacs <- function(gmrep) {
-  shinyApp( ui = pageWithSidebar(
+  shiny::shinyApp( ui = shiny::pageWithSidebar(
   # Application title
-  headerPanel("Gmacs Model Outputs"),
-  sidebarPanel(
-	  selectInput('plotType',"Select variable to plot",
+    shiny::headerPanel("Gmacs Model Outputs"),
+    shiny::sidebarPanel(
+      shiny::selectInput('plotType',"Select variable to plot",
 	  		c(	 "Spawning Biomass",
 	  	  	   "Fit to Index Data",
 	  		  	 "Retained Catch",
@@ -18,19 +18,20 @@ shiny_gmacs <- function(gmrep) {
 	  	  	   "Size Composition"
 	  	  	   ),
 	  		selected="Mature Male Biomass")),
-  # Show plot 
-  mainPanel( plotOutput("distPlot") ) ), 
+
+  # Show plot
+  shiny::mainPanel(shiny::plotOutput("distPlot") ) ),
 server = function(input, output) { output$distPlot <- renderPlot(
     if(input$plotType == "Spawning Biomass")
   		plot_ssb(gmrep)
     else if(input$plotType == "Recruitment")
 			plot_recruitment(gmrep)
     else if(input$plotType == "Growth Transition")
-			plot_sizetransition(gmrep)
+      plot_size_transition(gmrep)
     else if(input$plotType == "Growth curve")
       plot_growth(gmrep)
     else if(input$plotType == "Natural Mortality")
-			plot_naturalmortality(gmrep)
+      plot_natural_mortality(gmrep)
     else if(input$plotType == "Retained Catch")
       plot_catch(gmrep)
     else if(input$plotType == "Retained Catch Residuals")
@@ -44,7 +45,7 @@ server = function(input, output) { output$distPlot <- renderPlot(
 			#plot_sizecomp_res(gmrep)
 			#plot_selectivity(gmrep)
     else if(input$plotType == "Size Composition")
-    	plot_sizecomp(gmrep,which_plots=c(1))
+      plot_size_comps(gmrep,which_plots=c(1))
     )
   }
  )

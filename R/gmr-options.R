@@ -22,10 +22,11 @@
 #'
 #' Parameters to be passed on to gmr plotting functions
 #'
-#' @param plot_type the type of plot to create (png is the only option at the mo)
-#' @param plot_resolution png resolution
-#' @param plot_size a vector of length 2 containing the width and height of plot (mm)
-#' @param plot_cols the colour palette used for plotting (recommend the colour-blind palette cbPalette1 or cdPalette2)
+#' @details
+#' \code{plot_type} is the type of plot to create (png is the only option at the mo),
+#' \code{plot_resolution} png resolution
+#' \code{plot_size} a vector of length 2 containing the width and height of plot (mm)
+#' \code{plot_cols} the colour palette used for plotting (recommend the colour-blind palette cbPalette1 or cdPalette2)
 #' @author D'Arcy N. Webber
 #' @export
 #'
@@ -39,15 +40,15 @@
 #' that do the same. This allows a user to set the theme without
 #' independently loading the ggplot2 package.
 #'
-#' @param name of desired theme
+#' @param theme of desired theme
 #' @return Sets ggplot2 theme for current working session
 #' @export
 set_ggtheme <- function(theme){
   switch(theme,
-         bw      = ggtheme <<- ggplot2::theme_bw(),
-         gray    = ggtheme <<- ggplot2::theme_gray(),
-         classic = ggtheme <<- ggplot2::theme_classic(),
-         minimal = ggtheme <<- ggplot2::theme_minimal()
+         bw      = ggtheme <- ggplot2::theme_bw(),
+         gray    = ggtheme <- ggplot2::theme_gray(),
+         classic = ggtheme <- ggplot2::theme_classic(),
+         minimal = ggtheme <- ggplot2::theme_minimal()
   )
   message("The ggplot theme has been set to ", theme, " for this working session")
 }

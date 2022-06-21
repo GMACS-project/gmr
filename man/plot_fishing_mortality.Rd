@@ -8,10 +8,6 @@ plot_fishing_mortality(M)
 }
 \arguments{
 \item{M}{list of object(s) created by read_admb function}
-
-\item{xlab}{the x-axis label for the plot}
-
-\item{ylab}{the y-axis label for the plot}
 }
 \value{
 plot of fishing mortality (F)

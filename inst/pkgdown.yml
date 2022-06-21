@@ -2,6 +2,6 @@ pandoc: 2.14.0.3
 pkgdown: 2.0.4
 pkgdown_sha: ~
 articles:
-  001_Use_gmr_to_Run_GMACS: 001_Use_gmr_to_Run_GMACS.html
-last_built: 2022-06-20T17:26Z
+  001_UseGmrToRunGMACS: 001_UseGmrToRunGMACS.html
+last_built: 2022-06-20T19:13Z
 

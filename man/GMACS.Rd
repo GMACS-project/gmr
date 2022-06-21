@@ -58,12 +58,7 @@ realizes  the analysis based on the choice of the user, i.e: compiles the model,
 runs the model, and/or establishes comparison between versions. This is the core
 version to work with GMACS in `R`.
 }
-\examples{
-\dontrun{
-}
-
-}
 \seealso{
-\code{\link{Do_GMACS}}, \code{\link{.buildGMACS}} for
+\code{\link{Do_GMACS}}, \code{.buildGMACS} for
 building the executable.
 }

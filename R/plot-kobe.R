@@ -7,22 +7,26 @@
 #' @param xlab the x-label of the figure
 #' @param ylab the y-label of the figure
 #' @param ylim is the upper limit of the figure
+#' @param sex (character string), sex. Default "Male"
+#' @param fleet_in (character string), the fleet considered. Default "Pot"
+#' @param ref_ind (numeric), which sublist of M. Default 1
 #' @param alpha the opacity of the ribbon
-#' @return Plot of model estimates of spawning stock biomass 
+#' @return Plot of model estimates of spawning stock biomass
 #' @export
-#' 
-plot_kobe <- function(M, ylab = "Fishing mortality", xlab = "SSB (tonnes)", ylim = NULL, alpha = 0.1,
+#'
+plot_kobe <- function(M, ylab = "Fishing mortality", xlab = "SSB (tonnes)",
+                      ylim = NULL, alpha = 0.1,
                       sex="Male",fleet_in="Pot",ref_ind=1)
 {
   xlab <- paste0("\n", xlab)
   ylab <- paste0(ylab, "\n")
-  
+
   mdf <- .get_ssb_df(M)
   mdf_1 <- .get_F_df(M)
-  
+
   use_F<-filter(mdf_1$F,fleet==fleet_in)
   in_plot<-merge(use_F,mdf)
-  
+
   p<-ggplot(data=in_plot,aes(x=ssb,y=F,col=Model))+
     geom_path() +
     geom_text(data=in_plot,aes(x=ssb,y=F,label=year,col=Model),size=2)+
@@ -31,5 +35,5 @@ plot_kobe <- function(M, ylab = "Fishing mortality", xlab = "SSB (tonnes)", ylim
     geom_hline(yintercept=M[[ref_ind]]$sd_fmsy[1],linetype='dashed') +
     geom_vline(xintercept=M[[ref_ind]]$spr_bmsy,linetype='dashed')
   print(p)
- 
+
 }

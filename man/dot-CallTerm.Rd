@@ -11,7 +11,7 @@
 
 \item{.Dir}{Character string: the directory of the executable}
 
-\item{verbose}{Logical: if TRUE, report the shell call an its messages 
+\item{verbose}{Logical: if TRUE, report the shell call an its messages
 to the R console.}
 }
 \value{
@@ -19,10 +19,4 @@ the (unique) terminal identifier
 }
 \description{
 Calls a R terminal to run a specific executable
-}
-\examples{
-\dontrun{
-}
-
-
 }

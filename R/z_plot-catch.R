@@ -4,7 +4,7 @@
 #' @return dataframe of catch history (observed) and predicted values
 #' @author SJD Martell, D'Arcy N. Webber
 #' @export
-#' 
+#'
 .get_catch_df <- function(M)
 {
     n <- length(M)
@@ -45,10 +45,13 @@
 #' @param xlab the x-axis label for the plot
 #' @param ylab the y-axis label for the plot
 #' @param mlab the model label for the plot that appears above the key
+#' @param x_leg numeric; (0<\code{in_leg_x}<1): x coordinate of the legend box.
+#' @param y_leg numeric; (0<\code{in_leg_x}<1): y coordinate of the legend box.
+#' @inheritParams ggplot2::facet_grid
 #' @return plot of catch history (observed) and predicted values
 #' @author SJD Martell, D'Arcy N. Webber
 #' @export
-#' 
+#'
 plot_catch <- function(M, plot_res = FALSE, scales = "free_y",
                        xlab = "Year", ylab = "Catch", mlab = "Model",x_leg = 0.9, y_leg=0.7)
 {
@@ -58,7 +61,7 @@ plot_catch <- function(M, plot_res = FALSE, scales = "free_y",
     mdf <- .get_catch_df(M)
     mdf$units[mdf$units == 1] <- "Units: biomass"
     mdf$units[mdf$units == 2] <- "Units: numbers"
-    
+
     #if (plot_res)
     #{
       ## Residuals
@@ -70,12 +73,12 @@ plot_catch <- function(M, plot_res = FALSE, scales = "free_y",
     #}
     #else
     #p <- ggplot(mdf, aes(x = as.integer(year), y = observed, fill = sex))
-    
+
     p <- ggplot(mdf, aes(x = year, y = observed)) +
         geom_bar(stat = "identity", position = "dodge", alpha = 0.15) +
         geom_linerange(aes(x = year, y = observed, ymax = ub, ymin = lb, position = "dodge"), size = 0.2, alpha = 0.5, col = "black") +
         labs(x = xlab, y = ylab)
-    
+
     if (.OVERLAY)
     {
         if (length(M) == 1 && length(unique(mdf$sex)) == 1)

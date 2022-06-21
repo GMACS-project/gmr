@@ -7,7 +7,7 @@
 plot_growth(M)
 }
 \arguments{
-\item{replist}{List object created by read_admb function}
+\item{M}{List object created by read_admb function}
 }
 \value{
 Plot natural mortality over time and size

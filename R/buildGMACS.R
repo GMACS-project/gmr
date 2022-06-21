@@ -4,19 +4,16 @@
 # @description Function to build the GMACS executable.
 # It converts the gmacs.tpl code to a gmacs.cpp code, calls ADMB to compile all
 #  .cpp files required to build gmacs and returns the gmacs executable.
-# 
+#
 # @param prefix String name prefix (i.e., without extension) of the ADMB project,
-# here "gmacs". 
-# @param args list of string names corresponding to the various .cpp libraries 
+# here "gmacs".
+# @param args list of string names corresponding to the various .cpp libraries
 # required to build gmacs. These files are stored in the lib/ folder.
-# @inheritParams PBSadmb::convAD 
-# 
+# @inheritParams PBSadmb::convAD
+#
 # @return
 #
-# @examples
-# \dontrun{
-# }
-# 
+#
 .buildGMACS <-
   function (prefix = NULL,
             raneff = NULL,
@@ -43,7 +40,7 @@
     prog <- paste("adlink", ext, sep = "")
     if (is.null(PBSmodelling::getOptions(PBSadmb::atcall(.PBSadmb), "admbver")))
       PBSadmb::setADver(gccver = NULL)
-    admbvernum = .version(PBSmodelling::getOptions(PBSadmb::atcall(.PBSadmb), "admbver"))
+    admbvernum = PBSadmb::.version(PBSmodelling::getOptions(PBSadmb::atcall(.PBSadmb), "admbver"))
     flags <- c()
     if (dll)
       flags[length(flags) + 1] <- "-d"
@@ -61,21 +58,21 @@
     cmd <- paste(prog, flags, prefix, sep = " ")
     if (.Platform$OS.type == "windows")
       cmd = shQuote(cmd)
-    .setPath(pathfile)
+    PBSadmb::.setPath(pathfile)
     if (logfile & !add)
-      startLog(prefix)
+      PBSadmb::startLog(prefix)
     if (verbose)
       cat(cmd, "\n")
-    
+
     out <- PBSadmb::.callSys(cmd, wait = TRUE)
     out2 <- c(cmd, out)
     if (logfile) {
-      appendLog(prefix, out2)
+      PBSadmb::appendLog(prefix, out2)
     }
     if (verbose)
       cat(out, sep = "\n")
     invisible(out2)
-    
+
     if (out2[6] == "Successfully built 'gmacs.exe'.")
       del <-
       c(dir(pattern = ".obj"),

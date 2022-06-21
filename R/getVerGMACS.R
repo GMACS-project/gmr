@@ -1,17 +1,13 @@
 
 # @title .getVerGMACS
 #
-# @description Function to ask the user the name of the new Version of GMACS 
+# @description Function to ask the user the name of the new Version of GMACS
 # and specify the compilation date for the new gmacbase.TPL file when updating it.
 #
 # @return Character string: the user-defined name of the new GMACS version
 #
 #
-# @examples
-# \dontrun{
-# }
-# 
-# 
+#
 .getVerGMACS <- function () {
   New.ver <- NA
   while (is.na(New.ver)) {

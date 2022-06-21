@@ -7,7 +7,7 @@
 shiny_gmacs(gmrep)
 }
 \arguments{
-\item{replist}{List object created by read_admb function}
+\item{gmrep}{List object created by read_admb function}
 }
 \description{
 Plot Gmacs on shiny app

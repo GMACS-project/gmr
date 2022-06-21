@@ -19,13 +19,13 @@ plot_growth_inc(
 )
 }
 \arguments{
+\item{M}{list object created by read_admb function}
+
 \item{xlab}{the x-axis label for the plot}
 
 \item{ylab}{the y-axis label for the plot}
 
 \item{slab}{the sex label for the plot that appears above the key}
-
-\item{replist}{list object created by read_admb function}
 }
 \value{
 plot growth increment for given pre-molt size, including model predictions and data

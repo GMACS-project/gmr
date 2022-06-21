@@ -1,12 +1,10 @@
 #' Plot fishing mortality (F)
 #'
 #' @param M list of object(s) created by read_admb function
-#' @param xlab the x-axis label for the plot
-#' @param ylab the y-axis label for the plot
 #' @return plot of fishing mortality (F)
 #' @author JN Ianelli, SJD Martell, DN Webber
 #' @export
-#' 
+#'
 plot_fishing_mortality <- function(M)
 {
     n <- length(M)
@@ -27,7 +25,7 @@ plot_fishing_mortality <- function(M)
         efdev <- odf$log_est[ifdev]
         sfdev <- odf$log_std[ifdev]
         # combine
-        
+
     }
 
     #plot(efbar, type = "l")
@@ -37,7 +35,7 @@ plot_fishing_mortality <- function(M)
      #   plot(A$F[seq(2,114,3),1], type = "l")
      #   plot(A$F[seq(2,114,3),2], type = "l", col = 2)
      #   plot(A$F[seq(2,114,3),3], type = "l", col = 3)
-    
+
     #    plot(A$F[seq(2,114,3),1], type = "l", ylim = c(0,2))
     #    lines(A$F[seq(2,114,3),2], col = 2)
     #    lines(A$F[seq(2,114,3),3], col = 3)

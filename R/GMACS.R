@@ -28,15 +28,12 @@
 #' \code{GMACS_version} considered in the analysis.
 #' @inheritParams PBSadmb::convAD
 #'
-#' @seealso \code{\link{Do_GMACS}}, \code{\link{.buildGMACS}} for
+#' @seealso \code{\link{Do_GMACS}}, \code{.buildGMACS} for
 #' building the executable.
 #'
 #'
 #' @export
 #'
-#' @examples
-#' \dontrun{
-#' }
 #'
 GMACS <- function(Spc = NULL,
                   GMACS_version = NULL,

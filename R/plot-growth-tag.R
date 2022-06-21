@@ -4,7 +4,7 @@
 #' @return dataframe of growth increments
 #' @author D'Arcy N. Webber, SJD Martell
 #' @export
-#' 
+#'
 .get_gi_df <- function(M)
 {
     n  <- length(M)
@@ -17,18 +17,18 @@
         df <- data.frame(Model = names(M)[i],
                          Sex   = as.factor(A$iMoltIncSex),
                          molt_inc   = A$dMoltInc,
-                         premolt  = A$dPreMoltSize,
+                         Premolt  = A$dPreMoltSize,
                          type = 'obs')
-        
+
         df_2<-data.frame(Model = names(M)[i],
                          Sex  = as.factor(rep(sort(unique(A$iMoltIncSex)),each=length(A$mid_points))),
                          molt_inc = as.vector(t(A$molt_increment)),
-                         premolt = A$mid_points,
+                         Premolt = A$mid_points,
                          type = 'pred')
 
         mdf <- rbind(mdf, df,df_2)
     }
-    } else 
+    } else
     {
       for(i in 1:n)
       {
@@ -46,34 +46,34 @@
 
 #' Plot growth from arbitrary start age
 #'
-#' @param replist list object created by read_admb function
+#' @param M list object created by read_admb function
 #' @param xlab the x-axis label for the plot
 #' @param ylab the y-axis label for the plot
 #' @param slab the sex label for the plot that appears above the key
 #' @return plot growth increment for given pre-molt size, including model predictions and data
 #' @author SJD Martell, D'Arcy N. Webber
 #' @export
-#' 
+#'
 plot_growth_inc <- function(M, xlab = "Pre-molt size (mm)", ylab = "Molt increment (mm)",
                             slab = "Sex")
 {
     xlab <- paste0("\n", xlab)
     ylab <- paste0(ylab, "\n")
-    
+
     mdf <- .get_gi_df(M)
     obs_in<-filter(mdf,type=="obs")
     pred_in<-filter(mdf,type=="pred")
-    
+
     p <- ggplot(obs_in) +
-        labs(x = xlab, y=ylab, col = slab) + 
+        labs(x = xlab, y=ylab, col = slab) +
         expand_limits(y=0) +
         facet_wrap(~Sex) +
-        geom_line(data=pred_in,aes(x=premolt,y=molt_inc,col=Model)) +
+        geom_line(data=pred_in,aes(x=Premolt,y=molt_inc,col=Model)) +
         .THEME
-     
+
      if(obs_in$molt_inc[1]!=0)
-       p <- p+ geom_point(aes(x=premolt,y=molt_inc,col=Sex)) 
-    
+       p <- p+ geom_point(aes(x=Premolt,y=molt_inc,col=Sex))
+
     #p <- p + geom_point(aes(x = size, y = obs, colour = sex))
     #p <- p + geom_line(aes(x = size, y = pred, colour = sex))
     #if (!length(M) == 1)
@@ -112,6 +112,6 @@ plot_growth_inc <- function(M, xlab = "Pre-molt size (mm)", ylab = "Molt increme
     #       geom_point(aes(x = mids, y = molt_inc, col = Model))
     #   }
     # }
-    # 
+    #
      return(p)
 }

@@ -7,13 +7,13 @@
 set_ggtheme(theme)
 }
 \arguments{
-\item{name}{of desired theme}
+\item{theme}{of desired theme}
 }
 \value{
 Sets ggplot2 theme for current working session
 }
 \description{
-Gives user control over plot theme by running ggplot2 functions 
-that do the same. This allows a user to set the theme without 
+Gives user control over plot theme by running ggplot2 functions
+that do the same. This allows a user to set the theme without
 independently loading the ggplot2 package.
 }

@@ -30,7 +30,7 @@
 #' \code{GMACS_version} considered in the analysis.
 #' @inheritParams PBSadmb::convAD
 #'
-#' @seealso \code{\link{Do_Comp}} for comparisons, \code{\link{.buildGMACS}} for
+#' @seealso \code{\link{Do_Comp}} for comparisons, \code{.buildGMACS} for
 #' building the executable.
 #'
 #' @return Depending on the option chose, it can return all the output files from
@@ -39,9 +39,6 @@
 #'
 #' @export
 #'
-#' @examples
-#' \dontrun{
-#' }
 #'
 Do_GMACS <- function(Spc = NULL,
                      GMACS_version = NULL,
@@ -83,7 +80,7 @@ Do_GMACS <- function(Spc = NULL,
 
       #  Create gmacs.tpl from gmacsbase.tpl and personal.tpl
       cat("Now writing gmacs.tpl\n")
-      gmr::write_TPL(vv = vv,
+      write_TPL(vv = vv,
                      Dir = Dir,
                      update = FALSE)
       # cat("\n")
@@ -95,7 +92,7 @@ Do_GMACS <- function(Spc = NULL,
             ignore.case = TRUE,
             all.files = TRUE)
       file.copy(file.path(paste0(Dir[vv], "/lib/"), libFiles), Dir[vv], overwrite = TRUE)
-      args <- gmr::get_nam(libFiles)
+      args <- get_nam(libFiles)
 
       # .tpl to .cpp
       cat("\nNow converting gmacs.tpl to gmacs.cpp ...\n")
@@ -127,7 +124,7 @@ Do_GMACS <- function(Spc = NULL,
 
       # Build GMACS
       cat("\nNow building gmacs executable ...\n")
-      gmr::.buildGMACS(
+      .buildGMACS(
         prefix = "gmacs",
         raneff = FALSE,
         safe = TRUE,
@@ -212,7 +209,7 @@ Do_GMACS <- function(Spc = NULL,
         cat("Data for ", Spc[nm], " have been copied.\n")
       } else {
         if (file.exists(paste(todir, "gmacs.dat", sep = ""))) {
-          nam <- gmr::read_GMACS.dat(path = paste(todir, "gmacs.dat", sep = ""))
+          nam <- read_GMACS.dat(path = paste(todir, "gmacs.dat", sep = ""))
           tmp <- NULL
           for (f in 1:length(nam)) {
             if (!file.exists(paste(todir, nam[f], sep = "")))

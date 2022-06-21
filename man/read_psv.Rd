@@ -7,7 +7,9 @@
 read_psv(fn, nsamples = 10000)
 }
 \arguments{
-\item{repfile}{name of ADMB output file to be read (no extension needed)}
+\item{fn}{name of ADMB output file to be read (no extension needed)}
+
+\item{nsamples}{(numeric); number of samples in the  MCMC chain}
 }
 \value{
 object of type 'list' with ADMB outputs therein

@@ -14,6 +14,8 @@ plot_size_comps_res(
 \arguments{
 \item{M}{List object(s) created by read_admb function}
 
+\item{ncol}{(numeric); number of columns in the facet_wrap. Default \code{1}}
+
 \item{xlab}{the x-axis label for the plot}
 
 \item{ylab}{the y-axis label for the plot}

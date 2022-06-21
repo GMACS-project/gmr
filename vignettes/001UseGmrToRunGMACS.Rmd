@@ -1,5 +1,5 @@
 ---
-title: "Use_gmr_to_Run_GMACS"
+title: "Use gmr to Run GMACS"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Use_gmr_to_Run_GMACS}

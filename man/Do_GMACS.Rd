@@ -64,12 +64,7 @@ For each stock considered in the analysis, this function will copy the
 all the input files required by GMACS from a specific directory which can be
 the directory where are stored the input files used for the last assessment.
 }
-\examples{
-\dontrun{
-}
-
-}
 \seealso{
-\code{\link{Do_Comp}} for comparisons, \code{\link{.buildGMACS}} for
+\code{\link{Do_Comp}} for comparisons, \code{.buildGMACS} for
 building the executable.
 }

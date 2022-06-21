@@ -1,10 +1,10 @@
 #' Get numbers at length data
-#' 
+#'
 #' @param M list object(s) created by read_admb function
 #' @return dataframe of numbers at length
 #' @author D'Arcy N. Webber
 #' @export
-#' 
+#'
 .get_numbers_df <- function(M)
 {
     n <- length(M)
@@ -40,12 +40,15 @@
 #'
 #' @param M list object created by read_admb function
 #' @param subsetby a selection of the years to restrict plotting of
+#' @param nrow Number of rows
+#' @param ncol Number of columns
 #' @return plot of numbers of individuals in each size-class each year in the model
 #' @author D'Arcy N. Webber
 #' @export
-#' 
+#'
 plot_numbers <- function(M, subsetby = "", nrow = 2, ncol = NULL)
 {
+    mp <- NULL
     mdf <- .get_numbers_df(M)
     if (all(subsetby != "")) mdf <- mdf[mdf$Year %in% subsetby,]
     p <- ggplot(mdf, aes(x = mp, y = N)) + labs(x = "\nMid-point of size-class (mm)", y = "Number of inidividuals\n")

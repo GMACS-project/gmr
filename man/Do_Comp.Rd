@@ -61,12 +61,7 @@ For each stock considered in the analysis, this function
 establishes comparison tables of management quantities between different
 versions of GMACS.
 }
-\examples{
-\dontrun{
-}
-
-}
 \seealso{
-\code{\link{Do_GMACS}}, \code{\link{.buildGMACS}} for
+\code{\link{Do_GMACS}}, \code{.buildGMACS} for
 building the executable.
 }
