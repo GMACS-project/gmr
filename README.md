@@ -3,10 +3,7 @@ date)](https://img.shields.io/github/release/GMACS-project/gmr)](https://github.
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# gmr
-
-Working with A Generalized size-structured Model for Assessing
-Crustaceans.
+# gmr - R package to work with a Generalized size-structured Model for Assessing Crustaceans ***GMACS***
 
 `gmr` is an R package providing tools to work with
 *[GMACS](https://github.com/GMACS-project/GMACS_Assessment_code/tree/main/GMACS/Latest_Version)*,

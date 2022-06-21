@@ -28,7 +28,7 @@
 #' \code{GMACS_version} considered in the analysis.
 #' @inheritParams PBSadmb::convAD
 #'
-#' @seealso \code{\link{Do_GMACS}}, \code{\link{.buildGMACS}} for
+#' @seealso \code{\link{Do_GMACS}}, \code{.buildGMACS} for
 #' building the executable.
 #'
 #' @return For each stock considered in the analysis, this function returns a
@@ -36,9 +36,6 @@
 #'
 #' @export
 #'
-#' @examples
-#' \dontrun{
-#' }
 #'
 Do_Comp <-
   function(Spc = NULL,
@@ -179,7 +176,7 @@ Do_Comp <-
 
       # cat("\n\n\\# This is the summary of management quantities for: ",Spc,"\n")
 
-      Mfile <- unique(gmr::.an(base.file))
+      Mfile <- unique(.an(base.file))
       PlotTab <- data.frame(
         Model = ScenarioNames,
         MMB = rep(0, length(ScenarioNames)),

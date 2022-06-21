@@ -11,6 +11,8 @@ plot_gmr(M, plot_res = FALSE, target_dir = "", gmr_options = .gmr_options)
 
 \item{plot_res}{plot residuals only (default = FALSE)}
 
+\item{target_dir}{(character string) the target directory wherein results are saved}
+
 \item{gmr_options}{the default plotting options}
 }
 \value{

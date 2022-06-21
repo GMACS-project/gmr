@@ -9,7 +9,7 @@
 
 Here are some of the items for the next release:
 
--   [ ] Build a website
+-   [x] Build a website
 -   [ ] Check all plotting functions
 -   [ ] Improve code
 -   [ ] Create vignettes to build and run gmacs, make comparison

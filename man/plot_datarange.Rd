@@ -8,6 +8,8 @@ plot_datarange(M, verbose = FALSE)
 }
 \arguments{
 \item{M}{a list of lists object created by the read_admb function}
+
+\item{verbose}{(Logical); if TRUE, the table of the results is printed}
 }
 \value{
 plot of data range

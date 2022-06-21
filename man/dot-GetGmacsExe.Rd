@@ -11,12 +11,7 @@ the new GMACS executable
 }
 \description{
 Function used when updating and releasing a new version of GMACS.
-It uses the (\code{\link{write_TPL}}) function to editate the new
-gmacs.tpl, compiles the model and uses the (\code{\link{.buildGMACS}})
+It uses the (\code{write_TPL}) function to editate the new
+gmacs.tpl, compiles the model and uses the (\code{.buildGMACS})
 function to provide a new executable.
-}
-\examples{
-\dontrun{
-}
-
 }

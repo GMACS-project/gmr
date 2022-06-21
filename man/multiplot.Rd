@@ -10,13 +10,15 @@ ggplot objects can be passed in ..., or to plotlist (as a list of ggplot objects
 multiplot(..., plotlist = NULL, file, cols = 1, layout = NULL)
 }
 \arguments{
+\item{...}{Numeric, complex, or logical vectors.}
+
 \item{plotlist}{the list of figures to arrange}
 
 \item{file}{does nothing (yet)}
 
 \item{cols}{is the number of columns}
 
-\item{layout}{}
+\item{layout}{A matrix specifying the layout. If present, 'cols' is ignored.}
 }
 \value{
 plot of all

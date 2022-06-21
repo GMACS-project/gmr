@@ -2,11 +2,10 @@
 .Rhistory
 .RData
 .Ruserdata
-
-*.R
-*.Rmd
 Work_on_gmr.R
 README.Rmd
-NEWS.RMD
-README.Rmd
 NEWS.Rmd
+inst/doc
+NEWS.Rmd
+README.Rmd
+Work_on_gmr.R

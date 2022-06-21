@@ -29,6 +29,8 @@ plot_selectivity(
 \item{nrow}{the number of rows in the facet grid}
 
 \item{ncol}{the number of columns in the facet grid}
+
+\item{legend_loc}{(numeric vector); c(x,y) where x and y are the coordinates of the legend box}
 }
 \value{
 plot of selectivity

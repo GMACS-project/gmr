@@ -10,17 +10,14 @@ An object of class \code{list} of length 6.
 \usage{
 .gmr_options
 }
-\arguments{
-\item{plot_type}{the type of plot to create (png is the only option at the mo)}
-
-\item{plot_resolution}{png resolution}
-
-\item{plot_size}{a vector of length 2 containing the width and height of plot (mm)}
-
-\item{plot_cols}{the colour palette used for plotting (recommend the colour-blind palette cbPalette1 or cdPalette2)}
-}
 \description{
 Parameters to be passed on to gmr plotting functions
+}
+\details{
+\code{plot_type} is the type of plot to create (png is the only option at the mo),
+\code{plot_resolution} png resolution
+\code{plot_size} a vector of length 2 containing the width and height of plot (mm)
+\code{plot_cols} the colour palette used for plotting (recommend the colour-blind palette cbPalette1 or cdPalette2)
 }
 \author{
 D'Arcy N. Webber

@@ -4,7 +4,7 @@
 #' @return list of selectivities
 #' @author SJD Martell, D'Arcy N. Webber
 #' @export
-#' 
+#'
 .get_selectivity_df <- function(M)
 {
     n   <- length(M)
@@ -44,7 +44,7 @@
 #' This function takes a list of lists created by the read_admb function plots
 #' the selectivity by fishing fleet, sex, year, type (retained or discarded) and
 #' model.
-#' 
+#'
 #' @param M list of lists created by the read_admb function
 #' @param xlab the x-axis label for the plot
 #' @param ylab the y-axis label for the plot
@@ -52,10 +52,11 @@
 #' @param ilab the year label for the plot that appears above the key
 #' @param nrow the number of rows in the facet grid
 #' @param ncol the number of columns in the facet grid
+#' @param legend_loc (numeric vector); c(x,y) where x and y are the coordinates of the legend box
 #' @return plot of selectivity
 #' @author SJD Martell, D'Arcy N. Webber
 #' @export
-#' 
+#'
 plot_selectivity <- function(M,
                              xlab = "Mid-point of size class (mm)",
                              ylab = "Selectivity",
@@ -64,7 +65,7 @@ plot_selectivity <- function(M,
 {
     xlab <- paste0("\n", xlab)
     ylab <- paste0(ylab, "\n")
-    
+
     mdf <- .get_selectivity_df(M)
     ncol <-length(unique(mdf$fleet))
     nrow <-length(unique(mdf$Model))
@@ -88,15 +89,15 @@ plot_selectivity <- function(M,
         p <- p + facet_wrap(~Model + fleet + type, nrow = nrow, ncol = ncol)
     }
     p <- p + labs(y = ylab, x = xlab, col = ilab, linetype = tlab) +
-        scale_linetype_manual(values = c("solid", "dashed", "dotted")) + 
+        scale_linetype_manual(values = c("solid", "dashed", "dotted")) +
       .THEME
     p <- p + theme(strip.text.x = element_text(margin= margin(1,0,1,0)),
-    panel.grid.major = element_blank(), 
+    panel.grid.major = element_blank(),
     panel.grid.minor = element_blank(),
     panel.border = element_blank(),
     panel.background = element_blank(),
     strip.background = element_rect(color="white",fill="white"))
-    
+
     print(p )
 }
 
@@ -108,16 +109,16 @@ plot_selectivity <- function(M,
 #' Plot selectivity 3D
 #'
 #' @param M list object created by read_admb function
-#' @param plt_surface include a panel with surface over size-time 
+#' @param plt_surface include a panel with surface over size-time
 #' @return 3D plot of selectivity
 #' @author D'Arcy N. Webber
 #' @export
-#' 
+#'
 plot_selectivity_3d <- function(M, plt_surface = FALSE)
 {
     mdf <- .get_selectivity_df(M)
     df3 <- subset(mdf, unique(year) > 1)
-    
+
     p <- ggplot(mdf) + expand_limits(y = 0)
     if(.OVERLAY)
     {

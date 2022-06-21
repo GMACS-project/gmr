@@ -10,6 +10,10 @@ plot_numbers(M, subsetby = "", nrow = 2, ncol = NULL)
 \item{M}{list object created by read_admb function}
 
 \item{subsetby}{a selection of the years to restrict plotting of}
+
+\item{nrow}{Number of rows}
+
+\item{ncol}{Number of columns}
 }
 \value{
 plot of numbers of individuals in each size-class each year in the model

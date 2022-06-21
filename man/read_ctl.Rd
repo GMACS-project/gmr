@@ -7,7 +7,7 @@
 read_ctl(fn)
 }
 \arguments{
-\item{repfile}{name of ADMB output file to be read}
+\item{fn}{name of ADMB output file to be read}
 }
 \value{
 object of type 'list' with ADMB outputs therein

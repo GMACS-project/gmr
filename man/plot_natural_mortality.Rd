@@ -15,6 +15,10 @@ plot_natural_mortality(
 \item{M}{list object created by read_admb function}
 
 \item{plt_knots}{if the knots should be plotted or not}
+
+\item{knots}{(nuveric vector), specifies the knots.}
+
+\item{slab}{the x-axis label for the plot}
 }
 \value{
 plot of natural mortality

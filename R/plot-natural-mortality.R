@@ -3,9 +3,10 @@
 #' @param M list object created by read_admb function
 #' @author J Ianelli, SJD Martell, DN Webber
 #' @export
-#' 
+#'
 .get_M_df <-function(M)
 {
+  maturity <- NULL
     n <- length(M)
     ldf <- list()
     mdf <- NULL
@@ -27,7 +28,7 @@
         }
         if(A$nmature==2)
         {
-         df$maturity<-rep(rep(c("Mature","Immature"),each=nrow(df)/4),nsex)  
+         df$maturity<-rep(rep(c("Mature","Immature"),each=nrow(df)/4),nsex)
         }
         mdf <- rbind(mdf, df)
     }
@@ -39,11 +40,14 @@
 #'
 #' @param M list object created by read_admb function
 #' @param plt_knots if the knots should be plotted or not
+#' @param knots (nuveric vector), specifies the knots.
+#' @param slab the x-axis label for the plot
 #' @return plot of natural mortality
 #' @author J Ianelli, SJD Martell, DN Webber
 #' @export
-#' 
-plot_natural_mortality <- function(M, plt_knots = TRUE, knots = c(1976, 1980, 1985, 1994),
+#'
+plot_natural_mortality <- function(M, plt_knots = TRUE,
+                                   knots = c(1976, 1980, 1985, 1994),
                                    slab = "Knot")
 {
     mdf <- .get_M_df(M)
@@ -53,22 +57,22 @@ plot_natural_mortality <- function(M, plt_knots = TRUE, knots = c(1976, 1980, 19
     } else {
         p <- ggplot(mdf, aes(x = Year, y = M, colour = Model))
     }
-    
+
     if (length(unique(mdf$Sex)) == 1)
     {
         p <- p + geom_line()
     } else {
         p <- p + geom_line(aes(linetype = Sex))
     }
-    
+
     if (length(unique(mdf$maturity)) > 0)
     {
       p <- p + facet_wrap(~maturity)
     } else {
       p <- p +  geom_line()
     }
-    
-    
+
+
     if (plt_knots)
     {
         mdf$Knot <- NA

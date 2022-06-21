@@ -6,7 +6,7 @@
 #' @param repfile ADMB output files to be read (no extension needed)
 #' @return object of type 'list' with ADMB outputs as list elements
 #' @export
-#' 
+#'
 read_admb <- function(repfile)
 {
     ret <- read_fit(repfile)
@@ -26,7 +26,7 @@ read_admb <- function(repfile)
 #' @param repfile name of ADMB output file to be read (no extension needed)
 #' @return object of type 'list' with ADMB outputs therein
 #' @export
-#' 
+#'
 read_fit <- function(repfile)
 {
     ret <- list()
@@ -62,7 +62,7 @@ read_fit <- function(repfile)
 #' @param fn name of ADMB output file to be read (no extension needed)
 #' @return object of type "list" with ADMB outputs therein
 #' @export
-#' 
+#'
 read_rep <- function(fn)
 {
     options(warn = -1) # Suppress the NA message in the coercion to double
@@ -102,7 +102,7 @@ read_rep <- function(fn)
 			# cname <- paste(1:ncols)
 			# dum=as.matrix(read.table(fn,skip=ir,nrow=irr-ir-1,fill=TRUE,col.names=cname))
 			# cat("\n ir ",ir," irr ",irr)
-            dum <- as.matrix(read.table(fn, skip = ir, nrow = irr-ir-1, fill = TRUE, row.names = NULL))
+            dum <- as.matrix(read.table(fn, skip = ir, nrows =  irr-ir-1, fill = TRUE, row.names = NULL))
         }
         if (is.numeric(dum)) # Logical test to ensure dealing with numbers
         {
@@ -119,10 +119,11 @@ read_rep <- function(fn)
 #' Read ADMB .psv file and return an R object of type 'list'
 #'
 #' @author Steve Martell
-#' @param repfile name of ADMB output file to be read (no extension needed)
+#' @param fn name of ADMB output file to be read (no extension needed)
+#' @param nsamples (numeric); number of samples in the  MCMC chain
 #' @return object of type 'list' with ADMB outputs therein
 #' @export
-#' 
+#'
 read_psv <- function(fn, nsamples=10000)
 {
 	#This function reads the binary output from ADMB
@@ -142,10 +143,10 @@ read_psv <- function(fn, nsamples=10000)
 #' Read ADMB .ctl file and return an R object of type 'list'. DOES NOT WORK
 #'
 #' @author D'Arcy N. Webber
-#' @param repfile name of ADMB output file to be read
+#' @param fn name of ADMB output file to be read
 #' @return object of type 'list' with ADMB outputs therein
 #' @export
-#' 
+#'
 read_ctl <- function(fn)
 {
     options(warn = -1) # Suppress the NA message in the coercion to double
@@ -165,7 +166,7 @@ read_ctl <- function(fn)
         if(irr-ir==2) dum=as.double(scan(fn,skip=ir,nlines=1,quiet=TRUE,what=""))
         if(irr-ir>2)
         {
-            dum=as.matrix(read.table(fn,skip=ir,nrow=irr-ir-1,fill=TRUE,row.names = NULL))
+            dum=as.matrix(read.table(fn,skip=ir,nrows = irr-ir-1,fill=TRUE,row.names = NULL))
         }
         if(is.numeric(dum))#Logical test to ensure dealing with numbers
         {

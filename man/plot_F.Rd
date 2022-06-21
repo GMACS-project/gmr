@@ -17,11 +17,19 @@ plot_F(
 \arguments{
 \item{M}{list object created by read_admb function}
 
+\item{scales}{Are scales shared across all facets (the default,
+\code{"fixed"}), or do they vary across rows (\code{"free_x"}),
+columns (\code{"free_y"}), or both rows and columns (\code{"free"})?}
+
 \item{xlab}{the x-axis label for the plot}
 
 \item{ylab}{the y-axis label for the plot}
 
 \item{mlab}{the model label for the plot that appears above the key}
+
+\item{in_leg_x}{numeric; (0<\code{in_leg_x}<1): x coordinate of the legend box.}
+
+\item{in_leg_y}{numeric; (0<\code{in_leg_x}<1): y coordinate of the legend box.}
 }
 \value{
 plot of fishing mortality and mean Fs

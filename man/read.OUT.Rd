@@ -18,8 +18,3 @@ of specific management/biological quantities
 
 Need to be modified to allow a vector of character to search any variable
 }
-\examples{
-\dontrun{
-}
-
-}

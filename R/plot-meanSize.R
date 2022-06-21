@@ -4,7 +4,7 @@
 #' @return dataframe of catch history (observed) and predicted values
 #' @author J. Ianelli, SJD Martell, D'Arcy N. Webber
 #' @export
-#' 
+#'
 .get_mnLen_df <- function(M)
 {
     n <- length(M)
@@ -13,7 +13,6 @@
     {
         A <- M[[i]]
         df <- data.frame(Model = names(M)[i], A$dCatchData_out)
-pre_mn_size
         colnames(df) <- c("model","year","seas","fleet","sex","obs","cv","type","units","mult","effort","discard.mortality")
         df$observed  <- na.omit(as.vector(t(A$obs_catch_out)))
         df$predicted <- na.omit(as.vector(t(A$pre_catch_out)))
@@ -46,10 +45,11 @@ pre_mn_size
 #' @param xlab the x-axis label for the plot
 #' @param ylab the y-axis label for the plot
 #' @param mlab the model label for the plot that appears above the key
+#' @inheritParams ggplot2::facet_grid
 #' @return plot of catch history (observed) and predicted values
 #' @author SJD Martell, D'Arcy N. Webber
 #' @export
-#' 
+#'
 plot_catch <- function(M, plot_res = FALSE, scales = "free_y",
                        xlab = "Year", ylab = "Catch", mlab = "Model")
 {
@@ -59,7 +59,7 @@ plot_catch <- function(M, plot_res = FALSE, scales = "free_y",
     mdf <- .get_catch_df(M)
     mdf$units[mdf$units == 1] <- "Units: biomass"
     mdf$units[mdf$units == 2] <- "Units: numbers"
-    
+
     #if (plot_res)
     #{
       ## Residuals
@@ -71,12 +71,12 @@ plot_catch <- function(M, plot_res = FALSE, scales = "free_y",
     #}
     #else
     #p <- ggplot(mdf, aes(x = as.integer(year), y = observed, fill = sex))
-    
+
     p <- ggplot(mdf, aes(x = year, y = observed)) +
         geom_bar(stat = "identity", position = "dodge", alpha = 0.15) +
         geom_linerange(aes(x = year, y = observed, ymax = ub, ymin = lb, position = "dodge"), size = 0.2, alpha = 0.5, col = "black") +
         labs(x = xlab, y = ylab)
-    
+
     if (.OVERLAY)
     {
         if (length(M) == 1 && length(unique(mdf$sex)) == 1)

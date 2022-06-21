@@ -33,6 +33,10 @@ plot_size_comps(
 \item{tlab}{the fleet label for the plot that appears above the key}
 
 \item{res}{boolean if residual or observed and predicted}
+
+\item{legend_loc}{(numeric vector); c(x,y) where x and y are the coordinates of the legend box}
+
+\item{ylim_max}{(numeric), defines the ylim.}
 }
 \value{
 Plots of observed and predicted size composition values

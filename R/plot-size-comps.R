@@ -15,26 +15,26 @@
         df <- data.frame(Model = names(M)[i], cbind(A$d3_SizeComps[,1:8], A$d3_obs_size_comps_out))
         pf <- data.frame(Model = names(M)[i], cbind(A$d3_SizeComps[,1:8], A$d3_pre_size_comps_out))
         rf <- data.frame(Model = names(M)[i], cbind(A$d3_SizeComps[,1:8], A$d3_res_size_comps_out))
-        
+
         colnames(df) <- tolower(c("Model", "Year", "Seas", "Fleet", "Sex", "Type", "Shell", "Maturity", "Nsamp", as.character(A$mid_points)))
         colnames(pf) <- colnames(rf) <- colnames(df)
-        
+
         df$fleet    <- pf$fleet    <- rf$fleet    <- .FLEET[df$fleet]
         df$sex      <- pf$sex      <- rf$sex      <- .SEX[df$sex+1]
         df$shell    <- pf$shell    <- rf$shell    <- .SHELL[df$shell+1]
         df$maturity <- pf$maturity <- rf$maturity <- .MATURITY[df$maturity+1]
         df$type     <- pf$type     <- rf$type     <- .TYPE[df$type+1]
         df$seas     <- pf$seas     <- rf$seas     <- .SEAS[df$seas]
-	
+
         mdf <- rbind(mdf, df)
         mpf <- rbind(mpf, pf)
         mrf <- rbind(mrf, rf)
     }
-    
+
     mdf <- reshape2::melt(mdf, id.var = 1:9)
     mpf <- reshape2::melt(mpf, id.var = 1:9)
     mrf <- reshape2::melt(mrf, id.var = 1:9)
-    
+
     for(i in 1:n)
     {
         j  <- 1
@@ -47,9 +47,9 @@
                     for(s in unique(df$shell))
                      for(m in unique(df$maturity))
                      {
-			tdf <- mdf %>% filter(fleet==k) %>% filter(sex==h) %>% filter(type==t) %>% filter(shell==s) %>% filter(maturity==m)
-			tpf <- mpf %>% filter(fleet==k) %>% filter(sex==h) %>% filter(type==t) %>% filter(shell==s) %>% filter(maturity==m)
-			trf <- mrf %>% filter(fleet==k) %>% filter(sex==h) %>% filter(type==t) %>% filter(shell==s) %>% filter(maturity==m)
+			tdf <- mdf %>% dplyr::filter(fleet==k) %>% dplyr::filter(sex==h) %>% dplyr::filter(type==t) %>% dplyr::filter(shell==s) %>% dplyr::filter(maturity==m)
+			tpf <- mpf %>% dplyr::filter(fleet==k) %>% dplyr::filter(sex==h) %>% dplyr::filter(type==t) %>% dplyr::filter(shell==s) %>% dplyr::filter(maturity==m)
+			trf <- mrf %>% dplyr::filter(fleet==k) %>% dplyr::filter(sex==h) %>% dplyr::filter(type==t) %>% dplyr::filter(shell==s) %>% dplyr::filter(maturity==m)
 			if(dim(tdf)[1]!=0)
 			{
 				# deterimin row & column.
@@ -71,8 +71,8 @@
 				# 	if(ic > nc)
 				# 	{
 				# 		ic = 1
-				# 		ir = ir + 1	
-				# 	} 
+				# 		ir = ir + 1
+				# 	}
 				# }
 				# tdf$irow = irow[tdf$year-syr+1]
 				# tdf$icol = icol[tdf$year-syr+1]
@@ -85,13 +85,13 @@
                 }
             }
         }
-    }   
+    }
     return(ldf)
 }
 
 
 #' Plot fits to size composition data
-#' 
+#'
 #' Get observed and predicted size composition values
 #'
 #' @param M List object(s) created by read_admb function
@@ -102,21 +102,24 @@
 #' @param mlab the model label for the plot that appears above the key
 #' @param tlab the fleet label for the plot that appears above the key
 #' @param res boolean if residual or observed and predicted
+#' @param legend_loc (numeric vector); c(x,y) where x and y are the coordinates of the legend box
+#' @param ylim_max (numeric), defines the ylim.
+#'
 #' @return Plots of observed and predicted size composition values
 #' @export
 #'
 plot_size_comps <- function(M, which_plots = "all", xlab = "Mid-point of size-class (mm)", ylab = "Proportion",
                             slab = "Sex", mlab = "Model", tlab = "Fleet", res = FALSE,legend_loc=c(1,1),ylim_max=0.3)
 {
-    
+
     ylab <- paste0(ylab, "\n")
 
     mdf <- .get_sizeComps_df(M)
-    
+
     ix <- pretty(1:length(M[[1]]$mid_points))
-    
+
     p <- ggplot(data = mdf[[1]])
-    
+
     if (res)
     {
         xlab <- paste0(xlab, "\n")
@@ -139,13 +142,13 @@ plot_size_comps <- function(M, which_plots = "all", xlab = "Mid-point of size-cl
         } else {
             p <- p + geom_line(aes(as.numeric(variable), pred, col = model), alpha = 0.85)
         }
-        p <- p + scale_x_discrete(breaks=M[[1]]$mid_points[ix]) 
+        p <- p + scale_x_discrete(breaks=M[[1]]$mid_points[ix])
         p <- p + labs(x = xlab, y = ylab, col = mlab, fill = slab, linetype = tlab)
         p <- p + ggtitle("title")
         p <- p + facet_wrap(~year,dir="v") + .THEME # + ylim(0,ylim_max)
         p <- p + theme(axis.text.x = element_text(angle = 45, vjust = 0.5, size = 6),
                        strip.text.x = element_text(margin= margin(1,0,1,0)),
-                       panel.grid.major = element_blank(), 
+                       panel.grid.major = element_blank(),
                        panel.grid.minor = element_blank(),
                        legend.position=legend_loc,
                        panel.border = element_blank(),
@@ -158,28 +161,28 @@ plot_size_comps <- function(M, which_plots = "all", xlab = "Mid-point of size-cl
         if (length(unique(do.call(rbind.data.frame, mdf)$fleet)) == 1 && length(unique(do.call(rbind.data.frame, mdf)$sex)) == 1 && length(unique(do.call(rbind.data.frame, mdf)$seas)) == 1)
         {
             p$labels$title <- ""
-        } else if (length(unique(do.call(rbind.data.frame, mdf)$fleet)) != 1 && 
-                   length(unique(do.call(rbind.data.frame, mdf)$sex)) == 1 && 
+        } else if (length(unique(do.call(rbind.data.frame, mdf)$fleet)) != 1 &&
+                   length(unique(do.call(rbind.data.frame, mdf)$sex)) == 1 &&
                    length(unique(do.call(rbind.data.frame, mdf)$seas)) == 1) {
             p$labels$title <- paste("Gear =", unique(x$fleet))
-        } else if (length(unique(do.call(rbind.data.frame, mdf)$fleet)) == 1 && 
-                   length(unique(do.call(rbind.data.frame, mdf)$sex)) != 1 && 
+        } else if (length(unique(do.call(rbind.data.frame, mdf)$fleet)) == 1 &&
+                   length(unique(do.call(rbind.data.frame, mdf)$sex)) != 1 &&
                    length(unique(do.call(rbind.data.frame, mdf)$seas)) == 1) {
             p$labels$title <- paste("Sex =", unique(x$sex))
-        } else if (length(unique(do.call(rbind.data.frame, mdf)$fleet)) == 1 && 
-                   length(unique(do.call(rbind.data.frame, mdf)$sex)) == 1 && 
+        } else if (length(unique(do.call(rbind.data.frame, mdf)$fleet)) == 1 &&
+                   length(unique(do.call(rbind.data.frame, mdf)$sex)) == 1 &&
                    length(unique(do.call(rbind.data.frame, mdf)$seas)) != 1) {
             p$labels$title <- paste("Season =", unique(x$seas))
-        } else if (length(unique(do.call(rbind.data.frame, mdf)$fleet)) != 1 && 
-                   length(unique(do.call(rbind.data.frame, mdf)$sex)) != 1 && 
+        } else if (length(unique(do.call(rbind.data.frame, mdf)$fleet)) != 1 &&
+                   length(unique(do.call(rbind.data.frame, mdf)$sex)) != 1 &&
                    length(unique(do.call(rbind.data.frame, mdf)$seas)) == 1) {
             p$labels$title <- paste("Gear =", unique(x$fleet), ", Sex =", unique(x$sex))
-        } else if (length(unique(do.call(rbind.data.frame, mdf)$fleet)) != 1 && 
-                   length(unique(do.call(rbind.data.frame, mdf)$sex)) == 1 && 
+        } else if (length(unique(do.call(rbind.data.frame, mdf)$fleet)) != 1 &&
+                   length(unique(do.call(rbind.data.frame, mdf)$sex)) == 1 &&
                    length(unique(do.call(rbind.data.frame, mdf)$seas)) != 1) {
             p$labels$title <- paste("Gear =", unique(x$fleet), ", Season =", unique(x$seas))
-        } else if (length(unique(do.call(rbind.data.frame, mdf)$fleet)) == 1 && 
-                   length(unique(do.call(rbind.data.frame, mdf)$sex)) != 1 && 
+        } else if (length(unique(do.call(rbind.data.frame, mdf)$fleet)) == 1 &&
+                   length(unique(do.call(rbind.data.frame, mdf)$sex)) != 1 &&
                    length(unique(do.call(rbind.data.frame, mdf)$seas)) != 1) {
             p$labels$title <- paste("Sex =", unique(x$sex), ", Season =", unique(x$seas))
         } else {
@@ -187,9 +190,9 @@ plot_size_comps <- function(M, which_plots = "all", xlab = "Mid-point of size-cl
         }
         p %+% x
     }
-    
+
     plist <- lapply(mdf, fun, p = p)
-    
+
     if (which_plots == "all")
     {
         print(plist)
@@ -201,24 +204,26 @@ plot_size_comps <- function(M, which_plots = "all", xlab = "Mid-point of size-cl
 
 
 #' Plot fits to size composition data
-#' 
+#'
 #' Get observed and predicted size composition values
 #'
 #' @param M List object(s) created by read_admb function
 #' @param xlab the x-axis label for the plot
 #' @param ylab the y-axis label for the plot
+#' @param ncol (numeric); number of columns in the facet_wrap. Default \code{1}
 #' @return Plots of observed and predicted size composition values
 #' @export
 #'
 plot_size_comps_res <- function(M, ncol = 1, xlab = "Year", ylab = "Mid-point of size-class (mm)")
 {
+  seas <- NULL
     xlab <- paste0(xlab, "\n")
     ylab <- paste0(ylab, "\n")
 
     mdf <- .get_sizeComps_df(M) %>%
         reshape2::melt(id = c("model", "year", "seas", "fleet", "sex", "type", "shell", "maturity", "nsamp", "variable", "value", "pred", "resd")) %>%
         dplyr::mutate(seas = paste("Season", seas))
-    
+
     p <- ggplot(data = mdf) +
         geom_point(aes(factor(year), variable, col = factor(sign(resd)), size = abs(resd)), alpha = 0.6) +
         scale_size_area(max_size = 10) +
@@ -229,7 +234,7 @@ plot_size_comps_res <- function(M, ncol = 1, xlab = "Year", ylab = "Mid-point of
 }
 
 #' Plot fits to size composition data
-#' 
+#'
 #' Get observed and predicted size composition values
 #'
 #' @param M List object(s) created by read_admb function
@@ -240,56 +245,58 @@ plot_size_comps_res <- function(M, ncol = 1, xlab = "Year", ylab = "Mid-point of
 #' @param mlab the model label for the plot that appears above the key
 #' @param tlab the fleet label for the plot that appears above the key
 #' @param res boolean if residual or observed and predicted
+#' @param legend_loc (numeric vector); c(x,y) where x and y are the coordinates of the legend box
+#' @param ylim_max (numeric), defines the ylim.
 #' @return Plots of observed and predicted size composition values
 #' @export
 #'
 plot_size_ridges <- function(M, which_plots = "all", xlab = "Mid-point of size-class (mm)", ylab = "Proportion",
                             slab = "Sex", mlab = "Model", tlab = "Fleet", res = FALSE,legend_loc=c(1,1),ylim_max=0.3)
 {
-  
+  y <- NULL
   ylab <- paste0(ylab, "\n")
-  
+
   mdf <- .get_sizeComps_df(M)
-  
+
   ix <- pretty(1:length(M[[1]]$mid_points))
-  
+
   p <- ggplot(data = mdf[[1]])
 
     xlab <- paste0("\n", xlab)
-    p <- p + geom_density_ridges(aes(x=variable, y=year, height = value, group = year, 
+    p <- p + geom_density_ridges(aes(x=variable, y=year, height = value, group = year,
                                      fill=stat(y),alpha=.9999),stat = "identity",scale=3) +
       scale_fill_viridis_c()+
       .THEME +
       theme(legend.position = "none",
             axis.text.x = element_text(angle = 90))
-      
+
   fun <- function(x, p)
   {
     if (length(unique(do.call(rbind.data.frame, mdf)$fleet)) == 1 && length(unique(do.call(rbind.data.frame, mdf)$sex)) == 1 && length(unique(do.call(rbind.data.frame, mdf)$seas)) == 1)
     {
       p$labels$title <- ""
-    } else if (length(unique(do.call(rbind.data.frame, mdf)$fleet)) != 1 && 
-               length(unique(do.call(rbind.data.frame, mdf)$sex)) == 1 && 
+    } else if (length(unique(do.call(rbind.data.frame, mdf)$fleet)) != 1 &&
+               length(unique(do.call(rbind.data.frame, mdf)$sex)) == 1 &&
                length(unique(do.call(rbind.data.frame, mdf)$seas)) == 1) {
       p$labels$title <- paste("Gear =", unique(x$fleet))
-    } else if (length(unique(do.call(rbind.data.frame, mdf)$fleet)) == 1 && 
-               length(unique(do.call(rbind.data.frame, mdf)$sex)) != 1 && 
+    } else if (length(unique(do.call(rbind.data.frame, mdf)$fleet)) == 1 &&
+               length(unique(do.call(rbind.data.frame, mdf)$sex)) != 1 &&
                length(unique(do.call(rbind.data.frame, mdf)$seas)) == 1) {
       p$labels$title <- paste("Sex =", unique(x$sex))
-    } else if (length(unique(do.call(rbind.data.frame, mdf)$fleet)) == 1 && 
-               length(unique(do.call(rbind.data.frame, mdf)$sex)) == 1 && 
+    } else if (length(unique(do.call(rbind.data.frame, mdf)$fleet)) == 1 &&
+               length(unique(do.call(rbind.data.frame, mdf)$sex)) == 1 &&
                length(unique(do.call(rbind.data.frame, mdf)$seas)) != 1) {
       p$labels$title <- paste("Season =", unique(x$seas))
-    } else if (length(unique(do.call(rbind.data.frame, mdf)$fleet)) != 1 && 
-               length(unique(do.call(rbind.data.frame, mdf)$sex)) != 1 && 
+    } else if (length(unique(do.call(rbind.data.frame, mdf)$fleet)) != 1 &&
+               length(unique(do.call(rbind.data.frame, mdf)$sex)) != 1 &&
                length(unique(do.call(rbind.data.frame, mdf)$seas)) == 1) {
       p$labels$title <- paste("Gear =", unique(x$fleet), ", Sex =", unique(x$sex))
-    } else if (length(unique(do.call(rbind.data.frame, mdf)$fleet)) != 1 && 
-               length(unique(do.call(rbind.data.frame, mdf)$sex)) == 1 && 
+    } else if (length(unique(do.call(rbind.data.frame, mdf)$fleet)) != 1 &&
+               length(unique(do.call(rbind.data.frame, mdf)$sex)) == 1 &&
                length(unique(do.call(rbind.data.frame, mdf)$seas)) != 1) {
       p$labels$title <- paste("Gear =", unique(x$fleet), ", Season =", unique(x$seas))
-    } else if (length(unique(do.call(rbind.data.frame, mdf)$fleet)) == 1 && 
-               length(unique(do.call(rbind.data.frame, mdf)$sex)) != 1 && 
+    } else if (length(unique(do.call(rbind.data.frame, mdf)$fleet)) == 1 &&
+               length(unique(do.call(rbind.data.frame, mdf)$sex)) != 1 &&
                length(unique(do.call(rbind.data.frame, mdf)$seas)) != 1) {
       p$labels$title <- paste("Sex =", unique(x$sex), ", Season =", unique(x$seas))
     } else {
@@ -297,9 +304,9 @@ plot_size_ridges <- function(M, which_plots = "all", xlab = "Mid-point of size-c
     }
     p %+% x
   }
-  
+
   plist <- lapply(mdf, fun, p = p)
-  
+
   if (which_plots == "all")
   {
     print(plist)

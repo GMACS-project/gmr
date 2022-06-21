@@ -7,12 +7,12 @@
 #' @return a plot device
 #' @author DN Webber
 #' @export
-#' 
+#'
 plot_type <- function(filename, width, height, gmr_options = .gmr_options)
 {
     if (gmr_options$plot_type %in% c("png","PNG",".png",".PNG","Png",".Png"))
     {
         png(paste(filename, ".png", sep = ""), width = width, height = height,
-            unit = "mm", res = gmr_options$plot_resolution)
+            units = "mm", res = gmr_options$plot_resolution)
     }
 }

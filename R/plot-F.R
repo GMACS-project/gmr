@@ -65,10 +65,13 @@
 #' @param xlab the x-axis label for the plot
 #' @param ylab the y-axis label for the plot
 #' @param mlab the model label for the plot that appears above the key
+#' @param in_leg_x numeric; (0<\code{in_leg_x}<1): x coordinate of the legend box.
+#' @param in_leg_y numeric; (0<\code{in_leg_x}<1): y coordinate of the legend box.
+#' @inheritParams ggplot2::facet_grid
 #' @return plot of fishing mortality and mean Fs
 #' @author D'Arcy N. Webber
 #' @export
-#' 
+#'
 plot_F <- function(M, scales = "free_y",
                    xlab = "Year", ylab = "F", mlab = "Model",
                    in_leg_x=.7,in_leg_y=.9)
@@ -86,11 +89,11 @@ plot_F <- function(M, scales = "free_y",
 
         if(length(unique(mdf$sex))==1)
          p <- p + facet_grid(fleet ~ season, scales = scales) + labs(x = xlab, y = ylab)
-  
+
         if(length(unique(mdf$sex))>1)
          p <- p + facet_grid(fleet ~ season + sex, scales = scales) + labs(x = xlab, y = ylab)
     #dcast( mdf , year~fleet+model  ,value.var="F")
-      
+
     # if (.OVERLAY)
     # {
     #     if (length(M) == 1 && length(unique(mdf$sex)) == 1)
@@ -113,5 +116,5 @@ plot_F <- function(M, scales = "free_y",
     #     #p <- p + geom_line(aes(x = as.integer(year), y = predicted, col = model), alpha = 0.4)
     #     p <- p + facet_wrap(~model + fleet + type, scales = scales)
     # }
-    print(p + .THEME+ theme(legend.position=c(in_leg_x,in_leg_y)))
+    print(p + .THEME+ ggplot2::theme(legend.position=c(in_leg_x,in_leg_y)))
 }

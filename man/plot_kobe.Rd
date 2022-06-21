@@ -25,6 +25,12 @@ plot_kobe(
 \item{ylim}{is the upper limit of the figure}
 
 \item{alpha}{the opacity of the ribbon}
+
+\item{sex}{(character string), sex. Default "Male"}
+
+\item{fleet_in}{(character string), the fleet considered. Default "Pot"}
+
+\item{ref_ind}{(numeric), which sublist of M. Default 1}
 }
 \value{
 Plot of model estimates of spawning stock biomass
