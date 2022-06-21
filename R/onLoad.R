@@ -14,7 +14,12 @@
   cat("=====================================================================\n")
   cat("\n")
   suppressPackageStartupMessages
+  suppressWarnings
 }
+
+
+
+
 
 # No Visible Bindings
 # ===================

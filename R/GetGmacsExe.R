@@ -1,19 +1,43 @@
-
 #' @title .GetGmacsExe
 #'
 #' @description Function used when updating and releasing a new version of GMACS.
-#' It uses the (\code{write_TPL}) function to editate the new
-#' gmacs.tpl, compiles the model and uses the (\code{.buildGMACS})
+#' It uses the `write_TPL` function to editate the new
+#' gmacs.tpl, compiles the model and uses the `.buildGMACS()`
 #' function to provide a new executable.
+#'
+#' @param .nameFold (character string); name of the folder holding the development
+#' version you want to work on. The default is `Dvpt_Version` but you can
+#' have renamed this folder.
+#' @param .nameVer (character string); Name of the development version of GMACS you
+#' are going to work on. Default: `Dvpt_Version`.
+#'
 #'
 #' @return the new GMACS executable
 #'
 #' @export
 #'
 #'
-.GetGmacsExe <- function() {
+.GetGmacsExe <- function(.nameFold = "Dvpt_Version", .nameVer = NULL) {
+
+
   # Define directory
-  Dir <-  paste0(getwd(), "/Dvpt_Version/")
+
+  if(.nameFold != "Dvpt_Version"){
+
+    check <- NA
+    while (is.na(check)) {
+      text = paste("You have specified a file name other than 'Dvpt_Version' to work on GMACS and/or develop a new version.
+      Please confirm that the following directory is the one you want to work in (0:No, 1: Yes):\n",
+                   print(paste0(getwd(), "/", .nameFold, "/")),sep="")
+      check <- svDialogs::dlgInput(text, Sys.info())$res
+      Sys.sleep(0.1)
+    }
+    if(.an(check)==0) stop("Please redefine the directory you want to work in.")
+    GMACS_version <- .nameVer
+  } else {GMACS_version <- "Dvpt_Version"}
+
+
+  Dir <-  paste0(getwd(), "/", .nameFold, "/")
 
   # Need to conpile the model?
   # vector of length(.GMACS_version)
@@ -22,7 +46,6 @@
   # compile <- 1
 
   # Names of the GMACS version to consider
-  GMACS_version <- "Dvpt_Version"
   vv <- 1
 
   # Check directories for ADMB

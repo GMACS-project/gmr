@@ -4,14 +4,22 @@
 \alias{.GetGmacsExe}
 \title{.GetGmacsExe}
 \usage{
-.GetGmacsExe()
+.GetGmacsExe(.nameFold = "Dvpt_Version", .nameVer = NULL)
+}
+\arguments{
+\item{.nameFold}{(character string); name of the folder holding the development
+version you want to work on. The default is `Dvpt_Version` but you can
+have renamed this folder.}
+
+\item{.nameVer}{(character string); Name of the development version of GMACS you
+are going to work on. Default: `Dvpt_Version`.}
 }
 \value{
 the new GMACS executable
 }
 \description{
 Function used when updating and releasing a new version of GMACS.
-It uses the (\code{write_TPL}) function to editate the new
-gmacs.tpl, compiles the model and uses the (\code{.buildGMACS})
+It uses the `write_TPL` function to editate the new
+gmacs.tpl, compiles the model and uses the `.buildGMACS()`
 function to provide a new executable.
 }
