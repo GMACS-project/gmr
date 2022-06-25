@@ -1,0 +1,38 @@
+on:
+  push:
+  paths:
+  - 'R/**'
+- 'index.Rmd'
+
+name: update-pkgdown-site
+
+jobs:
+  update-pkgdown-site:
+  runs-on: windows-latest
+env:
+  GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+steps:
+  - uses: actions/checkout@v2
+- uses: r-lib/actions/setup-r@v1
+- uses: r-lib/actions/setup-pandoc@v1
+
+- name: Install packages
+run: Rscript -e 'install.packages(c("pkgdown", "roxygen2", "ggplot2", "knitr", "here", "dplyr", "kableExtra"))'
+
+- name: Update documentation
+run: Rscript -e 'roxygen2::roxygenize()'
+
+- name: Update Index.Rmd
+run: Rscript -e 'knitr::knit("Index.Rmd")'
+
+- name: Build site
+run: Rscript -e 'pkgdown::build_site()'
+
+- name: Set up Git
+run: |
+  git config --local user.email "actions@github.com"
+git config --local user.name "GitHub Actions"
+- name: Commit all changes
+run: |
+  git add -A && git commit -m 'Build site' || echo "No changes to commit"
+git push origin || echo "No changes to commit"
