@@ -2,6 +2,11 @@
 
 [![GitHub release (latest by
 date)](https://img.shields.io/github/release/GMACS-project/gmr)](https://github.com/GMACS-project/gmr/releases)
+<<<<<<< Updated upstream
+=======
+[![R-CMD-check](https://github.com/GMACS-project/gmr/workflows/R-CMD-check/badge.svg)](https://github.com/GMACS-project/gmr/actions)
+[![R-CMD-check.yaml](https://github.com/GMACS-project/gmr/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/GMACS-project/gmr/actions)
+>>>>>>> Stashed changes
 <!-- badges: end -->
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
