@@ -1,5 +1,8 @@
+<!-- badges: start -->
+
 [![GitHub release (latest by
 date)](https://img.shields.io/github/release/GMACS-project/gmr)](https://github.com/GMACS-project/gmr/releases)
+<!-- badges: end -->
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
