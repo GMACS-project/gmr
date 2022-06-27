@@ -19,18 +19,22 @@ jobs:
       - name: Install packages
         run: |
           install.packages(c("pkgdown", "roxygen2", "ggplot2", "knitr", "here", "dplyr", "kableExtra"))
+        shell: Rscript {0}
 
       - name: Update documentation
         run: |
           roxygen2::roxygenize()
+        shell: Rscript {0}
 
       - name: Update README.Rmd
         run: |
           knitr::knit("README.Rmd")
+        shell: Rscript {0}
 
       - name: Build site
         run: |
           pkgdown::build_site()
+        shell: Rscript {0}
 
       - name: Set up Git
         run: |
