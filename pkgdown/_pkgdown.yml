@@ -95,17 +95,20 @@ footer:
 reference:
 - title: Run GMACS
   desc: >
-    Set of functions for working GMACS while selecting specific work (building the gmacs executable, running a stock assessment for one or several stocks, making comparisons between different versions of GMACS).
+    Set of functions for working with GMACS while selecting specific work
+    (building the gmacs executable, running a stock assessment for one or several stocks,
+    making comparisons between different versions of GMACS, releasing a new version).
   contents:
   - gmr-package
   - GMACS
   - Do_GMACS
   - Do_Comp
   - .GetGmacsExe
+  - UpdateGMACS
 - title: Manipulating outputs from the GMACS function
   desc: >
     The following functions allow to read GMACS outputs and manipulate the results. These functions are called in the graphical functions.
-- subtitle: Read GMACS outputs
+- subtitle: Read GMACS inputs/outputs
   contents:
   - read_admb
   - read_fit
