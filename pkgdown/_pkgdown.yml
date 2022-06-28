@@ -34,7 +34,7 @@ navbar:
   components:
     home:
       icon: fa-home fa-lg
-      href: README.md
+      href: README.html
 
     reference:
       text: Functions
