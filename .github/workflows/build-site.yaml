@@ -18,7 +18,7 @@ jobs:
 
       - name: Install packages
         run: |
-          install.packages(c("pkgdown", "roxygen2", "ggplot2", "knitr", "here", "dplyr", "kableExtra"))
+          install.packages(c("PBSadmb","pkgdown", "roxygen2", "ggplot2", "knitr", "here", "dplyr", "kableExtra"))
         shell: Rscript {0}
 
       - name: Update documentation
@@ -26,9 +26,9 @@ jobs:
           roxygen2::roxygenize()
         shell: Rscript {0}
 
-      - name: Update README.Rmd
+      - name: Update README.md
         run: |
-          knitr::knit("README.Rmd")
+          knitr::knit("README.md")
         shell: Rscript {0}
 
       - name: Build site
