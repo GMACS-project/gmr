@@ -82,10 +82,10 @@ Do_Comp <-
           ex.rep[vv, nm] <- 0
           Need.run <- 1
         }
-        if (file.exists(paste0(Dir[vv], Spc[nm], addDir[vv, nm], "/Gmacsall.OUT")))
-          base.file[vv, nm] <- 0
-        if (file.exists(paste0(Dir[vv], Spc[nm], addDir[vv, nm], "/gmacs.rep")))
-          base.file[vv, nm] <- 1
+        if (file.exists(paste0(Dir[vv], Spc[nm], addDir[vv, nm], "/Gmacsall.OUT"))){
+          base.file[vv, nm] <- 0}else{
+            if (file.exists(paste0(Dir[vv], Spc[nm], addDir[vv, nm], "/gmacs.rep")))
+              base.file[vv, nm] <- 1}
       }
 
     if (Need.run == 1 && !ASS) {
@@ -176,7 +176,7 @@ Do_Comp <-
 
       # cat("\n\n\\# This is the summary of management quantities for: ",Spc,"\n")
 
-      Mfile <- unique(.an(base.file))
+      Mfile <- unique(.an(base.file[, nm]))
       PlotTab <- data.frame(
         Model = ScenarioNames,
         MMB = rep(0, length(ScenarioNames)),
@@ -208,8 +208,8 @@ Do_Comp <-
             M[[vv]]$FOFL <- tmp[[vv]]$sd_fofl[1]
             M[[vv]]$OFL <- tmp[[vv]]$spr_cofl
             M[[vv]]$Status <- M[[vv]]$MMB / M[[vv]]$B35
-            M[[vv]]$M <- mean(tmp[[vv]]$M)
-            M[[vv]]$Av_Recr <- mean(tmp[[vv]]$recruits) / 10000
+            M[[vv]]$M <- mean(tmp[[vv]]$M[1,])
+            M[[vv]]$Av_Recr <- mean(tmp[[vv]]$recruits[1,]) / 10000
           }
 
           PlotTab$MMB[vv] <- M[[vv]]$MMB

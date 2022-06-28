@@ -2,7 +2,7 @@
 title: "Use gmr to Run GMACS"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Use_gmr_to_Run_GMACS}
+  %\VignetteIndexEntry{Use gmr to Run GMACS}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
