@@ -10,6 +10,7 @@
 #'
 #'
 #'
+
 UpdateGMACS <- function() {
   dirSrc <- paste0(getwd(), "/Dvpt_Version/")
   dirNew <- paste0(getwd(), "/Latest_Version/")
@@ -36,25 +37,22 @@ UpdateGMACS <- function() {
 
 
   for (nm in 1:length(stock.files)) {
-    tmp <- paste(dirSrc, "build/", stock.files[nm], sep = "")
+    # Clean the Latest_Version directory
+    tmp <- paste(dirNew, "build/", stock.files[nm], sep = "")
+    term <-
+      .CallTerm(command = "clean.bat",
+                .Dir = tmp,
+                verbose = FALSE)
+    rstudioapi::terminalKill(id = term)
+
     # Clean the Dvpt_Version directory
+    tmp <- paste(dirSrc, "build/", stock.files[nm], sep = "")
     term <-
       .CallTerm(command = "clean.bat",
                 .Dir = tmp,
                 verbose = FALSE)
     rstudioapi::terminalKill(id = term)
     nam <- list.files(path = tmp)
-
-    # Clean the Latest_Version directory
-    term <-
-      .CallTerm(
-        command = "clean.bat",
-        .Dir = paste(dirNew, "build/", stock.files[nm], sep = ""),
-        verbose = FALSE
-      )
-    rstudioapi::terminalKill(id = term)
-    nam <-
-      list.files(path = paste(dirNew, "build/", stock.files[nm], sep = ""))
 
 
     file.copy(
@@ -66,3 +64,4 @@ UpdateGMACS <- function() {
     )
   }
 }
+
