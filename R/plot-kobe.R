@@ -18,7 +18,6 @@ plot_kobe <- function(M, ylab = "Fishing mortality", xlab = "SSB (tonnes)",
                       ylim = NULL, alpha = 0.1,
                       sex="Male",fleet_in="Pot",ref_ind=1)
 {
-  fleet <- NULL
   xlab <- paste0("\n", xlab)
   ylab <- paste0(ylab, "\n")
 
