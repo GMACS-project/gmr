@@ -165,7 +165,7 @@ Do_Comp <-
       # nm = 1
 
       cat("\n\n\\pagebreak\n")
-      cat("\n\n\\#Comparaison of ",
+      cat("\n\n\\# Comparaison of ",
           Spc[nm],
           " for ",
           length(Dir),
