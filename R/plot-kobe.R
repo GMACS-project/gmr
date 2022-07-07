@@ -24,7 +24,7 @@ plot_kobe <- function(M, ylab = "Fishing mortality", xlab = "SSB (tonnes)",
   mdf <- .get_ssb_df(M)
   mdf_1 <- .get_F_df(M)
 
-  use_F<-filter(mdf_1$F, fleet==fleet_in)
+  use_F<-dplyr::filter(mdf_1$F, fleet==fleet_in)
   in_plot<-merge(use_F,mdf)
 
   p<-ggplot(data=in_plot,aes(x=ssb,y=F,col=Model))+
