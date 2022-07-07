@@ -13,7 +13,9 @@
     {
         A        <- M[[i]]
         df       <- data.frame(Model = names(M)[i], as.data.frame(A$dSurveyData))
-        colnames(df) <- c("Model","Index","year","seas","fleet","sex","mature","cpue","cv","units")
+        # colnames(df) <- c("Model","Index","year","seas","fleet","sex","mature","cpue","cv","units")
+        if(dim(df)[2]<11) df = data.frame(cbind(df, rep(0,dim(df)[1])))
+        colnames(df) <- c("Model","Index","year","seas","fleet","sex","mature","cpue","cv","units","cpue_Timing")
         df$sex   <- .SEX[df$sex+1]
         df$fleet <- .FLEET[df$fleet]
         sd       <- sqrt(log(1 + df$cv^2))

@@ -61,8 +61,8 @@ plot_growth_inc <- function(M, xlab = "Pre-molt size (mm)", ylab = "Molt increme
     ylab <- paste0(ylab, "\n")
 
     mdf <- .get_gi_df(M)
-    obs_in<-filter(mdf,type=="obs")
-    pred_in<-filter(mdf,type=="pred")
+    obs_in<-dplyr::filter(mdf,type=="obs")
+    pred_in<-dplyr::filter(mdf,type=="pred")
 
     p <- ggplot(obs_in) +
         labs(x = xlab, y=ylab, col = slab) +
