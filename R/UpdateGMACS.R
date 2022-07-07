@@ -49,16 +49,6 @@ UpdateGMACS <- function() {
       rstudioapi::terminalKill(id = term)
     }
 
-
-
-
-
-
-
-
-
-
-
     # Clean the Dvpt_Version directory
     tmp <- paste(dirSrc, "build/", stock.files[nm], sep = "")
 
