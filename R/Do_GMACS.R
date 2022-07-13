@@ -53,6 +53,19 @@ Do_GMACS <- function(Spc = NULL,
                      verbose = NULL) {
 
   for (vv in 1:length(Dir)) {
+
+
+    # Check directories for ADMB
+    # Define the name of the file containing the different pathways needed to build
+    # the GMACS executable
+    suppressWarnings(PBSadmb::readADpaths(paste(dirname(Dir[vv]), ADMBpaths, sep =
+                                                  "/")))
+    cat("\n Verifying the paths for ADMB, the C/C++ compiler and the editor ....\n")
+    if (!PBSadmb::checkADopts())
+      stop(
+        "The definition of the pathways to locate ADMB,the C/C++ compiler and/or the editer are wrong.\nPlease check the ADMBpaths file."
+      )
+
     cat(
       "\n# ------------------------------------------------------------------- #\n"
     )
@@ -65,23 +78,19 @@ Do_GMACS <- function(Spc = NULL,
 
     # 1.Get an executable for GMACS ----
 
-    # Check directories for ADMB
-    suppressWarnings(PBSadmb::readADpaths(paste(dirname(Dir[vv]), ADMBpaths, sep =
-                                                  "/")))
-    if (!PBSadmb::checkADopts())
-      stop("The definition for the ADMB directories are wrong. Please check.")
-
     if (compile[vv] == 1) {
-      # Clean directory from previous version
       setwd(Dir[vv])
-      gmr::.CallTerm(command = "clean_root.bat",
+
+      # Clean directory from previous version
+      tmp <- gmr::.CallTerm(command = "clean_root.bat",
                      .Dir = Dir[vv],
                      verbose = verbose)
+      rstudioapi::terminalKill(id = tmp)
 
       #  Create gmacs.tpl from gmacsbase.tpl and personal.tpl
       cat("Now writing gmacs.tpl\n")
       write_TPL(vv = vv,
-                Dir = Dir,
+                Dir = Dir[vv],
                 .update = FALSE)
       # cat("\n")
 
