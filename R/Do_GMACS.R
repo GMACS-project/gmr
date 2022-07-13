@@ -81,8 +81,8 @@ Do_GMACS <- function(Spc = NULL,
       #  Create gmacs.tpl from gmacsbase.tpl and personal.tpl
       cat("Now writing gmacs.tpl\n")
       write_TPL(vv = vv,
-                     Dir = Dir,
-                     update = FALSE)
+                Dir = Dir,
+                .update = FALSE)
       # cat("\n")
 
       # Copy files from lib\
