@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">gmr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.0</span>
       </span>
     </div>
 
@@ -44,22 +44,14 @@
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu"><li>
-      <a href="../articles/001_Use_gmr_to_Run_GMACS.html"></a>
+      <a href="../articles/001UseGmrToRunGMACS.html">Run GMACS</a>
     </li>
   </ul></li>
 <li>
   <a href="https://github.com/GMACS-project/User-manual" class="external-link">
     <span class="fas fa-book fa-lg"></span>
      
-    About GMAS
-  </a>
-</li>
-<li class="dropdown-header">Contribute</li>
-<li>
-  <a href="https://github.com/GMACS-project/gmr/issues" class="external-link">
-    <span class="fas fa-question-circle fa-lg"></span>
-     
-    Issues
+    About GMACS
   </a>
 </li>
 <li class="dropdown">
@@ -80,6 +72,14 @@
       <a href="https://github.com/GMACS-project/gmr/releases/tag/V0.1.0.0" class="external-link">gmr V 0.1.0.0</a>
     </li>
   </ul></li>
+<li class="dropdown-header">Contribute</li>
+<li>
+  <a href="https://github.com/GMACS-project/gmr/issues" class="external-link">
+    <span class="fas fa-question-circle fa-lg"></span>
+     
+    Issues
+  </a>
+</li>
       </ul><ul class="nav navbar-nav navbar-right"><li>
   <a href="https://github.com/GMACS-project/gmr" class="external-link">
     <span class="fa fa-github"></span>
@@ -112,7 +112,7 @@
 
     <table class="ref-index"><colgroup><col class="alias"><col class="title"></colgroup><tbody><tr><th colspan="2">
           <h2 id="run-gmacs">Run GMACS <a href="#run-gmacs" class="anchor" aria-hidden="true"></a></h2>
-          <p class="section-desc"></p><p>Set of functions for working GMACS while selecting specific work (building the gmacs executable, running a stock assessment for one or several stocks, making comparisons between different versions of GMACS).</p>
+          <p class="section-desc"></p><p>Set of functions for working with GMACS while selecting specific work (building the gmacs executable, running a stock assessment for one or several stocks, making comparisons between different versions of GMACS, releasing a new version).</p>
         </th>
       </tr></tbody><tbody><tr><td>
           <p><code><a href="gmr-package.html">gmr-package</a></code> </p>
@@ -134,12 +134,16 @@
           <p><code><a href="dot-GetGmacsExe.html">.GetGmacsExe()</a></code> </p>
         </td>
         <td><p>.GetGmacsExe</p></td>
+      </tr><tr><td>
+          <p><code><a href="UpdateGMACS.html">UpdateGMACS()</a></code> </p>
+        </td>
+        <td><p>UpdateGMACS</p></td>
       </tr></tbody><tbody><tr><th colspan="2">
           <h2 id="manipulating-outputs-from-the-gmacs-function">Manipulating outputs from the GMACS function <a href="#manipulating-outputs-from-the-gmacs-function" class="anchor" aria-hidden="true"></a></h2>
           <p class="section-desc"></p><p>The following functions allow to read GMACS outputs and manipulate the results. These functions are called in the graphical functions.</p>
         </th>
       </tr></tbody><tbody><tr><th colspan="2">
-          <h3 id="read-gmacs-outputs">Read GMACS outputs <a href="#read-gmacs-outputs" class="anchor" aria-hidden="true"></a></h3>
+          <h3 id="read-gmacs-inputs-outputs">Read GMACS inputs/outputs <a href="#read-gmacs-inputs-outputs" class="anchor" aria-hidden="true"></a></h3>
           <p class="section-desc"></p>
         </th>
       </tr></tbody><tbody><tr><td>

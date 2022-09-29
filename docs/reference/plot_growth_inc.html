@@ -18,7 +18,7 @@ Plot growth from arbitrary start age"><!-- mathjax --><script src="https://cdnjs
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">gmr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.0</span>
       </span>
     </div>
 
@@ -45,22 +45,14 @@ Plot growth from arbitrary start age"><!-- mathjax --><script src="https://cdnjs
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu"><li>
-      <a href="../articles/001_Use_gmr_to_Run_GMACS.html"></a>
+      <a href="../articles/001UseGmrToRunGMACS.html">Run GMACS</a>
     </li>
   </ul></li>
 <li>
   <a href="https://github.com/GMACS-project/User-manual" class="external-link">
     <span class="fas fa-book fa-lg"></span>
      
-    About GMAS
-  </a>
-</li>
-<li class="dropdown-header">Contribute</li>
-<li>
-  <a href="https://github.com/GMACS-project/gmr/issues" class="external-link">
-    <span class="fas fa-question-circle fa-lg"></span>
-     
-    Issues
+    About GMACS
   </a>
 </li>
 <li class="dropdown">
@@ -81,6 +73,14 @@ Plot growth from arbitrary start age"><!-- mathjax --><script src="https://cdnjs
       <a href="https://github.com/GMACS-project/gmr/releases/tag/V0.1.0.0" class="external-link">gmr V 0.1.0.0</a>
     </li>
   </ul></li>
+<li class="dropdown-header">Contribute</li>
+<li>
+  <a href="https://github.com/GMACS-project/gmr/issues" class="external-link">
+    <span class="fas fa-question-circle fa-lg"></span>
+     
+    Issues
+  </a>
+</li>
       </ul><ul class="nav navbar-nav navbar-right"><li>
   <a href="https://github.com/GMACS-project/gmr" class="external-link">
     <span class="fa fa-github"></span>
@@ -109,7 +109,7 @@ Plot growth from arbitrary start age"><!-- mathjax --><script src="https://cdnjs
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Plot growth from arbitrary start age</h1>
-    
+    <small class="dont-index">Source: <a href="https://github.com/GMACS-project/gmr/blob/HEAD/R/plot-growth-inc.R" class="external-link"><code>R/plot-growth-inc.R</code></a>, <a href="https://github.com/GMACS-project/gmr/blob/HEAD/R/plot-growth-tag.R" class="external-link"><code>R/plot-growth-tag.R</code></a></small>
     <div class="hidden name"><code>plot_growth_inc.Rd</code></div>
     </div>
 
@@ -136,7 +136,11 @@ Plot growth from arbitrary start age"><!-- mathjax --><script src="https://cdnjs
 
     <div id="arguments">
     <h2>Arguments</h2>
-    <dl><dt>xlab</dt>
+    <dl><dt>M</dt>
+<dd><p>list object created by read_admb function</p></dd>
+
+
+<dt>xlab</dt>
 <dd><p>the x-axis label for the plot</p></dd>
 
 
@@ -146,10 +150,6 @@ Plot growth from arbitrary start age"><!-- mathjax --><script src="https://cdnjs
 
 <dt>slab</dt>
 <dd><p>the sex label for the plot that appears above the key</p></dd>
-
-
-<dt>replist</dt>
-<dd><p>list object created by read_admb function</p></dd>
 
 </dl></div>
     <div id="value">

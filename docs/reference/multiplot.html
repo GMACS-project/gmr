@@ -25,7 +25,7 @@ then plot 1 will go in the upper left, 2 will go in the upper right, and
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">gmr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.0</span>
       </span>
     </div>
 
@@ -52,22 +52,14 @@ then plot 1 will go in the upper left, 2 will go in the upper right, and
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu"><li>
-      <a href="../articles/001_Use_gmr_to_Run_GMACS.html"></a>
+      <a href="../articles/001UseGmrToRunGMACS.html">Run GMACS</a>
     </li>
   </ul></li>
 <li>
   <a href="https://github.com/GMACS-project/User-manual" class="external-link">
     <span class="fas fa-book fa-lg"></span>
      
-    About GMAS
-  </a>
-</li>
-<li class="dropdown-header">Contribute</li>
-<li>
-  <a href="https://github.com/GMACS-project/gmr/issues" class="external-link">
-    <span class="fas fa-question-circle fa-lg"></span>
-     
-    Issues
+    About GMACS
   </a>
 </li>
 <li class="dropdown">
@@ -88,6 +80,14 @@ then plot 1 will go in the upper left, 2 will go in the upper right, and
       <a href="https://github.com/GMACS-project/gmr/releases/tag/V0.1.0.0" class="external-link">gmr V 0.1.0.0</a>
     </li>
   </ul></li>
+<li class="dropdown-header">Contribute</li>
+<li>
+  <a href="https://github.com/GMACS-project/gmr/issues" class="external-link">
+    <span class="fas fa-question-circle fa-lg"></span>
+     
+    Issues
+  </a>
+</li>
       </ul><ul class="nav navbar-nav navbar-right"><li>
   <a href="https://github.com/GMACS-project/gmr" class="external-link">
     <span class="fa fa-github"></span>
@@ -119,7 +119,7 @@ then plot 1 will go in the upper left, 2 will go in the upper right, and
 ggplot objects can be passed in ..., or to plotlist (as a list of ggplot objects)
 - cols:   Number of columns in layout
 - layout: A matrix specifying the layout. If present, 'cols' is ignored.</h1>
-    
+    <small class="dont-index">Source: <a href="https://github.com/GMACS-project/gmr/blob/HEAD/R/multiplot.R" class="external-link"><code>R/multiplot.R</code></a></small>
     <div class="hidden name"><code>multiplot.Rd</code></div>
     </div>
 
@@ -135,7 +135,11 @@ then plot 1 will go in the upper left, 2 will go in the upper right, and
 
     <div id="arguments">
     <h2>Arguments</h2>
-    <dl><dt>plotlist</dt>
+    <dl><dt>...</dt>
+<dd><p>Numeric, complex, or logical vectors.</p></dd>
+
+
+<dt>plotlist</dt>
 <dd><p>the list of figures to arrange</p></dd>
 
 
@@ -148,7 +152,7 @@ then plot 1 will go in the upper left, 2 will go in the upper right, and
 
 
 <dt>layout</dt>
-<dd></dd>
+<dd><p>A matrix specifying the layout. If present, 'cols' is ignored.</p></dd>
 
 </dl></div>
     <div id="value">

@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">gmr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.0</span>
       </span>
     </div>
 
@@ -44,22 +44,14 @@
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu"><li>
-      <a href="../articles/001_Use_gmr_to_Run_GMACS.html"></a>
+      <a href="../articles/001UseGmrToRunGMACS.html">Run GMACS</a>
     </li>
   </ul></li>
 <li>
   <a href="https://github.com/GMACS-project/User-manual" class="external-link">
     <span class="fas fa-book fa-lg"></span>
      
-    About GMAS
-  </a>
-</li>
-<li class="dropdown-header">Contribute</li>
-<li>
-  <a href="https://github.com/GMACS-project/gmr/issues" class="external-link">
-    <span class="fas fa-question-circle fa-lg"></span>
-     
-    Issues
+    About GMACS
   </a>
 </li>
 <li class="dropdown">
@@ -80,6 +72,14 @@
       <a href="https://github.com/GMACS-project/gmr/releases/tag/V0.1.0.0" class="external-link">gmr V 0.1.0.0</a>
     </li>
   </ul></li>
+<li class="dropdown-header">Contribute</li>
+<li>
+  <a href="https://github.com/GMACS-project/gmr/issues" class="external-link">
+    <span class="fas fa-question-circle fa-lg"></span>
+     
+    Issues
+  </a>
+</li>
       </ul><ul class="nav navbar-nav navbar-right"><li>
   <a href="https://github.com/GMACS-project/gmr" class="external-link">
     <span class="fa fa-github"></span>
@@ -108,7 +108,7 @@
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>GMR plotting options</h1>
-    
+    <small class="dont-index">Source: <a href="https://github.com/GMACS-project/gmr/blob/HEAD/R/gmr-options.R" class="external-link"><code>R/gmr-options.R</code></a></small>
     <div class="hidden name"><code>dot-gmr_options.Rd</code></div>
     </div>
 
@@ -124,24 +124,13 @@
     <h2>Format</h2>
     <p>An object of class <code>list</code> of length 6.</p>
     </div>
-    <div id="arguments">
-    <h2>Arguments</h2>
-    <dl><dt>plot_type</dt>
-<dd><p>the type of plot to create (png is the only option at the mo)</p></dd>
-
-
-<dt>plot_resolution</dt>
-<dd><p>png resolution</p></dd>
-
-
-<dt>plot_size</dt>
-<dd><p>a vector of length 2 containing the width and height of plot (mm)</p></dd>
-
-
-<dt>plot_cols</dt>
-<dd><p>the colour palette used for plotting (recommend the colour-blind palette cbPalette1 or cdPalette2)</p></dd>
-
-</dl></div>
+    <div id="details">
+    <h2>Details</h2>
+    <p><code>plot_type</code> is the type of plot to create (png is the only option at the mo),
+<code>plot_resolution</code> png resolution
+<code>plot_size</code> a vector of length 2 containing the width and height of plot (mm)
+<code>plot_cols</code> the colour palette used for plotting (recommend the colour-blind palette cbPalette1 or cdPalette2)</p>
+    </div>
     <div id="author">
     <h2>Author</h2>
     <p>D'Arcy N. Webber</p>
