@@ -1,11 +1,12 @@
 
 #' @title Do_GMACS
 #'
-#' @description This function allows to build the GMACS executable, run GMACS
-#' and make comparison if several version of GMACS are considered in the analysis.
-#' For each stock considered in the analysis, this function will copy the
-#' all the input files required by GMACS from a specific directory which can be
-#' the directory where are stored the input files used for the last assessment.
+#' @description This function allows one to build the GMACS executable, run GMACS
+#' and make comparisons if several versions of GMACS are considered in the analysis.
+#' For each stock considered in the analysis, this function will copy
+#' all the input files required by GMACS from a specific directory (which can be
+#' the directory where the input files used for the last assessment are stored,
+#' or some other).
 #'
 #' @param Spc vector of strings specifying the name(s) of the stock
 #' considered in the analysis.
@@ -15,7 +16,7 @@
 #' to the GMACS version(s) currently used in this analysis.
 #' @param AssMod_names vector of strings specifying the names of the models used
 #' in the last assessment (e.g., model_16_0)
-#' @param Dir vector of strings containing the directories for all
+#' @param Dir vector of strings containing the directories for all elements of
 #' \code{GMACS_version} used in this analysis
 #' @param compile (0/1). If 0, GMACS is not compiled. This assumes that an
 #' executable already exists in the directory of the version(s) used in the analysis.
@@ -27,10 +28,10 @@
 #' @param ADMBpaths string name of 2-column text file that details the relevant
 #' paths for the R variables admbpath, gccpath, and editor.
 #' @param make.comp Logical. If TRUE, comparisons will be made between the various
-#' \code{GMACS_version} considered in the analysis.
+#' \code{GMACS_version}s considered in the analysis.
 #' @inheritParams PBSadmb::convAD
 #'
-#' @seealso \code{\link{Do_Comp}} for comparisons, \code{.buildGMACS} for
+#' @seealso \code{\link{Do_Comp}} for comparisons, \code{\link{createGmacsExe}} for
 #' building the executable.
 #'
 #' @return Depending on the option chose, it can return all the output files from
@@ -58,8 +59,7 @@ Do_GMACS <- function(Spc = NULL,
     # Check directories for ADMB
     # Define the name of the file containing the different pathways needed to build
     # the GMACS executable
-    suppressWarnings(PBSadmb::readADpaths(paste(dirname(Dir[vv]), ADMBpaths, sep =
-                                                  "/")))
+    suppressWarnings(PBSadmb::readADpaths(file.path(dirname(Dir[vv]), ADMBpaths)));
     cat("\n Verifying the paths for ADMB, the C/C++ compiler and the editor ....\n")
     if (!PBSadmb::checkADopts())
       stop(
@@ -77,79 +77,11 @@ Do_GMACS <- function(Spc = NULL,
     # vv <- 1
 
     # 1.Get an executable for GMACS ----
-
+    gmacs_exe = ifelse(isWindowsOS(),"gmacs.exe","gmacs")
     if (compile[vv] == 1) {
-      setwd(Dir[vv])
-
-      # Clean directory from previous version
-      tmp <- gmr::.CallTerm(command = "clean_root.bat",
-                     .Dir = Dir[vv],
-                     verbose = verbose)
-      rstudioapi::terminalKill(id = tmp)
-
-      #  Create gmacs.tpl from gmacsbase.tpl and personal.tpl
-      cat("Now writing gmacs.tpl\n")
-      write_TPL(vv = vv,
-                Dir = Dir[vv],
-                .update = FALSE)
-      # cat("\n")
-
-      # Copy files from lib\
-      libFiles <-
-        dir(paste0(Dir[vv], "/lib/"),
-            "*.cpp",
-            ignore.case = TRUE,
-            all.files = TRUE)
-      file.copy(file.path(paste0(Dir[vv], "/lib/"), libFiles), Dir[vv], overwrite = TRUE)
-      args <- get_nam(libFiles)
-
-      # .tpl to .cpp
-      cat("\nNow converting gmacs.tpl to gmacs.cpp ...\n")
-      PBSadmb::convAD(
-        prefix = "gmacs",
-        pathfile = ADMBpaths,
-        debug = TRUE,
-        safe = TRUE,
-        logfile = FALSE,
-        verbose = verbose
-      )
-      cat("OK after convertion from .tpl to .cpp ...\n")
-      cat("\n")
-
-      # Compile files
-      compFiles <- c("gmacs", libFiles)
-      for (nm in 1:length(compFiles)) {
-        cat("Now compiling ", compFiles[nm], "...\n")
-        PBSadmb::compAD(
-          prefix = compFiles[nm],
-          pathfile = ADMBpaths,
-          safe = TRUE,
-          debug = TRUE,
-          logfile = FALSE,
-          verbose = verbose
-        )
-      }
-      cat("OK after compilation ...\n")
-
-      # Build GMACS
-      cat("\nNow building gmacs executable ...\n")
-      .buildGMACS(
-        prefix = "gmacs",
-        raneff = FALSE,
-        safe = TRUE,
-        dll = FALSE,
-        debug = TRUE,
-        logfile = FALSE,
-        add = FALSE,
-        verbose = verbose,
-        pathfile = NULL,
-        args = args
-      )
-      cat("OK after building gmacs executable ...\n")
-      setwd(dirname(Dir[vv]))
-
+      createGmacsExe(vv,Dir,verbose=ifelse(is.logical(verbose),verbose,FALSE))
     } else {
-      if (!file.exists(paste0(Dir[vv], "gmacs.exe"))) {
+      if (!file.exists(file.path(Dir[vv], gmacs_exe))) {
         stop(
           paste(
             "no gmacs executable exists in the source directory:",
@@ -157,13 +89,12 @@ Do_GMACS <- function(Spc = NULL,
             sep = " "
           ),
           cat(
-            "\nPlease provide this repertory with an executable or allow for compilation
+            "\nPlease provide this folder with an executable or allow for compilation
                                                                     (i.e. turn on 'compile')\n"
           )
         )
       } else {
-        cat("!!! GMACS has not been recompiled. !!! ")
-        cat("\n")
+        warning("!!! GMACS has not been recompiled. !!! ")
       }
 
     }
@@ -181,22 +112,20 @@ Do_GMACS <- function(Spc = NULL,
     cat("# ------------------------------------------------------------------- #\n")
 
     # build directory
-    dirbuild <- paste(Dir[vv], "build/", sep = "")
+    dirbuild <- file.path(Dir[vv], "build")
     if (!dir.exists(dirbuild))
       dir.create(file.path(dirbuild), recursive = TRUE)
-    if (!dir.exists(paste0(dirbuild, 'debug/')))
-      dir.create(file.path(paste0(dirbuild, 'debug/')), recursive = TRUE)
-    if (!dir.exists(paste0(dirbuild, 'release/')))
-      dir.create(file.path(paste0(dirbuild, 'release/')), recursive = TRUE)
+    if (!dir.exists(file.path(dirbuild, 'debug')))
+      dir.create(file.path(dirbuild, 'debug'), recursive = TRUE)
+    if (!dir.exists(file.path(dirbuild, 'release')))
+      dir.create(file.path(dirbuild, 'release'), recursive = TRUE)
 
     id_term <- matrix(NA, nrow = length(Spc), ncol = 5)
 
     for (nm in 1:length(Spc)) {
       # nm=1
-      srcdir <-
-        paste(dirname(getwd()), "/Assessment_data/", Spc[nm], sep = "")
-      todir <-
-        paste(Dir[vv], "build/", paste0(Spc[nm], "/"), sep = "")
+      srcdir <- file.path(dirname(getwd()), "Assessment_data", Spc[nm])
+      todir  <- file.path(Dir[vv], "build", Spc[nm])
 
       # Check if directory already exist
       if (!dir.exists(todir)) {
@@ -204,7 +133,7 @@ Do_GMACS <- function(Spc = NULL,
         cat(
           "\nBuilding the following directory :\n",
           todir,
-          "\nIt will hold data and run outputs for the assessment of :",
+          "\nIt will hold data and run outputs for the assessment of: ",
           Spc[nm],
           ".\n",
           sep = ""
@@ -221,7 +150,7 @@ Do_GMACS <- function(Spc = NULL,
           nam <- read_GMACS.dat(path = paste(todir, "gmacs.dat", sep = ""))
           tmp <- NULL
           for (f in 1:length(nam)) {
-            if (!file.exists(paste(todir, nam[f], sep = "")))
+            if (!file.exists(file.path(todir, nam[f])))
               tmp <- c(tmp, f)
           }
           if (!is.null(tmp))
@@ -244,10 +173,10 @@ Do_GMACS <- function(Spc = NULL,
       }
 
       # Copy clean.bat and gmacs.exe to the repertories to run GMACS
-      Excop <- paste0(Dir[vv], c("clean.bat", 'gmacs.exe'))
+      Excop <- file.path(Dir[vv], gmacs_exe)
       file.copy(
         Excop,
-        to = paste(Dir[vv], "build/", Spc[nm], sep = ""),
+        to = file.path(Dir[vv], "build", Spc[nm]),
         copy.date = TRUE,
         overwrite = TRUE,
         recursive = TRUE
@@ -265,8 +194,8 @@ Do_GMACS <- function(Spc = NULL,
       # id <- GMACS_term(.Dir = paste(Dir[vv], "build/", Spc[nm], sep=""), verbose = verbose)
       id <-
         gmr::.CallTerm(
-          command = "gmacs.exe",
-          .Dir = paste(Dir[vv], "build/", Spc[nm], sep = ""),
+          command = ifelse(.Platform$OS.type=="windows",gmacs_exe,paste0("./",gmacs_exe)),
+          .Dir = file.path(Dir[vv], "build", Spc[nm]),
           verbose = verbose
         )
       id_term[nm, c(1:3)] <-
@@ -301,7 +230,7 @@ Do_GMACS <- function(Spc = NULL,
           cat("\nAll assessment have been carried out.\n")
         } else {
           for (nm in 1:length(Spc)) {
-            eval(parse(text = paste(Spc[nm], 'list()', sep = "")))
+            #eval(parse(text = paste(Spc[nm], 'list()', sep = "")))
             eval(parse(
               text = paste(
                 Spc[nm],

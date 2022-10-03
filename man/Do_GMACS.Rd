@@ -31,7 +31,7 @@ to the GMACS version(s) currently used in this analysis.}
 \item{AssMod_names}{vector of strings specifying the names of the models used
 in the last assessment (e.g., model_16_0)}
 
-\item{Dir}{vector of strings containing the directories for all
+\item{Dir}{vector of strings containing the directories for all elements of
 \code{GMACS_version} used in this analysis}
 
 \item{compile}{(0/1). If 0, GMACS is not compiled. This assumes that an
@@ -48,7 +48,7 @@ the "Assessment_data" folder.}
 paths for the R variables admbpath, gccpath, and editor.}
 
 \item{make.comp}{Logical. If TRUE, comparisons will be made between the various
-\code{GMACS_version} considered in the analysis.}
+\code{GMACS_version}s considered in the analysis.}
 
 \item{verbose}{logical: if \code{TRUE}, report the shell call an its messages to the R console.}
 }
@@ -58,13 +58,14 @@ GMACS, an error if something happened during the run or a list of comparison
 between the various GMACS version used for each stock considered in the analysis.
 }
 \description{
-This function allows to build the GMACS executable, run GMACS
-and make comparison if several version of GMACS are considered in the analysis.
-For each stock considered in the analysis, this function will copy the
-all the input files required by GMACS from a specific directory which can be
-the directory where are stored the input files used for the last assessment.
+This function allows one to build the GMACS executable, run GMACS
+and make comparisons if several versions of GMACS are considered in the analysis.
+For each stock considered in the analysis, this function will copy
+all the input files required by GMACS from a specific directory (which can be
+the directory where the input files used for the last assessment are stored,
+or some other).
 }
 \seealso{
-\code{\link{Do_Comp}} for comparisons, \code{.buildGMACS} for
+\code{\link{Do_Comp}} for comparisons, \code{\link{createGmacsExe}} for
 building the executable.
 }

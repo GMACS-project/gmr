@@ -125,3 +125,15 @@ GMACS_term <-
                                   show = verbose)
     return(termId)
   }
+
+#'
+#' @title Is the OS type windows?
+#'
+#' @description Function to determine if the OS type windows.
+#'
+#' @return TRUE/FALSE if OS is windows
+#'
+#' @export
+#'
+isWindowsOS<-function(){return(.Platform$OS.type=="windows")}
+

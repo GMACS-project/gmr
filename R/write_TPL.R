@@ -1,30 +1,31 @@
-# @title write_TPL
-#
-# @description Function to write the gmacs.TPL file from gmacsbase.tpl and
-# personnal.tpl.
-#
-# @param vv Numeric: indicate the version - loop on the length(Dir).
-# @param Dir list of Character string: hold the directories for the versions of
-# GMACS considered in the analysis.
-# @param .update Logical: is it to update a new version of GMACS? If TRUE,
-# the name of the new version of GMACS and the date of the compilation will be
-# modified in the gmacsbase.tpl file.
-#
-# @return a new gmacs.tpl file corresponding to the merging of gmacsbase.tpl
-# and personnal.tpl files. This gmacs.tpl will then be used to build the GMACS
-# executable.
-#
-#
+#' @title write_TPL
+#'
+#' @description Function to write the gmacs.TPL file from gmacsbase.tpl and
+#' personnal.tpl.
+#'
+#' @param vv Numeric: indicate the version - loop on the length(Dir).
+#' @param Dir list of Character string: hold the directories for the versions of
+#' GMACS considered in the analysis.
+#' @param .update Logical: is it to update a new version of GMACS? If TRUE,
+#' the name of the new version of GMACS and the date of the compilation will be
+#' modified in the gmacsbase.tpl file.
+#'
+#' @return a new gmacs.tpl file corresponding to the merging of gmacsbase.tpl
+#' and personnal.tpl files. This gmacs.tpl will then be used to build the GMACS
+#' executable.
+#'
+#' @export
+#'
 write_TPL <- function(vv = NULL,
                       Dir = NULL,
                       .update = NULL) {
-  gmacsbase <- paste0(Dir[vv], "gmacsbase.tpl")
+  gmacsbase <- file.path(Dir[vv], "gmacsbase.tpl")
   if (file.exists(gmacsbase) == FALSE)
     stop(cat("\ngmacsbase.tpl does not exist\n"))
-  personal <- paste0(Dir[vv], "personal.tpl")
+  personal <- file.path(Dir[vv], "personal.tpl")
   if (file.exists(personal) == FALSE)
     stop(cat("\npersonal.tpl does not exist\n"))
-  gmacs <- paste0(Dir[vv], "gmacs.tpl")
+  gmacs <- file.path(Dir[vv], "gmacs.tpl")
   fs::file_create(gmacs)
 
   if (.update) {

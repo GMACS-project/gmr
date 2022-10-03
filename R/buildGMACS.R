@@ -1,19 +1,20 @@
 
-# @title .buildGMACS
-#
-# @description Function to build the GMACS executable.
-# It converts the gmacs.tpl code to a gmacs.cpp code, calls ADMB to compile all
-#  .cpp files required to build gmacs and returns the gmacs executable.
-#
-# @param prefix String name prefix (i.e., without extension) of the ADMB project,
-# here "gmacs".
-# @param args list of string names corresponding to the various .cpp libraries
-# required to build gmacs. These files are stored in the lib/ folder.
-# @inheritParams PBSadmb::convAD
-#
-# @return
-#
-#
+#' @title .buildGMACS
+#'
+#' @description Function to build the GMACS executable.
+#' It converts the gmacs.tpl code to a gmacs.cpp code, calls ADMB to compile all
+#'  .cpp files required to build gmacs and returns the gmacs executable.
+#'
+#' @param prefix String name prefix (i.e., without extension) of the ADMB project;
+#' here "gmacs".
+#' @param args list of string names corresponding to the various .cpp libraries
+#' required to build gmacs. These files are stored in the lib/ folder.
+#' @inheritParams PBSadmb::convAD
+#'
+#' @return nothing.
+#'
+#' @export
+#'
 .buildGMACS <-
   function (prefix = NULL,
             raneff = NULL,
@@ -31,7 +32,7 @@
     old_path <- Sys.getenv("PATH")
     on.exit(Sys.setenv(PATH = old_path))
     admbpath <- PBSmodelling::getOptions(PBSadmb::atcall(.PBSadmb), "admbpath")
-    ext <- ifelse(.Platform$OS.type == "windows",
+    ext <- ifelse(isWindowsOS(),
                   ifelse(file.exists(
                     paste(admbpath, "/bin/adlink.cmd", sep = "")
                   ),
@@ -56,7 +57,7 @@
     prefix <-
       paste(prefix, paste0(args, " ", collapse = ""), sep = " ")
     cmd <- paste(prog, flags, prefix, sep = " ")
-    if (.Platform$OS.type == "windows")
+    if (isWindowsOS())
       cmd = shQuote(cmd)
     PBSadmb::.setPath(pathfile)
     if (logfile & !add)
@@ -73,12 +74,12 @@
       cat(out, sep = "\n")
     invisible(out2)
 
-    if (out2[6] == "Successfully built 'gmacs.exe'.")
-      del <-
-      c(dir(pattern = ".obj"),
-        dir(pattern = ".cpp"),
-        dir(pattern = ".htp"))
-    file.remove(del)
+    if (out2[6] == "Successfully built 'gmacs.exe'."){ #--works for windows. TODO:implement for OSX/Linux
+        del <- c(dir(pattern = ".obj"),
+                 dir(pattern = ".cpp"),
+                 dir(pattern = ".htp"));
+        file.remove(del);
+    }
     if (logfile == TRUE)
-      file.remove(dir(pattern = ".txt"))
+      file.remove(dir(pattern = ".txt"))#--why "txt"? log files are .log
   }
