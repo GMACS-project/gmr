@@ -18,7 +18,8 @@ jobs:
 
       - name: Install packages
         run: |
-          install.packages(c("PBSadmb","pkgdown", "roxygen2", "ggplot2", "knitr", "here", "dplyr", "kableExtra"))
+          install.packages(c("PBSadmb","pkgdown", "roxygen2", "ggplot2", "knitr", "here", "dplyr", "kableExtra",
+          "shiny", "gdata", "reshape2", "tidyr", "svDialogs", "ggridges"))
         shell: Rscript {0}
 
       - name: Update documentation
