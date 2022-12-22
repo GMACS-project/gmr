@@ -1,7 +1,7 @@
 Package: gmr
 Type: Package
 Title: A Generalized size-structured Model for Assessing Crustaceans in R
-Version: 1.1.0.1
+Version: 1.1.1
 Description: gmr is an R package providing tools to work with *GMACS*, a 
     Generalized size-structured Assessment Model for Crustaceans. Specifically, 
     it includes an extensive library of functions developed to build and run GMACS

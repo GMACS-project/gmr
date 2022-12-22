@@ -19,6 +19,21 @@
     <loc>/news/index.html</loc>
   </url>
   <url>
+    <loc>/reference/clean_bat.html</loc>
+  </url>
+  <url>
+    <loc>/reference/clean_files.html</loc>
+  </url>
+  <url>
+    <loc>/reference/clean_root.html</loc>
+  </url>
+  <url>
+    <loc>/reference/createGmacsExe.html</loc>
+  </url>
+  <url>
+    <loc>/reference/dot-buildGMACS.html</loc>
+  </url>
+  <url>
     <loc>/reference/dot-CallTerm.html</loc>
   </url>
   <url>
@@ -98,6 +113,15 @@
   </url>
   <url>
     <loc>/reference/index.html</loc>
+  </url>
+  <url>
+    <loc>/reference/insertTime.html</loc>
+  </url>
+  <url>
+    <loc>/reference/insertTime2.html</loc>
+  </url>
+  <url>
+    <loc>/reference/isWindowsOS.html</loc>
   </url>
   <url>
     <loc>/reference/multiplot.html</loc>
@@ -230,5 +254,8 @@
   </url>
   <url>
     <loc>/reference/UpdateGMACS.html</loc>
+  </url>
+  <url>
+    <loc>/reference/write_TPL.html</loc>
   </url>
 </urlset>

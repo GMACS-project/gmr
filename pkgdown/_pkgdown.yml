@@ -105,6 +105,12 @@ reference:
   - Do_Comp
   - .GetGmacsExe
   - UpdateGMACS
+  - createGmacsExe
+  - .buildGMACS
+  - write_TPL
+  - clean_bat
+  - clean_files
+  - clean_root
 - title: Manipulating outputs from the GMACS function
   desc: >
     The following functions allow to read GMACS outputs and manipulate the results. These functions are called in the graphical functions.
@@ -202,4 +208,8 @@ reference:
   - plot_type
   - multiplot
   - plot_multiple
-
+- title: internal
+  contents:
+  - insertTime
+  - insertTime2
+  - isWindowsOS

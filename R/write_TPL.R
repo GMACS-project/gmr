@@ -14,7 +14,7 @@
 #' and personnal.tpl files. This gmacs.tpl will then be used to build the GMACS
 #' executable.
 #'
-#' 
+#' @export
 #'
 write_TPL <- function(vv = NULL,
                       Dir = NULL,
