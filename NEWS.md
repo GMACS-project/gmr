@@ -1,20 +1,51 @@
--   [gmr 0.1.1.9000](#gmr-0.1.1.9000)
--   [gmr 0.1.1](#gmr-0.1.1)
+-   [gmr 1.2.0.9001](#gmr-1.2.0.9001)
+-   [gmr 1.2.0](#gmr-1.2.0)
     -   [New functions](#new-functions)
+    -   [Updated functions](#updated-functions)
+-   [gmr 0.1.1](#gmr-0.1.1)
+    -   [New functions](#new-functions-1)
 -   [gmr 0.1.0](#gmr-0.1.0)
 
-# gmr 0.1.1.9000
+# gmr 1.2.0.9001
 
 ------------------------------------------------------------------------
 
 Here are some of the items for the next release:
 
--   [x] Build a website
 -   [ ] Check all plotting functions
 -   [ ] Improve code
 -   [ ] Create vignettes to build and run gmacs, make comparison
 -   [ ] Create SAFE document templates
 -   [ ] Add data and implement examples in the package
+
+# gmr 1.2.0
+
+------------------------------------------------------------------------
+
+(GitHub issue/PR numbers in parentheses)
+
+This is a minor version update that includes modification of some
+functions to make `gmr` compatible with MacOs/Linux and avoid the use of
+paste() and paste0() for defining file paths to file.path. Some
+additions have also been made in function documentation (#13).
+
+*Versioning has been updated correctly. (change from 0.1.1 to 1.2.0).*
+
+## New functions
+
+-   `createGmacsExe()`: Function to get the GMACS executable from TPL
+    file.
+-   `clean_files()`: Function to clean files in a specific folder.
+-   `clean_root()`: Function to clean gmacs compilation-process files in
+    the “root folder”.
+-   `clean_bat()`: Function to clean gmacs output files in a folder.
+-   `isWindowsOS`: Identify if the OS type is windows
+
+## Updated functions
+
+-   `Do_GMACS()`
+-   `.buildGMACS()`
+-   `write_TPL()`: is now exported (#11).
 
 # gmr 0.1.1
 
@@ -30,8 +61,8 @@ through the various windows prompt (#1).
 -   `GMACS()`, which allows you to compile, run and make comparison of
     different versions of GMACS for one or several stocks. This is the
     main function to work with the GMACS model with the `gmr` package.
--   `Do_GMACS`, which is called by the `GMACS()` function. It allows to
-    build the GMACS executable, run the model and make comparison
+-   `Do_GMACS()`, which is called by the `GMACS()` function. It allows
+    to build the GMACS executable, run the model and make comparison
     between multiple versions of GMACS if the user ask for.
 -   `Do_Comp()`, which establishes comparison tables of management
     quantities between different versions of GMACS.
