@@ -4,22 +4,41 @@
 \alias{.GetGmacsExe}
 \title{.GetGmacsExe}
 \usage{
-.GetGmacsExe(.nameFold = "Dvpt_Version", .nameVer = NULL)
+.GetGmacsExe(
+  .nameFold = "Dvpt_Version",
+  .nameVer = NULL,
+  ADMBpaths = "ADpaths.txt",
+  verbose = FALSE,
+  logFiles = FALSE
+)
 }
 \arguments{
-\item{.nameFold}{(character string); name of the folder holding the development
+\item{.nameFold}{(character string); name of the subfolder holding the development
 version you want to work on. The default is `Dvpt_Version` but you can
 have renamed this folder.}
 
-\item{.nameVer}{(character string); Name of the development version of GMACS you
+\item{.nameVer}{(character string); name of the development version of GMACS you
 are going to work on. Default: `Dvpt_Version`.}
+
+\item{ADMBpaths}{(filepath): absolute or relative to current working directory path to file defining required ADMB paths}
+
+\item{verbose}{(TRUE/FALSE); flag to print processing information}
+
+\item{logFiles}{(TRUE/FALSE); flag to create PBSadmb log files}
 }
 \value{
 the new GMACS executable
 }
 \description{
 Function used when updating and releasing a new version of GMACS.
-It uses the `write_TPL` function to editate the new
-gmacs.tpl, compiles the model and uses the `.buildGMACS()`
+It uses the `write_TPL` function to create a new
+gmacs.tpl file from the gmacsbase.tpl and personal.TPL files,
+compiles the model and uses the `.buildGMACS()`
 function to provide a new executable.
+}
+\details{
+This function assumes you are calling it from the parent folder to
+that identified by \code{.nameFold}. In the course of creating the executable,
+the working directory is switched to \code{.nameFold}, but switched back to the
+parent folder when the function exits.
 }

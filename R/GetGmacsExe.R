@@ -1,15 +1,24 @@
 #' @title .GetGmacsExe
 #'
 #' @description Function used when updating and releasing a new version of GMACS.
-#' It uses the `write_TPL` function to editate the new
-#' gmacs.tpl, compiles the model and uses the `.buildGMACS()`
+#' It uses the `write_TPL` function to create a new
+#' gmacs.tpl file from the gmacsbase.tpl and personal.TPL files,
+#' compiles the model and uses the `.buildGMACS()`
 #' function to provide a new executable.
 #'
-#' @param .nameFold (character string); name of the folder holding the development
+#' @param .nameFold (character string); name of the subfolder holding the development
 #' version you want to work on. The default is `Dvpt_Version` but you can
 #' have renamed this folder.
-#' @param .nameVer (character string); Name of the development version of GMACS you
+#' @param .nameVer (character string); name of the development version of GMACS you
 #' are going to work on. Default: `Dvpt_Version`.
+#' @param ADMBpaths (filepath): absolute or relative to current working directory path to file defining required ADMB paths
+#' @param verbose (TRUE/FALSE); flag to print processing information
+#' @param logFiles (TRUE/FALSE); flag to create PBSadmb log files
+#'
+#' @details This function assumes you are calling it from the parent folder to
+#' that identified by \code{.nameFold}. In the course of creating the executable,
+#' the working directory is switched to \code{.nameFold}, but switched back to the
+#' parent folder when the function exits.
 #'
 #'
 #' @return the new GMACS executable
@@ -17,7 +26,11 @@
 #' @export
 #'
 #'
-.GetGmacsExe <- function(.nameFold = "Dvpt_Version", .nameVer = NULL) {
+.GetGmacsExe <- function(.nameFold = "Dvpt_Version",
+                         .nameVer = NULL,
+                         ADMBpaths="ADpaths.txt",
+                         verbose=FALSE,
+                         logFiles=FALSE) {
 
 
   # Define directory
@@ -37,9 +50,9 @@
   } else {GMACS_version <- "Dvpt_Version"}
 
 
-  Dir <-  paste0(getwd(), "/", .nameFold, "/")
+  Dir <-  file.path(getwd(), .nameFold);
 
-  # Need to conpile the model?
+  # Need to compile the model?
   # vector of length(.GMACS_version)
   # 0: GMACS is not compiled. This assumes that an executable exists in the directory of the concerned version.
   # 1: GMACS is compiles
@@ -51,9 +64,7 @@
   # Check directories for ADMB
   # Define the name of the file containing the different pathways needed to build
   # the GMACS executable
-  ADMBpaths = .ADMBpaths
-  suppressWarnings(PBSadmb::readADpaths(paste(dirname(Dir[vv]), ADMBpaths, sep =
-                                                "/")))
+   suppressWarnings(PBSadmb::readADpaths(ADMBpaths));
   cat("\n Verifying the paths for ADMB, the C/C++ compiler and the editor ....\n")
   if (!PBSadmb::checkADopts())
     stop(
@@ -67,27 +78,34 @@
   cat("# ------------------------------------------------------------------- #\n")
 
   # 1.Get an executable for GMACS ----
-  setwd(Dir[vv])
+  oldWD = getwd();
+  on.exit(setwd(oldWD));
+  cat("--Setting working directory to '", Dir[vv], "' \n",sep="")
+  setwd(Dir[vv]);
+
   # Clean directory from previous version
-  gmr::.CallTerm(command = "clean_root.bat",
-                 .Dir = Dir[vv],
-                 verbose = FALSE)
+  clean_root(path=Dir[vv]);
 
   #  Create gmacs.tpl from gmacsbase.tpl and personal.tpl
   cat("Now writing gmacs.tpl\n")
   write_TPL(vv = vv,
-                 Dir = Dir[vv],
-                 .update = TRUE)
+            Dir = Dir[vv],
+            .update = TRUE)
   # cat("\n")
 
-  # Copy files from lib\
+  # Copy files from ./lib IF on windows
   libFiles <-
-    dir(paste0(Dir[vv], "/lib/"),
-        "*.cpp",
+    dir(path=file.path(Dir[vv], "lib"),
+        pattern="*.cpp",
         ignore.case = TRUE,
-        all.files = TRUE)
-  file.copy(file.path(paste0(Dir[vv], "/lib/"), libFiles), Dir[vv], overwrite = TRUE)
-  args <- get_nam(libFiles)
+        all.files = TRUE,
+        full.names=TRUE)
+  if (isWindowsOS()){
+    file.copy(libFiles, Dir[vv], overwrite = TRUE)
+    args <- get_nam(basename(libFiles));#--drop extensions
+  } else {
+    args <-get_nam(libFiles);#--drop extensions
+  }
 
   # .tpl to .cpp
   cat("\nNow converting gmacs.tpl to gmacs.cpp ...\n")
@@ -96,23 +114,24 @@
     pathfile = ADMBpaths,
     debug = TRUE,
     safe = TRUE,
-    logfile = FALSE,
-    verbose = FALSE
+    logfile = logFiles,
+    verbose = verbose
   )
-  cat("OK after convertion from .tpl to .cpp ...\n")
+  cat("OK after conversion from .tpl to .cpp ...\n")
   cat("\n")
 
   # Compile files
-  compFiles <- c("gmacs", libFiles)
+#  compFiles <- c("gmacs", libFiles)
+  compFiles <- c("gmacs", args)
   for (nm in 1:length(compFiles)) {
-    cat("Now compiling ", compFiles[nm], "...\n")
+    cat("Now compiling file ",nm,": '",compFiles[nm],"'\n",sep="")
     PBSadmb::compAD(
       prefix = compFiles[nm],
       pathfile = ADMBpaths,
-      safe = TRUE,
+      safe = FALSE,
       debug = TRUE,
-      logfile = FALSE,
-      verbose = FALSE
+      logfile = logFiles,
+      verbose = verbose
     )
   }
   cat("OK after compilation ...\n")
@@ -127,10 +146,12 @@
     debug = TRUE,
     logfile = FALSE,
     add = FALSE,
-    verbose = FALSE,
+    verbose = verbose,
     pathfile = NULL,
     args = args
   )
   cat("OK after building gmacs executable ...\n")
-  setwd(dirname(Dir[vv]))
+
+  cat("--Re-setting working directory to '", oldWD, "' \n",sep="")
+  #--setwd(oldWD) <-does this on exit
 }

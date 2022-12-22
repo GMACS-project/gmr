@@ -60,13 +60,13 @@ Do_Comp <-
              ncol = length(Spc))
     if (ASS) {
       pat <- Dir[which(grep(pattern = "Assessments", x = Dir) == 1)]
-      Dir[!Dir == pat] <- paste(Dir[!Dir == pat], "build/", sep = "")
+      Dir[!Dir == pat] <- file.path(Dir[!Dir == pat], "build")
       for (vv in 1:length(Dir))
         if (Dir[vv] == pat) {
-          addDir[vv, ] <- paste("/", AssMod_names, sep = "")
+          addDir[vv, ] <- AssMod_names
         }
     } else {
-      Dir <- paste(Dir, "build/", sep = "")
+      Dir <- file.path(Dir, "build")
       # addDir <- rep("", length(Spc))
     }
 
@@ -75,29 +75,35 @@ Do_Comp <-
     # Check existence files
     ex.rep <- matrix(NA, nrow = length(Dir), ncol = length(Spc))
     Need.run <- 0
-    for (vv in 1:length(Dir))
+    for (vv in 1:length(Dir)){
       for (nm in 1:length(Spc)) {
-        if (!file.exists(paste0(Dir[vv], Spc[nm], addDir[vv, nm], "/gmacs.rep")) &&
-            !file.exists(paste0(Dir[vv], Spc[nm], addDir[vv, nm], "/Gmacsall.OUT"))) {
+        pth = file.path(Dir[vv], Spc[nm], addDir[vv, nm]);
+        cat("checking path: ",pth,"\n")
+        if (!file.exists(file.path(pth, "gmacs.rep")) &&
+            !file.exists(file.path(pth, "Gmacsall.out"))) {
+          cat("Did not find either gmacs.rep or Gmacsall.out\n")
           ex.rep[vv, nm] <- 0
           Need.run <- 1
         }
-        if (file.exists(paste0(Dir[vv], Spc[nm], addDir[vv, nm], "/Gmacsall.OUT"))){
-          base.file[vv, nm] <- 0}else{
-            if (file.exists(paste0(Dir[vv], Spc[nm], addDir[vv, nm], "/gmacs.rep")))
-              base.file[vv, nm] <- 1}
+        if (file.exists(file.path(pth, "Gmacsall.out"))){
+          cat("\tFound Gmacsall.out\n")
+          base.file[vv, nm] <- 0
+        } else {
+            if (file.exists(file.path(pth, "gmacs.rep"))){
+              cat("\tFound gmacs.rep\n");
+              base.file[vv, nm] <- 1
+            }
+        }
       }
+    }
 
     if (Need.run == 1 && !ASS) {
-      for (vv in 1:length(Dir))
+      for (vv in 1:length(Dir)){
         if (length(which(ex.rep[vv, ] == 0)) > 0)
-          cat(
-            "gmacs.rep is missing for ",
-            paste0(Spc[which(ex.rep[vv, ] == 0)], collapse = ", "),
-            " for the ",
-            GMACS_version[vv],
-            " of GMACS.\n"
-          )
+          cat("gmacs.rep is missing for ",
+              paste0(Spc[which(ex.rep[vv, ] == 0)], collapse = ", "),
+             " for the ",GMACS_version[vv]," of GMACS.\n",sep="");
+      }
       do.run <- NA
 
       while (is.na(do.run)) {
@@ -126,7 +132,7 @@ Do_Comp <-
             make.comp = make.comp,
             verbose = verbose
           )
-        gmr::Do_Comp(
+        gmr::Do_Comp(                      #<-TODO: this is a recursive call: shiould it be recursive??
           Spc = Spc,
           GMACS_version = GMACS_version,
           ASS = ASS,
@@ -165,18 +171,18 @@ Do_Comp <-
       # nm = 1
 
       cat("\n\n\\pagebreak\n")
-      cat("\n\n\\# Comparaison of ",
+      cat("\n\n\\# Comparison of ",
           Spc[nm],
           " for ",
           length(Dir),
-          " version of GMACS. \n")
+          " version",ifelse(length(Dir)==1,"","s")," of GMACS. \n",sep="")
       cat("\n\n\\                                                                 \n")
       cat("\n\n\\                                                                 \n")
 
 
       # cat("\n\n\\# This is the summary of management quantities for: ",Spc,"\n")
 
-      Mfile <- unique(.an(base.file[, nm]))
+      Mfile <- unique(gmr:::.an(base.file[, nm]))
       PlotTab <- data.frame(
         Model = ScenarioNames,
         MMB = rep(0, length(ScenarioNames)),
@@ -193,14 +199,15 @@ Do_Comp <-
         # fn       <- ifelse(test = base.file[,nm]==0, paste0(Dir, Spc[nm], addDir[,nm], "/gmacsall.OUT"), paste0(Dir, Spc[nm], addDir[,nm],"/gmacs"))
 
         for (vv in 1:length(Dir)) {
-          M <- NULL
+          #--vv=1;
+          M <- NULL;
 
           if (base.file[vv, nm] == 0) {
-            fn       <- paste0(Dir[vv], Spc[nm], addDir[vv, nm], "/gmacsall.out")
+            fn       <- file.path(Dir[vv], Spc[nm], addDir[vv, nm], "Gmacsall.out");
             M[[vv]] <- read.OUT(fn)
           } else {
             tmp <- NULL
-            fn <- paste0(Dir[vv], Spc[nm], addDir[vv, nm], "/gmacs")
+            fn <- file.path(Dir[vv], Spc[nm], addDir[vv, nm], "gmacs")
             tmp[[vv]] <- gmr::read_admb(fn)
             M[[vv]]$MMB <- tmp[[vv]]$ssb[length(tmp[[vv]]$ssb)]
             M[[vv]]$B35 <- tmp[[vv]]$spr_bmsy
@@ -220,11 +227,11 @@ Do_Comp <-
           PlotTab$Status[vv] <- M[[vv]]$Status
           PlotTab$M[vv] <- M[[vv]]$M
           PlotTab$Av_Recr[vv] <- M[[vv]]$Av_Recr
-        }
-      }
+        }#--vv
+      }#--if (Mfile == 0 || length(Mfile) > 1)
 
-      if (unique(.an(base.file)) == 1) {
-        fn       <- paste0(Dir, Spc[nm], "/gmacs")
+      if (unique(gmr:::.an(base.file)) == 1) {
+        fn       <- file.path(Dir, Spc[nm], "gmacs")
         M        <-
           lapply(fn, gmr::read_admb) #need .prj file to run gmacs and need .rep file here
         names(M) <- ScenarioNames

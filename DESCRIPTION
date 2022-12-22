@@ -1,7 +1,7 @@
 Package: gmr
 Type: Package
 Title: A Generalized size-structured Model for Assessing Crustaceans in R
-Version: 1.1.0
+Version: 1.1.0.1
 Description: gmr is an R package providing tools to work with *GMACS*, a 
     Generalized size-structured Assessment Model for Crustaceans. Specifically, 
     it includes an extensive library of functions developed to build and run GMACS
@@ -12,15 +12,16 @@ Authors@R: c(
     person("Andre", "Punt", role = c("ctb"),email = "aepunt@uw.edu"),
     person("Darcy", "Webber", role = c("ctb"), email = "darcy@quantifish.co.nz"),
     person("Steve", "Martell", role = "ctb"),
-    person("Jim", "Ianelli", role = "ctb",email = "jim.ianelli@noaa.gov"))
-Author: Matthieu Veron [aut, cre], Cody Szuwalski [aut, ctb], Andre Punt [ctb],Darcy Webber [ctb], Steve Martell [ctb],  Jim Ianelli [ctb]
+    person("Jim", "Ianelli", role = "ctb",email = "jim.ianelli@noaa.gov"),
+    person("William", "Stockhausen", role = "ctb",email = "william.stockhausen@noaa.gov"))
+Author: Matthieu Veron [aut, cre], Cody Szuwalski [aut, ctb], Andre Punt [ctb],Darcy Webber [ctb], Steve Martell [ctb], Jim Ianelli [ctb], William Stockhausen [ctb]
 Maintainer: Matthieu Veron <mveron@uw.edu>
 URL: https://gmacs-project.github.io/gmr/, https://github.com/GMACS-project/gmr
 BugReports: https://github.com/GMACS-project/gmr/issues
 License: GPL-2
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.1.2
+RoxygenNote: 7.2.1
 Depends:
     R (>= 4.1.1),
     PBSadmb
