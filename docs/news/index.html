@@ -115,11 +115,9 @@
     </div>
 
     <div class="section level2">
-<h2 class="page-header" data-toc-text="0.1.1.9000" id="gmr-0119000">gmr 0.1.1.9000<a class="anchor" aria-label="anchor" href="#gmr-0119000"></a></h2>
+<h2 class="page-header" data-toc-text="1.2.0.9001" id="gmr-1209001">gmr 1.2.0.9001<a class="anchor" aria-label="anchor" href="#gmr-1209001"></a></h2>
 <hr><p>Here are some of the items for the next release:</p>
 <ul class="task-list"><li>
-<input type="checkbox" disabled checked>Build a website</li>
-<li>
 <input type="checkbox" disabled>Check all plotting functions</li>
 <li>
 <input type="checkbox" disabled>Improve code</li>
@@ -131,6 +129,32 @@
 <input type="checkbox" disabled>Add data and implement examples in the package</li>
 </ul></div>
     <div class="section level2">
+<h2 class="page-header" data-toc-text="1.2.0" id="gmr-120">gmr 1.2.0<a class="anchor" aria-label="anchor" href="#gmr-120"></a></h2>
+<hr><p>(GitHub issue/PR numbers in parentheses)</p>
+<p>This is a minor version update that includes modification of some functions to make <code>gmr</code> compatible with MacOs/Linux and avoid the use of paste() and paste0() for defining file paths to file.path. Some additions have also been made in function documentation (<a href="https://github.com/GMACS-project/gmr/issues/13" class="external-link">#13</a>).</p>
+<p><em>Versioning has been updated correctly. (change from 0.1.1 to 1.2.0).</em></p>
+<div class="section level3">
+<h3 id="new-functions-1-2-0">New functions<a class="anchor" aria-label="anchor" href="#new-functions-1-2-0"></a></h3>
+<ul><li>
+<code><a href="../reference/createGmacsExe.html">createGmacsExe()</a></code>: Function to get the GMACS executable from TPL file.</li>
+<li>
+<code><a href="../reference/clean_files.html">clean_files()</a></code>: Function to clean files in a specific folder.</li>
+<li>
+<code><a href="../reference/clean_root.html">clean_root()</a></code>: Function to clean gmacs compilation-process files in the “root folder”.</li>
+<li>
+<code><a href="../reference/clean_bat.html">clean_bat()</a></code>: Function to clean gmacs output files in a folder.</li>
+<li>
+<code>isWindowsOS</code>: Identify if the OS type is windows</li>
+</ul></div>
+<div class="section level3">
+<h3 id="updated-functions-1-2-0">Updated functions<a class="anchor" aria-label="anchor" href="#updated-functions-1-2-0"></a></h3>
+<ul><li><code><a href="../reference/Do_GMACS.html">Do_GMACS()</a></code></li>
+<li><code><a href="../reference/dot-buildGMACS.html">.buildGMACS()</a></code></li>
+<li>
+<code><a href="../reference/write_TPL.html">write_TPL()</a></code>: is now exported (<a href="https://github.com/GMACS-project/gmr/issues/11" class="external-link">#11</a>).</li>
+</ul></div>
+</div>
+    <div class="section level2">
 <h2 class="page-header" data-toc-text="0.1.1" id="gmr-011">gmr 0.1.1<a class="anchor" aria-label="anchor" href="#gmr-011"></a></h2>
 <hr><p>(GitHub issue/PR numbers in parentheses)</p>
 <p>This new version allows to directly run GMACS within R instead of going through the various windows prompt (<a href="https://github.com/GMACS-project/gmr/issues/1" class="external-link">#1</a>).</p>
@@ -139,7 +163,7 @@
 <ul><li>
 <code><a href="../reference/GMACS.html">GMACS()</a></code>, which allows you to compile, run and make comparison of different versions of GMACS for one or several stocks. This is the main function to work with the GMACS model with the <code>gmr</code> package.</li>
 <li>
-<code>Do_GMACS</code>, which is called by the <code><a href="../reference/GMACS.html">GMACS()</a></code> function. It allows to build the GMACS executable, run the model and make comparison between multiple versions of GMACS if the user ask for.</li>
+<code><a href="../reference/Do_GMACS.html">Do_GMACS()</a></code>, which is called by the <code><a href="../reference/GMACS.html">GMACS()</a></code> function. It allows to build the GMACS executable, run the model and make comparison between multiple versions of GMACS if the user ask for.</li>
 <li>
 <code><a href="../reference/Do_Comp.html">Do_Comp()</a></code>, which establishes comparison tables of management quantities between different versions of GMACS.</li>
 <li>
