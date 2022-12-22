@@ -11,7 +11,8 @@
 #' have renamed this folder.
 #' @param .nameVer (character string); name of the development version of GMACS you
 #' are going to work on. Default: `Dvpt_Version`.
-#' @param ADMBpaths (filepath): absolute or relative to current working directory path to file defining required ADMB paths
+#' @param ADMBpaths (filepath): absolute or relative to current working directory
+#' path to file defining required ADMB paths. The default is `NULL`.
 #' @param verbose (TRUE/FALSE); flag to print processing information
 #' @param logFiles (TRUE/FALSE); flag to create PBSadmb log files
 #'
@@ -28,7 +29,7 @@
 #'
 .GetGmacsExe <- function(.nameFold = "Dvpt_Version",
                          .nameVer = NULL,
-                         ADMBpaths="ADpaths.txt",
+                         ADMBpaths=NULL,
                          verbose=FALSE,
                          logFiles=FALSE) {
 
