@@ -129,7 +129,7 @@
     PBSadmb::compAD(
       prefix = compFiles[nm],
       pathfile = ADMBpaths,
-      safe = FALSE,
+      safe = TRUE,
       debug = TRUE,
       logfile = logFiles,
       verbose = verbose
@@ -145,7 +145,7 @@
     safe = TRUE,
     dll = FALSE,
     debug = TRUE,
-    logfile = FALSE,
+    logfile = logFiles,
     add = FALSE,
     verbose = verbose,
     pathfile = NULL,

@@ -146,8 +146,8 @@ Do_GMACS <- function(Spc = NULL,
           file.copy(Filescop[i], to = todir, overwrite = TRUE)
         cat("Data for ", Spc[nm], " have been copied.\n")
       } else {
-        if (file.exists(paste(todir, "gmacs.dat", sep = ""))) {
-          nam <- read_GMACS.dat(path = paste(todir, "gmacs.dat", sep = ""))
+        if (file.exists(file.path(todir, "gmacs.dat"))) {
+          nam <- read_GMACS.dat(path = file.path(todir, "gmacs.dat"))
           tmp <- NULL
           for (f in 1:length(nam)) {
             if (!file.exists(file.path(todir, nam[f])))

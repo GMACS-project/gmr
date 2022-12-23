@@ -7,7 +7,7 @@
 .GetGmacsExe(
   .nameFold = "Dvpt_Version",
   .nameVer = NULL,
-  ADMBpaths = "ADpaths.txt",
+  ADMBpaths = NULL,
   verbose = FALSE,
   logFiles = FALSE
 )
@@ -20,7 +20,8 @@ have renamed this folder.}
 \item{.nameVer}{(character string); name of the development version of GMACS you
 are going to work on. Default: `Dvpt_Version`.}
 
-\item{ADMBpaths}{(filepath): absolute or relative to current working directory path to file defining required ADMB paths}
+\item{ADMBpaths}{(filepath): absolute or relative to current working directory
+path to file defining required ADMB paths. The default is `NULL`.}
 
 \item{verbose}{(TRUE/FALSE); flag to print processing information}
 
