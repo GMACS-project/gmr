@@ -128,13 +128,13 @@ function to provide a new executable.</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">.GetGmacsExe</span><span class="op">(</span>
-  .nameFold <span class="op">=</span> <span class="st">"Dvpt_Version"</span>,
-  .nameVer <span class="op">=</span> <span class="cn">NULL</span>,
-  ADMBpaths <span class="op">=</span> <span class="st">"ADpaths.txt"</span>,
-  verbose <span class="op">=</span> <span class="cn">FALSE</span>,
-  logFiles <span class="op">=</span> <span class="cn">FALSE</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">.GetGmacsExe</span><span class="op">(</span></span>
+<span>  .nameFold <span class="op">=</span> <span class="st">"Dvpt_Version"</span>,</span>
+<span>  .nameVer <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  ADMBpaths <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  verbose <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  logFiles <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -151,7 +151,8 @@ are going to work on. Default: `Dvpt_Version`.</p></dd>
 
 
 <dt>ADMBpaths</dt>
-<dd><p>(filepath): absolute or relative to current working directory path to file defining required ADMB paths</p></dd>
+<dd><p>(filepath): absolute or relative to current working directory
+path to file defining required ADMB paths. The default is `NULL`.</p></dd>
 
 
 <dt>verbose</dt>
@@ -188,7 +189,7 @@ parent folder when the function exits.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>

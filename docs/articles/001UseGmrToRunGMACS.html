@@ -137,7 +137,7 @@
 
       
 
-      </header><div class="row">
+      </header><script src="001UseGmrToRunGMACS_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Use gmr to Run GMACS</h1>
@@ -151,37 +151,37 @@
     
     
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R">
-<span class="fu"><a href="https://rdrr.io/r/base/getwd.html" class="external-link">setwd</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/basename.html" class="external-link">dirname</a></span><span class="op">(</span><span class="fu">rstudioapi</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/rstudioapi/man/rstudio-editors.html" class="external-link">getActiveDocumentContext</a></span><span class="op">(</span><span class="op">)</span><span class="op">$</span><span class="va">path</span><span class="op">)</span><span class="op">)</span>
-
-
-<span class="co"># Some functions used to run admb in R</span>
-<span class="co"># install.packages("PBSadmb")</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/pbs-software/pbs-admb" class="external-link">PBSadmb</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://yihui.org/knitr/" class="external-link">knitr</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/SciViews/svDialogs" class="external-link">svDialogs</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/alexanderrobitzsch/miceadds" class="external-link">miceadds</a></span><span class="op">)</span>
-
-<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://gmacs-project.github.io/gmr/" class="external-link">gmr</a></span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/getwd.html" class="external-link">setwd</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/basename.html" class="external-link">dirname</a></span><span class="op">(</span><span class="fu">rstudioapi</span><span class="fu">::</span><span class="fu"><a href="https://rstudio.github.io/rstudioapi/reference/rstudio-editors.html" class="external-link">getActiveDocumentContext</a></span><span class="op">(</span><span class="op">)</span><span class="op">$</span><span class="va">path</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span></span>
+<span><span class="co"># Some functions used to run admb in R</span></span>
+<span><span class="co"># install.packages("PBSadmb")</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/pbs-software/pbs-admb" class="external-link">PBSadmb</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://yihui.org/knitr/" class="external-link">knitr</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/SciViews/svDialogs" class="external-link">svDialogs</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/alexanderrobitzsch/miceadds" class="external-link">miceadds</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://gmacs-project.github.io/gmr/" class="external-link">gmr</a></span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R">
-
-<span class="co"># source("Run_GMACS_Function.R")</span>
-<span class="kw"><a href="https://rdrr.io/r/base/source.html" class="external-link">source</a></span><span class="op">(</span><span class="st">"Additional_functions.R"</span><span class="op">)</span>
-
-<span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/GMACS.html">GMACS</a></span><span class="op">(</span>
-  Spc <span class="op">=</span> <span class="va">.Spc</span>,
-  GMACS_version <span class="op">=</span> <span class="va">.GMACS_version</span>,
-  Dir <span class="op">=</span> <span class="va">.VERSIONDIR</span>,
-  ASS <span class="op">=</span> <span class="va">.ASS</span>,
-  AssMod_names <span class="op">=</span> <span class="va">.ASSMOD_NAMES</span>,
-  compile <span class="op">=</span> <span class="va">.COMPILE</span>,
-  run <span class="op">=</span> <span class="va">.RUN_GMACS</span>,
-  LastAssDat <span class="op">=</span> <span class="va">.LastAssDat</span>,
-  ADMBpaths <span class="op">=</span> <span class="va">.ADMBpaths</span>,
-  make.comp <span class="op">=</span> <span class="va">.MAKE_Comp</span>,
-  <span class="va">verbose</span> <span class="op">&lt;-</span> <span class="va">.VERBOSE</span>
-<span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span></span>
+<span></span>
+<span><span class="co"># source("Run_GMACS_Function.R")</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/source.html" class="external-link">source</a></span><span class="op">(</span><span class="st">"Additional_functions.R"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/GMACS.html">GMACS</a></span><span class="op">(</span></span>
+<span>  Spc <span class="op">=</span> <span class="va">.Spc</span>,</span>
+<span>  GMACS_version <span class="op">=</span> <span class="va">.GMACS_version</span>,</span>
+<span>  Dir <span class="op">=</span> <span class="va">.VERSIONDIR</span>,</span>
+<span>  ASS <span class="op">=</span> <span class="va">.ASS</span>,</span>
+<span>  AssMod_names <span class="op">=</span> <span class="va">.ASSMOD_NAMES</span>,</span>
+<span>  compile <span class="op">=</span> <span class="va">.COMPILE</span>,</span>
+<span>  run <span class="op">=</span> <span class="va">.RUN_GMACS</span>,</span>
+<span>  LastAssDat <span class="op">=</span> <span class="va">.LastAssDat</span>,</span>
+<span>  ADMBpaths <span class="op">=</span> <span class="va">.ADMBpaths</span>,</span>
+<span>  make.comp <span class="op">=</span> <span class="va">.MAKE_Comp</span>,</span>
+<span>  <span class="va">verbose</span> <span class="op">&lt;-</span> <span class="va">.VERBOSE</span></span>
+<span><span class="op">)</span></span></code></pre></div>
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
@@ -199,7 +199,7 @@
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer>
