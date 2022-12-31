@@ -1,12 +1,15 @@
--   [gmr 1.2.0.9001](#gmr-1.2.0.9001)
--   [gmr 1.2.0](#gmr-1.2.0)
+-   [gmr 1.3.0.9001](#gmr-1.3.0.9001)
+-   [gmr 1.3.0](#gmr-1.3.0)
     -   [New functions](#new-functions)
     -   [Updated functions](#updated-functions)
--   [gmr 0.1.1](#gmr-0.1.1)
+-   [gmr 1.2.0](#gmr-1.2.0)
     -   [New functions](#new-functions-1)
+    -   [Updated functions](#updated-functions-1)
+-   [gmr 0.1.1](#gmr-0.1.1)
+    -   [New functions](#new-functions-2)
 -   [gmr 0.1.0](#gmr-0.1.0)
 
-# gmr 1.2.0.9001
+# gmr 1.3.0.9001
 
 ------------------------------------------------------------------------
 
@@ -17,6 +20,52 @@ Here are some of the items for the next release:
 -   [ ] Create vignettes to build and run gmacs, make comparison
 -   [ ] Create SAFE document templates
 -   [ ] Add data and implement examples in the package
+
+# gmr 1.3.0
+
+------------------------------------------------------------------------
+
+(GitHub issue/PR numbers in parentheses)
+
+This is a minor version update of `gmr` that includes new functions to
+i) work with the simulation module of GMACS, ii) read input and some
+output files of GMACS and, iii) write the GMACS input files.
+
+## New functions
+
+1.  Functions to read GMACS input files
+
+-   `readGMACSfiles()`: Function to read all the GMACS input files
+-   `readGMACS.dat()`: Function to read the gmacs.dat file
+-   `readGMACSdat()`: Function to read the the data file
+-   `readGMACSctl()`: Function to read the control file
+-   `readGMACSprj`: Function to read the projection file All these
+    functions return the input files as a named list.
+
+1.  Functions to write the GMACS input/output files *`writeGmacs.dat()`:
+    function to write the gmacs.dat file *`writeGmacsdatfile()`:
+    function to write data file *`writeGmacsctlfile()`: function to
+    write the control file *`writeGmacsprjfile()`: function to write the
+    projection file \*`writeGmacsPAR()`: function to write the gmacs.par
+    file
+
+-   `GMACSversion()`: Function to extract the Version number of GMACS
+
+1.  Generate simulation using GMACS *`prepSim()`: function to get the
+    original input files for the simulation approach *`GenSimFiles()`:
+    function to get generate the input files to get the simulated data
+    for each simulation *`SimData()`: Function to generate the data
+    *`SaveSimFiles()`: Function to save the outputs of each
+    simulation-estimation run *`Gen_GmacsSim()`: Function to generates
+    the simulated data for a set of simulation *`RunGmacsSim()`:
+    Function to run the GMACS simulation-estimation \*`clean_bat_Sim()`:
+    Function to clean gmacs simulation-estimation approach
+
+## Updated functions
+
+-   `Do_GMACS()`
+-   `read_GMACS.dat()`
+-   `Do_Comp()`
 
 # gmr 1.2.0
 

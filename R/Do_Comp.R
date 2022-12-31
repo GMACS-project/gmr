@@ -182,7 +182,7 @@ Do_Comp <-
 
       # cat("\n\n\\# This is the summary of management quantities for: ",Spc,"\n")
 
-      Mfile <- unique(gmr:::.an(base.file[, nm]))
+      Mfile <- unique(.an(base.file[, nm]))
       PlotTab <- data.frame(
         Model = ScenarioNames,
         MMB = rep(0, length(ScenarioNames)),
@@ -230,7 +230,7 @@ Do_Comp <-
         }#--vv
       }#--if (Mfile == 0 || length(Mfile) > 1)
 
-      if (unique(gmr:::.an(base.file)) == 1) {
+      if (unique(.an(base.file)) == 1) {
         fn       <- file.path(Dir, Spc[nm], "gmacs")
         M        <-
           lapply(fn, gmr::read_admb) #need .prj file to run gmacs and need .rep file here

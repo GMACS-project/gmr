@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">gmr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.3.0</span>
       </span>
     </div>
 
@@ -64,6 +64,9 @@
   </a>
   <ul class="dropdown-menu" role="menu"><li>
       <a href="../news/index.html">Changelog</a>
+    </li>
+    <li>
+      <a href="https://github.com/GMACS-project/gmr/releases/tag/V1.3.0" class="external-link">gmr V 1.3.0</a>
     </li>
     <li>
       <a href="https://github.com/GMACS-project/gmr/releases/tag/V1.2.0" class="external-link">gmr V 1.2.0</a>
@@ -114,14 +117,90 @@
     </div>
 
     <table class="ref-index"><colgroup><col class="alias"><col class="title"></colgroup><tbody><tr><th colspan="2">
-          <h2 id="run-gmacs">Run GMACS <a href="#run-gmacs" class="anchor" aria-hidden="true"></a></h2>
-          <p class="section-desc"></p><p>Set of functions for working with GMACS while selecting specific work (building the gmacs executable, running a stock assessment for one or several stocks, making comparisons between different versions of GMACS, releasing a new version).</p>
+          <h2 id="preparing-runs-and-reading-input-files">Preparing runs and reading input files <a href="#preparing-runs-and-reading-input-files" class="anchor" aria-hidden="true"></a></h2>
+          <p class="section-desc"></p><p>The following functions allow (i) read the various input files and (ii) create folders (and clean them) needed for the runs.</p>
+        </th>
+      </tr></tbody><tbody><tr><th colspan="2">
+          <h3 id="functions-to-read-input-files">Functions to read input files <a href="#functions-to-read-input-files" class="anchor" aria-hidden="true"></a></h3>
+          <p class="section-desc"></p>
         </th>
       </tr></tbody><tbody><tr><td>
-          <p><code><a href="gmr-package.html">gmr-package</a></code> </p>
+          <p><code><a href="readGMACSfiles.html">readGMACSfiles()</a></code> </p>
         </td>
-        <td><p>**gmr**: R code for GMACS</p></td>
+        <td><p>Read all the GMACS input files</p></td>
       </tr><tr><td>
+          <p><code><a href="readGMACS.dat.html">readGMACS.dat()</a></code> </p>
+        </td>
+        <td><p>Read the gmacs.dat file</p></td>
+      </tr><tr><td>
+          <p><code><a href="readGMACSdat.html">readGMACSdat()</a></code> </p>
+        </td>
+        <td><p>Read the GMACS data file</p></td>
+      </tr><tr><td>
+          <p><code><a href="readGMACSctl.html">readGMACSctl()</a></code> </p>
+        </td>
+        <td><p>readGMACSctl</p></td>
+      </tr><tr><td>
+          <p><code><a href="readGMACSprj.html">readGMACSprj()</a></code> </p>
+        </td>
+        <td><p>readGMACSprj</p></td>
+      </tr><tr><td>
+          <p><code><a href="GMACSversion.html">GMACSversion()</a></code> </p>
+        </td>
+        <td><p>Function to extract the Version number of GMACS</p></td>
+      </tr></tbody><tbody><tr><th colspan="2">
+          <h3 id="functions-to-create-specific-folders-and-clean-output-files-from-gmacs">Functions to create specific folders and clean output files from GMACS <a href="#functions-to-create-specific-folders-and-clean-output-files-from-gmacs" class="anchor" aria-hidden="true"></a></h3>
+          <p class="section-desc"></p>
+        </th>
+      </tr></tbody><tbody><tr><td>
+          <p><code><a href="SetGMACSfold.html">SetGMACSfold()</a></code> </p>
+        </td>
+        <td><p>Create the needed folders to run GMACS</p></td>
+      </tr><tr><td>
+          <p><code><a href="clean_bat.html">clean_bat()</a></code> </p>
+        </td>
+        <td><p>Clean gmacs output files in a folder</p></td>
+      </tr><tr><td>
+          <p><code><a href="clean_files.html">clean_files()</a></code> </p>
+        </td>
+        <td><p>Clean files in a folder</p></td>
+      </tr><tr><td>
+          <p><code><a href="clean_root.html">clean_root()</a></code> </p>
+        </td>
+        <td><p>Clean gmacs compilation-process files in the "root folder"</p></td>
+      </tr><tr><td>
+          <p><code><a href="clean_bat_Sim.html">clean_bat_Sim()</a></code> </p>
+        </td>
+        <td><p>Clean the output files of the Gmacs simulation module</p></td>
+      </tr></tbody><tbody><tr><th colspan="2">
+          <h3 id="functions-to-re-write-the-input-output-files">Functions to (re)write the input/output files <a href="#functions-to-re-write-the-input-output-files" class="anchor" aria-hidden="true"></a></h3>
+          <p class="section-desc"></p>
+        </th>
+      </tr></tbody><tbody><tr><td>
+          <p><code><a href="writeGmacs.dat.html">writeGmacs.dat()</a></code> </p>
+        </td>
+        <td><p>Write the gmacs.dat file</p></td>
+      </tr><tr><td>
+          <p><code><a href="writeGmacsdatfile.html">writeGmacsdatfile()</a></code> </p>
+        </td>
+        <td><p>Write data file</p></td>
+      </tr><tr><td>
+          <p><code><a href="writeGmacsctlfile.html">writeGmacsctlfile()</a></code> </p>
+        </td>
+        <td><p>Write the control file</p></td>
+      </tr><tr><td>
+          <p><code><a href="writeGmacsprjfile.html">writeGmacsprjfile()</a></code> </p>
+        </td>
+        <td><p>Write the projection file</p></td>
+      </tr><tr><td>
+          <p><code><a href="writeGmacsPAR.html">writeGmacsPAR()</a></code> </p>
+        </td>
+        <td><p>Write the gmacs.par file</p></td>
+      </tr></tbody><tbody><tr><th colspan="2">
+          <h2 id="conducting-a-stock-assessment-using-gmacs">Conducting a stock assessment using GMACS <a href="#conducting-a-stock-assessment-using-gmacs" class="anchor" aria-hidden="true"></a></h2>
+          <p class="section-desc"></p><p>Set of functions for working with GMACS while realizing specific tasks (building the gmacs executable, running a stock assessment for one or several stocks, making comparisons between model versions).</p>
+        </th>
+      </tr></tbody><tbody><tr><td>
           <p><code><a href="GMACS.html">GMACS()</a></code> </p>
         </td>
         <td><p>GMACS</p></td>
@@ -138,10 +217,6 @@
         </td>
         <td><p>.GetGmacsExe</p></td>
       </tr><tr><td>
-          <p><code><a href="UpdateGMACS.html">UpdateGMACS()</a></code> </p>
-        </td>
-        <td><p>UpdateGMACS</p></td>
-      </tr><tr><td>
           <p><code><a href="createGmacsExe.html">createGmacsExe()</a></code> </p>
         </td>
         <td><p>Create the Gmacs executable from the tpl file</p></td>
@@ -153,27 +228,63 @@
           <p><code><a href="write_TPL.html">write_TPL()</a></code> </p>
         </td>
         <td><p>write_TPL</p></td>
-      </tr><tr><td>
-          <p><code><a href="clean_bat.html">clean_bat()</a></code> </p>
+      </tr></tbody><tbody><tr><th colspan="2">
+          <h2 id="updating-a-version-of-gmacs-for-a-new-release">Updating a version of GMACS for a new release <a href="#updating-a-version-of-gmacs-for-a-new-release" class="anchor" aria-hidden="true"></a></h2>
+          <p class="section-desc"></p><p>Set of functions for implementing and releasing a new version (including making comparison)</p>
+        </th>
+      </tr></tbody><tbody><tr><td>
+          <p><code><a href="Do_Comp.html">Do_Comp()</a></code> </p>
         </td>
-        <td><p>Clean gmacs output files in a folder</p></td>
+        <td><p>Do_Comp</p></td>
       </tr><tr><td>
-          <p><code><a href="clean_files.html">clean_files()</a></code> </p>
+          <p><code><a href="UpdateGMACS.html">UpdateGMACS()</a></code> </p>
         </td>
-        <td><p>Clean files in a folder</p></td>
+        <td><p>UpdateGMACS</p></td>
+      </tr></tbody><tbody><tr><th colspan="2">
+          <h2 id="realizing-a-simulation-estimation-analysis">Realizing a simulation-estimation analysis <a href="#realizing-a-simulation-estimation-analysis" class="anchor" aria-hidden="true"></a></h2>
+          <p class="section-desc"></p><p>Set of functions to generate simulated data and realize estimations in the context of a simulation-estimation approach.</p>
+        </th>
+      </tr></tbody><tbody><tr><td>
+          <p><code><a href="prepSim.html">prepSim()</a></code> </p>
+        </td>
+        <td><p>Get the original input files for the simulation approach</p></td>
       </tr><tr><td>
-          <p><code><a href="clean_root.html">clean_root()</a></code> </p>
+          <p><code><a href="GenSimFiles.html">GenSimFiles()</a></code> </p>
         </td>
-        <td><p>Clean gmacs compilation-process files in the "root folder"</p></td>
+        <td><p>Generate the input files to get the simulated data for each simulation</p></td>
+      </tr><tr><td>
+          <p><code><a href="SimData.html">SimData()</a></code> </p>
+        </td>
+        <td><p>Generate the simulated data</p></td>
+      </tr><tr><td>
+          <p><code><a href="SaveSimFiles.html">SaveSimFiles()</a></code> </p>
+        </td>
+        <td><p>Save the outputs of each simulation-estimation run</p></td>
+      </tr><tr><td>
+          <p><code><a href="Gen_GmacsSim.html">Gen_GmacsSim()</a></code> </p>
+        </td>
+        <td><p>Generates the simulated data for a set of simulation</p></td>
+      </tr><tr><td>
+          <p><code><a href="RunGmacsSim.html">RunGmacsSim()</a></code> </p>
+        </td>
+        <td><p>Run the GMACS simulation-estimation</p></td>
       </tr></tbody><tbody><tr><th colspan="2">
           <h2 id="manipulating-outputs-from-the-gmacs-function">Manipulating outputs from the GMACS function <a href="#manipulating-outputs-from-the-gmacs-function" class="anchor" aria-hidden="true"></a></h2>
           <p class="section-desc"></p><p>The following functions allow to read GMACS outputs and manipulate the results. These functions are called in the graphical functions.</p>
         </th>
       </tr></tbody><tbody><tr><th colspan="2">
-          <h3 id="read-gmacs-inputs-outputs">Read GMACS inputs/outputs <a href="#read-gmacs-inputs-outputs" class="anchor" aria-hidden="true"></a></h3>
+          <h3 id="read-gmacs-outputs">Read GMACS outputs <a href="#read-gmacs-outputs" class="anchor" aria-hidden="true"></a></h3>
           <p class="section-desc"></p>
         </th>
       </tr></tbody><tbody><tr><td>
+          <p><code><a href="readGMACSpar.html">readGMACSpar()</a></code> </p>
+        </td>
+        <td><p>readGMACSpar</p></td>
+      </tr><tr><td>
+          <p><code><a href="readGMACSsimdat.html">readGMACSsimdat()</a></code> </p>
+        </td>
+        <td><p>readGMACSsimdat</p></td>
+      </tr><tr><td>
           <p><code><a href="read_admb.html">read_admb()</a></code> </p>
         </td>
         <td><p>Read ADMB output files</p></td>
@@ -306,7 +417,7 @@
         </td>
         <td><p>Plot Gmacs on shiny app</p></td>
       </tr></tbody><tbody><tr><th colspan="2">
-          <h3 id="plotting-data-used-and-model-fits">Plotting Data used and model fits <a href="#plotting-data-used-and-model-fits" class="anchor" aria-hidden="true"></a></h3>
+          <h3 id="plotting-data-used-and-model-fits">Plotting data used and model fits <a href="#plotting-data-used-and-model-fits" class="anchor" aria-hidden="true"></a></h3>
           <p class="section-desc"></p>
         </th>
       </tr></tbody><tbody><tr><td>
@@ -489,7 +600,7 @@ ggplot objects can be passed in ..., or to plotlist (as a list of ggplot objects
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>

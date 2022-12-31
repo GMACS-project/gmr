@@ -49,7 +49,6 @@ clean_root<-function(path=".",
 }
 
 
-#'
 #' @title Clean gmacs output files in a folder
 #'
 #' @description Function to clean gmacs output files in a folder specified by \code{path}.
@@ -74,3 +73,48 @@ clean_bat<-function(path=".",verbose=TRUE){
             "personal.rep","gmacs_in.*","gmacs_files_in.dat","*.exe");
   clean_files(path=path,names=names,verbose=verbose);
 }
+
+#' @title Clean the output files of the Gmacs simulation module
+#'
+#' @description Function to clean gmacs output files in a folder when a
+#' simulation-estimation approach has been considered.
+#'
+#' @param path (character string)- names or file path representing root (default: ".")
+#' @param verbose (TRUE/FALSE) flag to print file names being deleted
+#'
+#' @return nothing
+#'
+#' @details Uses \link{clean_files()}.
+#' Deletes files matching "admodel.\*","\*.bar","\*.eva","\*.cor","fmin.log","\*.log","\*.std","gradient.\*",
+#'          "\*.r0\*","\*.p0\*","\*.b0\*","derivatives","ders.dat","mcout\*.\*","checkfile.rep",
+#'          "personal.rep","gmacs_in.\*","gmacs_files_in.dat","\*.exe","\*.a", "gmacs.par",
+#'          "gmacs.dat","gmacs.rep","simdata.out"
+#'
+#' @export
+#' @md
+#'
+clean_bat_Sim<-function(path=".",verbose=TRUE){
+  names = c("admodel.*","*.bar","*.eva","*.cor","fmin.log","*.log","*.std","gradient.*",
+            "*.r0*","*.p0*","*.b0*","derivatives","ders.dat","mcout*.*","checkfile.rep",
+            "personal.rep","gmacs_in.*","gmacs_files_in.dat","*.exe",
+            "*.a","gmacs.par", "gmacs.dat","gmacs.rep","simdata.out");
+  clean_files(path=path,names=names,verbose=verbose);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
