@@ -42,6 +42,26 @@ get_nam <- function(filenames) {
 # ---------------------------------------------------------------------------- #
 # ---------------------------------------------------------------------------- #
 
+# @title Numeric Vectors
+#
+# @description Creates objects of type "character". Uses the basic function
+# (\code{\link[base]{as.character}}).
+#
+# @param x object to be coerced
+#
+# @examples
+# \dontrun{
+# }
+#
+# as.character()
+.ac <- function(x) {
+  out <- as.character(x)
+  return(out)
+}
+
+# ---------------------------------------------------------------------------- #
+# ---------------------------------------------------------------------------- #
+
 # @title read_GMACS.dat
 #
 # @description Reads the gmacs.dat file and extract the names of input files
@@ -60,12 +80,18 @@ get_nam <- function(filenames) {
 # Get file names without extension
 read_GMACS.dat <- function(path) {
   tmp <- readLines(path)
-  Inddat <- which(stringr::str_detect(tmp, "data"))
-  namdat <- tmp[Inddat + 1]
-  Indctl <- which(stringr::str_detect(tmp, "controlfile"))
-  namctl <- tmp[Indctl + 1]
-  Indprj <- which(stringr::str_detect(tmp, "project"))
-  namprj <- tmp[Indprj + 1]
+  # Inddat <- which(stringr::str_detect(tmp, "data"))
+  # namdat <- tmp[Inddat + 1]
+  # Indctl <- which(stringr::str_detect(tmp, "controlfile"))
+  # namctl <- tmp[Indctl + 1]
+  # Indprj <- which(stringr::str_detect(tmp, "project"))
+  # namprj <- tmp[Indprj + 1]
+  Inddat <- which(stringr::str_detect(tmp, ".dat$"))
+  namdat <- tmp[Inddat]
+  Indctl <- which(stringr::str_detect(tmp, ".ctl$"))
+  namctl <- tmp[Indctl]
+  Indprj <- which(stringr::str_detect(tmp, ".prj$"))
+  namprj <- tmp[Indprj]
   return(list(namdat, namctl, namprj))
 }
 
@@ -84,10 +110,8 @@ read_GMACS.dat <- function(path) {
 #
 # @return the (unique) terminal identifier
 #
-#
-#
 GMACS_term <-
-  function(command = "gmacs.exe",
+  function(command = NULL,
            .Dir = NULL,
            verbose = NULL) {
     termId <-
@@ -113,8 +137,6 @@ GMACS_term <-
 #'
 #' @export
 #'
-#'
-#'
 .CallTerm <-
   function(command = command,
            .Dir = NULL,
@@ -125,6 +147,9 @@ GMACS_term <-
                                   show = verbose)
     return(termId)
   }
+
+# ---------------------------------------------------------------------------- #
+# ---------------------------------------------------------------------------- #
 
 #'
 #' @title Is the OS type windows?
@@ -137,3 +162,42 @@ GMACS_term <-
 #'
 isWindowsOS<-function(){return(.Platform$OS.type=="windows")}
 
+# ---------------------------------------------------------------------------- #
+# ---------------------------------------------------------------------------- #
+
+#' @title Function to extract the Version number of GMACS
+#'
+#' @description Extract the version number and the compilation date from the gmacs.tpl
+#'
+#' @param Dir Character string: the directory where the gmacs.exe is hold for the stock
+#' your are currently working on.
+#'
+#' @return a named list with the variable \code{ver} that contains the version number
+#' and \code{Comp} that holds the compilation date and time.
+#'
+#' @export
+#'
+GMACSversion <- function(Dir = NULL) {
+  out <- list()
+
+  oldWD = getwd()
+  on.exit(setwd(oldWD))
+  tmpDir <- unlist(strsplit(Dir, "build"))[1]
+
+  setwd(tmpDir)
+
+  TPL <- readLines("gmacs.tpl")
+  header <- which(stringr::str_detect(TPL, pattern = "!! TheHeader"))
+  header <- TPL[header]
+
+  header <- unlist(strsplit(header, "##"))[2]
+
+  ver <- unlist(strsplit(header, ";"))[1]
+  Comp <- unlist(strsplit(header, ";"))[2]
+  Comp <- unlist(strsplit(Comp, '\\")', ))
+
+  out$ver <- ver
+  out$Comp <- Comp
+
+  return(out)
+}
