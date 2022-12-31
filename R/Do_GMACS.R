@@ -77,7 +77,7 @@ Do_GMACS <- function(Spc = NULL,
     # vv <- 1
 
     # 1.Get an executable for GMACS ----
-    gmacs_exe = ifelse(isWindowsOS(),"gmacs.exe","gmacs")
+    gmacs_exe <- ifelse(isWindowsOS(),"gmacs.exe","gmacs")
     if (compile[vv] == 1) {
       createGmacsExe(vv,Dir,verbose=ifelse(is.logical(verbose),verbose,FALSE))
     } else {
