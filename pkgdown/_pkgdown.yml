@@ -198,6 +198,7 @@ reference:
 - subtitle: Do all plots from gmr
   contents:
   - plot_gmr
+  - plot_basicOutput
   - shiny_gmacs
 - subtitle: Plotting data used and model fits
   contents:

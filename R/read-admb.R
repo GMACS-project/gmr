@@ -25,7 +25,6 @@ read_admb <- function(repfile)
 #' @author Steve Martell, Anders Nielsen, Athol Whitten, D'Arcy N. Webber
 #' @param repfile name of ADMB output file to be read (no extension needed)
 #' @return object of type 'list' with ADMB outputs therein
-#' @export
 #'
 read_fit <- function(repfile)
 {
