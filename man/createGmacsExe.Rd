@@ -4,7 +4,7 @@
 \alias{createGmacsExe}
 \title{Create the Gmacs executable from the tpl file}
 \usage{
-createGmacsExe(vv, Dir, verbose = FALSE, logFiles = FALSE)
+createGmacsExe(vv, Dir, verbose = FALSE, logFiles = FALSE, ADMBpaths = NULL)
 }
 \arguments{
 \item{vv}{\itemize{
@@ -22,6 +22,9 @@ createGmacsExe(vv, Dir, verbose = FALSE, logFiles = FALSE)
 \item{logFiles}{\itemize{
 \item flag (TRUE/FALSE) to create log files during executable creation
 }}
+
+\item{ADMBpaths}{(filepath): absolute or relative to current working directory
+path to file defining required ADMB paths. The default is \code{NULL}.}
 }
 \value{
 nothing
