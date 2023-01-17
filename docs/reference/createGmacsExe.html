@@ -125,7 +125,7 @@ and personal.tpl files.</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">createGmacsExe</span><span class="op">(</span><span class="va">vv</span>, <span class="va">Dir</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span>, logFiles <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">createGmacsExe</span><span class="op">(</span><span class="va">vv</span>, <span class="va">Dir</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span>, logFiles <span class="op">=</span> <span class="cn">FALSE</span>, ADMBpaths <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -148,6 +148,11 @@ and personal.tpl files.</p>
 <dt>logFiles</dt>
 <dd><ul><li><p>flag (TRUE/FALSE) to create log files during executable creation</p></li>
 </ul></dd>
+
+
+<dt>ADMBpaths</dt>
+<dd><p>(filepath): absolute or relative to current working directory
+path to file defining required ADMB paths. The default is <code>NULL</code>.</p></dd>
 
 </dl></div>
     <div id="value">
