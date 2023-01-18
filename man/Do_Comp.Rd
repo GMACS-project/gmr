@@ -15,7 +15,8 @@ Do_Comp(
   LastAssDat = NULL,
   ADMBpaths = NULL,
   make.comp = NULL,
-  verbose = NULL
+  verbose = NULL,
+  out.pdf = FALSE
 )
 }
 \arguments{
@@ -51,6 +52,8 @@ paths for the R variables admbpath, gccpath, and editor.}
 \code{GMACS_version} considered in the analysis.}
 
 \item{verbose}{logical: if \code{TRUE}, report the shell call an its messages to the R console.}
+
+\item{out.pdf}{Logical. Do you want to get the table of comparison in a pdf format?}
 }
 \value{
 For each stock considered in the analysis, this function returns a
