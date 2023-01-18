@@ -878,6 +878,8 @@ readGMACSctl <- function(FileName = NULL,
     get.num(dat, Loc) # standard deviation in M deviations
   # Number of nodes for cubic spline or number of step-changes for option 3
   DatOut[["m_nNodes_sex"]] <- get.df(dat, Loc, nsex)
+  if(is.na(DatOut[["m_nNodes_sex"]]))
+    DatOut[["m_nNodes_sex"]] <- 0
   # Year position of the knots for each sex
   # if(length(DatOut[["m_nNodes_sex"]]) == 1 &&
   #    DatOut[["m_nNodes_sex"]] == 0){
