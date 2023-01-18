@@ -802,7 +802,11 @@ RunGmacsSim <- function(path = NULL,
 
     # 3.1 Copy the Gmacs_Isim.dat towards Gmacs.dat
     GmacsFileNames <- paste("Gmacs_",Isim,".dat",sep="")
-    command1 <- paste0("Copy ",GmacsFileNames," Gmacs.dat")
+
+    # command1 <- paste0("Copy ",GmacsFileNames," Gmacs.dat")
+    cpy_cmd = ifelse(.Platform$OS.type=="windows","Copy","cp");
+    command1 <- paste0(cpy_cmd, GmacsFileNames," Gmacs.dat")
+
     ExeCommand(Com = command1, dir = DirRuns, verbose = verbose)
 
     # 3.2 Run Gmacs and store the execution windows in the a.a file
