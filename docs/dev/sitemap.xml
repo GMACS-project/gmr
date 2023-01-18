@@ -22,6 +22,24 @@
     <loc>/news/index.html</loc>
   </url>
   <url>
+    <loc>/reference/clean_bat.html</loc>
+  </url>
+  <url>
+    <loc>/reference/clean_bat_Sim.html</loc>
+  </url>
+  <url>
+    <loc>/reference/clean_files.html</loc>
+  </url>
+  <url>
+    <loc>/reference/clean_root.html</loc>
+  </url>
+  <url>
+    <loc>/reference/createGmacsExe.html</loc>
+  </url>
+  <url>
+    <loc>/reference/dot-buildGMACS.html</loc>
+  </url>
+  <url>
     <loc>/reference/dot-CallTerm.html</loc>
   </url>
   <url>
@@ -91,7 +109,16 @@
     <loc>/reference/Do_GMACS.html</loc>
   </url>
   <url>
+    <loc>/reference/GenSimFiles.html</loc>
+  </url>
+  <url>
+    <loc>/reference/Gen_GmacsSim.html</loc>
+  </url>
+  <url>
     <loc>/reference/GMACS.html</loc>
+  </url>
+  <url>
+    <loc>/reference/GMACSversion.html</loc>
   </url>
   <url>
     <loc>/reference/gmr-package.html</loc>
@@ -100,7 +127,19 @@
     <loc>/reference/index.html</loc>
   </url>
   <url>
+    <loc>/reference/insertTime.html</loc>
+  </url>
+  <url>
+    <loc>/reference/insertTime2.html</loc>
+  </url>
+  <url>
+    <loc>/reference/isWindowsOS.html</loc>
+  </url>
+  <url>
     <loc>/reference/multiplot.html</loc>
+  </url>
+  <url>
+    <loc>/reference/plot_basicOutput.html</loc>
   </url>
   <url>
     <loc>/reference/plot_catch.html</loc>
@@ -190,7 +229,31 @@
     <loc>/reference/plot_type.html</loc>
   </url>
   <url>
+    <loc>/reference/prepSim.html</loc>
+  </url>
+  <url>
     <loc>/reference/read.OUT.html</loc>
+  </url>
+  <url>
+    <loc>/reference/readGMACS.dat.html</loc>
+  </url>
+  <url>
+    <loc>/reference/readGMACSctl.html</loc>
+  </url>
+  <url>
+    <loc>/reference/readGMACSdat.html</loc>
+  </url>
+  <url>
+    <loc>/reference/readGMACSfiles.html</loc>
+  </url>
+  <url>
+    <loc>/reference/readGMACSpar.html</loc>
+  </url>
+  <url>
+    <loc>/reference/readGMACSprj.html</loc>
+  </url>
+  <url>
+    <loc>/reference/readGMACSsimdat.html</loc>
   </url>
   <url>
     <loc>/reference/read_admb.html</loc>
@@ -208,10 +271,22 @@
     <loc>/reference/read_rep.html</loc>
   </url>
   <url>
+    <loc>/reference/RunGmacsSim.html</loc>
+  </url>
+  <url>
+    <loc>/reference/SaveSimFiles.html</loc>
+  </url>
+  <url>
+    <loc>/reference/SetGMACSfold.html</loc>
+  </url>
+  <url>
     <loc>/reference/set_ggtheme.html</loc>
   </url>
   <url>
     <loc>/reference/shiny_gmacs.html</loc>
+  </url>
+  <url>
+    <loc>/reference/SimData.html</loc>
   </url>
   <url>
     <loc>/reference/table_catch.html</loc>
@@ -230,5 +305,23 @@
   </url>
   <url>
     <loc>/reference/UpdateGMACS.html</loc>
+  </url>
+  <url>
+    <loc>/reference/writeGmacs.dat.html</loc>
+  </url>
+  <url>
+    <loc>/reference/writeGmacsctlfile.html</loc>
+  </url>
+  <url>
+    <loc>/reference/writeGmacsdatfile.html</loc>
+  </url>
+  <url>
+    <loc>/reference/writeGmacsPAR.html</loc>
+  </url>
+  <url>
+    <loc>/reference/writeGmacsprjfile.html</loc>
+  </url>
+  <url>
+    <loc>/reference/write_TPL.html</loc>
   </url>
 </urlset>
