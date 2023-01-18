@@ -602,7 +602,7 @@ SaveSimFiles <- function(simDat = NULL,
                     FileName = simDat$GmacsFile$PrjFileName,
                     PrjFile = simDat$PrjFile)
 
-  # Write the Spc.prj ?
+  # Write the Spc.pin ?
   if(UsePar)
     writeGmacsPAR(Dir = DirRuns,
                   FileName = "gmacs.pin",
@@ -804,7 +804,7 @@ RunGmacsSim <- function(path = NULL,
     GmacsFileNames <- paste("Gmacs_",Isim,".dat",sep="")
 
     # command1 <- paste0("Copy ",GmacsFileNames," Gmacs.dat")
-    cpy_cmd = ifelse(.Platform$OS.type=="windows","Copy","cp");
+    cpy_cmd = ifelse(.Platform$OS.type=="windows","Copy ","cp ");
     command1 <- paste0(cpy_cmd, GmacsFileNames," Gmacs.dat")
 
     ExeCommand(Com = command1, dir = DirRuns, verbose = verbose)
@@ -812,6 +812,13 @@ RunGmacsSim <- function(path = NULL,
     # 3.2 Run Gmacs and store the execution windows in the a.a file
     command2 <- paste(ifelse(.Platform$OS.type=="windows",gmacs_exe,paste0("./",gmacs_exe)), " -est >a.a", sep = "")
     ExeCommand(Com = command2, dir = DirRuns, verbose = verbose)
+
+    # 3.3 Save the results of the estimation
+    # Copy the GmacsAll.out for simulation Isim towards GmacsAll_Sim_Isim.out
+    namOut <- paste0("gmacsAll_Sim_", Isim, ".out")
+    cpy_cmd = ifelse(.Platform$OS.type=="windows","Copy ","cp ");
+    command3 <- paste0(cpy_cmd, "gmacsall.out ", namOut)
+    ExeCommand(Com = command3, dir = DirRuns, verbose = verbose)
   } # end Nsim
 
   close(pb)
