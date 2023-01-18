@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">gmr</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">0.1.1.0</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">1.3.2.1</span>
       </span>
     </div>
 
@@ -66,6 +66,15 @@
       <a href="../news/index.html">Changelog</a>
     </li>
     <li>
+      <a href="https://github.com/GMACS-project/gmr/releases/tag/V1.3.2.1" class="external-link">gmr V 1.3.2.1</a>
+    </li>
+    <li>
+      <a href="https://github.com/GMACS-project/gmr/releases/tag/V1.3.0" class="external-link">gmr V 1.3.0</a>
+    </li>
+    <li>
+      <a href="https://github.com/GMACS-project/gmr/releases/tag/V1.2.0" class="external-link">gmr V 1.2.0</a>
+    </li>
+    <li>
       <a href="https://github.com/GMACS-project/gmr/releases/tag/V0.1.1.0" class="external-link">gmr V 0.1.1.0</a>
     </li>
     <li>
@@ -112,11 +121,9 @@
     </div>
 
     <div class="section level2">
-<h2 class="page-header" data-toc-text="0.1.1.9000" id="gmr-0119000">gmr 0.1.1.9000<a class="anchor" aria-label="anchor" href="#gmr-0119000"></a></h2>
+<h2 class="page-header" data-toc-text="1.3.0.9001" id="gmr-1309001">gmr 1.3.0.9001<a class="anchor" aria-label="anchor" href="#gmr-1309001"></a></h2>
 <hr><p>Here are some of the items for the next release:</p>
 <ul class="task-list"><li>
-<input type="checkbox" disabled checked>Build a website</li>
-<li>
 <input type="checkbox" disabled>Check all plotting functions</li>
 <li>
 <input type="checkbox" disabled>Improve code</li>
@@ -128,6 +135,57 @@
 <input type="checkbox" disabled>Add data and implement examples in the package</li>
 </ul></div>
     <div class="section level2">
+<h2 class="page-header" data-toc-text="1.3.0" id="gmr-130">gmr 1.3.0<a class="anchor" aria-label="anchor" href="#gmr-130"></a></h2>
+<hr><p>(GitHub issue/PR numbers in parentheses)</p>
+<p>This is a minor version update of <code>gmr</code> that includes new functions to i) work with the simulation module of GMACS, ii) read input and some output files of GMACS and, iii) write the GMACS input files.</p>
+<div class="section level3">
+<h3 id="new-functions-1-3-0">New functions<a class="anchor" aria-label="anchor" href="#new-functions-1-3-0"></a></h3>
+<ol style="list-style-type: decimal"><li>Functions to read GMACS input files</li></ol><ul><li>
+<code><a href="../reference/readGMACSfiles.html">readGMACSfiles()</a></code>: Function to read all the GMACS input files</li>
+<li>
+<code><a href="../reference/readGMACS.dat.html">readGMACS.dat()</a></code>: Function to read the gmacs.dat file</li>
+<li>
+<code><a href="../reference/readGMACSdat.html">readGMACSdat()</a></code>: Function to read the the data file</li>
+<li>
+<code><a href="../reference/readGMACSctl.html">readGMACSctl()</a></code>: Function to read the control file</li>
+<li>
+<code>readGMACSprj</code>: Function to read the projection file All these functions return the input files as a named list.</li>
+</ul><ol style="list-style-type: decimal"><li>Functions to write the GMACS input/output files <em><code><a href="../reference/writeGmacs.dat.html">writeGmacs.dat()</a></code>: function to write the gmacs.dat file </em><code><a href="../reference/writeGmacsdatfile.html">writeGmacsdatfile()</a></code>: function to write data file <em><code><a href="../reference/writeGmacsctlfile.html">writeGmacsctlfile()</a></code>: function to write the control file </em><code><a href="../reference/writeGmacsprjfile.html">writeGmacsprjfile()</a></code>: function to write the projection file *<code><a href="../reference/writeGmacsPAR.html">writeGmacsPAR()</a></code>: function to write the gmacs.par file</li></ol><ul><li>
+<code><a href="../reference/GMACSversion.html">GMACSversion()</a></code>: Function to extract the Version number of GMACS</li></ul><ol style="list-style-type: decimal"><li>Generate simulation using GMACS <em><code><a href="../reference/prepSim.html">prepSim()</a></code>: function to get the original input files for the simulation approach </em><code><a href="../reference/GenSimFiles.html">GenSimFiles()</a></code>: function to get generate the input files to get the simulated data for each simulation <em><code><a href="../reference/SimData.html">SimData()</a></code>: Function to generate the data </em><code><a href="../reference/SaveSimFiles.html">SaveSimFiles()</a></code>: Function to save the outputs of each simulation-estimation run <em><code><a href="../reference/Gen_GmacsSim.html">Gen_GmacsSim()</a></code>: Function to generates the simulated data for a set of simulation </em><code><a href="../reference/RunGmacsSim.html">RunGmacsSim()</a></code>: Function to run the GMACS simulation-estimation *<code><a href="../reference/clean_bat_Sim.html">clean_bat_Sim()</a></code>: Function to clean gmacs simulation-estimation approach</li></ol></div>
+<div class="section level3">
+<h3 id="updated-functions-1-3-0">Updated functions<a class="anchor" aria-label="anchor" href="#updated-functions-1-3-0"></a></h3>
+<ul><li><code><a href="../reference/Do_GMACS.html">Do_GMACS()</a></code></li>
+<li><code>read_GMACS.dat()</code></li>
+<li><code><a href="../reference/Do_Comp.html">Do_Comp()</a></code></li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="1.2.0" id="gmr-120">gmr 1.2.0<a class="anchor" aria-label="anchor" href="#gmr-120"></a></h2>
+<hr><p>(GitHub issue/PR numbers in parentheses)</p>
+<p>This is a minor version update that includes modification of some functions to make <code>gmr</code> compatible with MacOs/Linux and avoid the use of paste() and paste0() for defining file paths to file.path. Some additions have also been made in function documentation (<a href="https://github.com/GMACS-project/gmr/issues/13" class="external-link">#13</a>).</p>
+<p><em>Versioning has been updated correctly. (change from 0.1.1 to 1.2.0).</em></p>
+<div class="section level3">
+<h3 id="new-functions-1-2-0">New functions<a class="anchor" aria-label="anchor" href="#new-functions-1-2-0"></a></h3>
+<ul><li>
+<code><a href="../reference/createGmacsExe.html">createGmacsExe()</a></code>: Function to get the GMACS executable from TPL file.</li>
+<li>
+<code><a href="../reference/clean_files.html">clean_files()</a></code>: Function to clean files in a specific folder.</li>
+<li>
+<code><a href="../reference/clean_root.html">clean_root()</a></code>: Function to clean gmacs compilation-process files in the “root folder”.</li>
+<li>
+<code><a href="../reference/clean_bat.html">clean_bat()</a></code>: Function to clean gmacs output files in a folder.</li>
+<li>
+<code>isWindowsOS</code>: Identify if the OS type is windows</li>
+</ul></div>
+<div class="section level3">
+<h3 id="updated-functions-1-2-0">Updated functions<a class="anchor" aria-label="anchor" href="#updated-functions-1-2-0"></a></h3>
+<ul><li><code><a href="../reference/Do_GMACS.html">Do_GMACS()</a></code></li>
+<li><code><a href="../reference/dot-buildGMACS.html">.buildGMACS()</a></code></li>
+<li>
+<code><a href="../reference/write_TPL.html">write_TPL()</a></code>: is now exported (<a href="https://github.com/GMACS-project/gmr/issues/11" class="external-link">#11</a>).</li>
+</ul></div>
+</div>
+    <div class="section level2">
 <h2 class="page-header" data-toc-text="0.1.1" id="gmr-011">gmr 0.1.1<a class="anchor" aria-label="anchor" href="#gmr-011"></a></h2>
 <hr><p>(GitHub issue/PR numbers in parentheses)</p>
 <p>This new version allows to directly run GMACS within R instead of going through the various windows prompt (<a href="https://github.com/GMACS-project/gmr/issues/1" class="external-link">#1</a>).</p>
@@ -136,7 +194,7 @@
 <ul><li>
 <code><a href="../reference/GMACS.html">GMACS()</a></code>, which allows you to compile, run and make comparison of different versions of GMACS for one or several stocks. This is the main function to work with the GMACS model with the <code>gmr</code> package.</li>
 <li>
-<code>Do_GMACS</code>, which is called by the <code><a href="../reference/GMACS.html">GMACS()</a></code> function. It allows to build the GMACS executable, run the model and make comparison between multiple versions of GMACS if the user ask for.</li>
+<code><a href="../reference/Do_GMACS.html">Do_GMACS()</a></code>, which is called by the <code><a href="../reference/GMACS.html">GMACS()</a></code> function. It allows to build the GMACS executable, run the model and make comparison between multiple versions of GMACS if the user ask for.</li>
 <li>
 <code><a href="../reference/Do_Comp.html">Do_Comp()</a></code>, which establishes comparison tables of management quantities between different versions of GMACS.</li>
 <li>
