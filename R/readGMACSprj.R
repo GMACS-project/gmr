@@ -241,6 +241,10 @@ readGMACSprj <- function(FileName = NULL, verbose =TRUE) {
   # End of data file
   # -------------------------------------------------------------------------
   eof <- get.num(dat, Loc)
+  if(eof != 9999){
+    cat("\n\nSomething went wrong while reading the projection file !!\n")
+    stop()
+  }
   if (verbose) {
     cat("====================================================\n")
     cat("Read of projection file complete. Final value = ", eof, "\n")

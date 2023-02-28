@@ -4,12 +4,12 @@
 #' the predicted catch and cpue from an assessment run as well as the observed
 #' and predicted size compositions.
 #'
-#' @param Dir - path to the "simulated" data file (output from GMACS)
-#' @param FileName - name of the "simulated" data file - By default, "simdata.out"
-#' @param verbose - (TRUE/FALSE); flag to print processing information
-#' @param DatFile - Object (list) containing the .dat file - This is the output
+#' @param Dir (character string)- path to the "simulated" data file (output from GMACS)
+#' @param FileName (character string)- name of the "simulated" data file - By default, "simdata.out"
+#' @param verbose (logical)- flag to print processing information
+#' @param DatFile (list)- Object containing the .dat file - This is the output
 #' of the [readGMACSdat()] function.
-#' @param CtlFile - Object (list) containing the .ctl file - This is the output
+#' @param CtlFile (list)- Object (list) containing the .ctl file - This is the output
 #' of the [readGMACSctl()] function.
 #'
 #' @return the simdata.out file as a named list.

@@ -21,12 +21,14 @@
 #' @md
 #
 readGMACSfiles <- function(Dir = NULL, verbose = NULL) {
-  oldWD <- getwd()
 
+  oldWD <- getwd()
   on.exit(setwd(oldWD))
 
+  if(verbose){
   cat("--Setting working directory to '", Dir, "' \n", sep = "")
   cat("\n")
+  }
   setwd(Dir)
 
   # Read gmacs.dat

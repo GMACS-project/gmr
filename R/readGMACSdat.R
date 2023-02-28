@@ -2,8 +2,8 @@
 #'
 #' @description Read the GMACS data file.
 #
-#' @param FileName - path (and name) of the data file (e.g. snow.data)
-#' @param verbose - (TRUE/FALSE); flag to print processing information
+#' @param FileName (character string)- path (and name) of the data file (e.g. snow.data)
+#' @param verbose (logical)- (TRUE/FALSE); flag to print processing information
 #'
 #' @return the .dat file as a named list.
 #'
@@ -133,10 +133,16 @@ readGMACSdat <- function(FileName = NULL,
       "1" = "Retained",
       "2" = "Discard"
     )
+    mat <- base::switch(
+      .ac(unique(df[, "Maturity"])),
+      "0" = "BothMat",
+      "1" = "Mature",
+      "2" = "Immat"
+    )
     fleet <-
       c(DatOut$F_Fleet_names, DatOut$Survey_names)[unique(df[, "fleet"])]
     Seas <- paste0("Seas", unique(df[, "seas"]))
-    nam <- paste(sex, type, fleet, Seas, sep = "_")
+    nam <- paste(sex, mat, type, fleet, Seas, sep = "_")
     return(nam)
   }
   # -------------------------------------------------------------------------
@@ -319,11 +325,14 @@ readGMACSdat <- function(FileName = NULL,
   DatOut[["N_SurveyDF"]] <-
     get.num(dat, Loc) # Number of relative abundance indices
 
-  if (DatOut$N_SurveyDF != length(DatOut$Survey_names)) {
-    cat(
-      "The number of relative abundance indices does not correspond to the\nnumber of survey names. GMACS will consider CPUE index"
-    )
+  if(verbose){
+    if (DatOut$N_SurveyDF != length(DatOut$Survey_names)) {
+      cat(
+        "The number of relative abundance indices does not correspond to the\nnumber of survey names. GMACS will consider CPUE index"
+      )
+    }
   }
+
   if (DatOut$N_SurveyDF == 1) {
     # Data type for each abundance index (1: total selectivity; 2:retention*selectivity)
     DatOut[["Sv_type"]] <- get.num(dat, Loc)
@@ -439,6 +448,12 @@ readGMACSdat <- function(FileName = NULL,
   # End of data file
   # -------------------------------------------------------------------------
   eof <- get.num(dat, Loc)
+
+  if(eof != 9999){
+    cat("\n\nSomething went wrong while reading the data file !!\n")
+    stop()
+  }
+
   if (verbose) {
     cat("====================================================\n")
     cat("Read of data file complete. Final value = ", eof, "\n")

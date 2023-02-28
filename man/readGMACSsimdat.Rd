@@ -13,27 +13,17 @@ readGMACSsimdat(
 )
 }
 \arguments{
-\item{Dir}{\itemize{
-\item path to the "simulated" data file (output from GMACS)
-}}
+\item{Dir}{(character string)- path to the "simulated" data file (output from GMACS)}
 
-\item{FileName}{\itemize{
-\item name of the "simulated" data file - By default, "simdata.out"
-}}
+\item{FileName}{(character string)- name of the "simulated" data file - By default, "simdata.out"}
 
-\item{verbose}{\itemize{
-\item (TRUE/FALSE); flag to print processing information
-}}
+\item{verbose}{(logical)- flag to print processing information}
 
-\item{DatFile}{\itemize{
-\item Object (list) containing the .dat file - This is the output
-of the \code{\link[=readGMACSdat]{readGMACSdat()}} function.
-}}
+\item{DatFile}{(list)- Object containing the .dat file - This is the output
+of the \code{\link[=readGMACSdat]{readGMACSdat()}} function.}
 
-\item{CtlFile}{\itemize{
-\item Object (list) containing the .ctl file - This is the output
-of the \code{\link[=readGMACSctl]{readGMACSctl()}} function.
-}}
+\item{CtlFile}{(list)- Object (list) containing the .ctl file - This is the output
+of the \code{\link[=readGMACSctl]{readGMACSctl()}} function.}
 }
 \value{
 the simdata.out file as a named list.

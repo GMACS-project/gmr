@@ -7,18 +7,14 @@
 readGMACSctl(FileName = NULL, verbose = TRUE, DatFile = NULL, nyrRetro = NULL)
 }
 \arguments{
-\item{FileName}{\itemize{
-\item path (and name (e.g. snow.ctl)) of the control file
-}}
+\item{FileName}{(character string)- path (and name (e.g. snow.ctl)) of the control file}
 
-\item{verbose}{\itemize{
-\item (TRUE/FALSE); flag to print processing information
-}}
+\item{verbose}{(logical)- (TRUE/FALSE); flag to print processing information}
 
-\item{DatFile}{\itemize{
-\item Object (list) containing the .dat file - This is the output
-of the \code{\link[=readGMACSdat]{readGMACSdat()}} function.
-}}
+\item{DatFile}{(list)- Object containing the .dat file - This is the output
+of the \code{\link[=readGMACSdat]{readGMACSdat()}} function.}
+
+\item{nyrRetro}{(integer)- Number of year for the retrospective analysis}
 }
 \value{
 the .ctl file as a named list.

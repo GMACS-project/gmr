@@ -2,10 +2,11 @@
 #'
 #' @description Read the GMACS control file.
 #
-#' @param FileName - path (and name (e.g. snow.ctl)) of the control file
-#' @param verbose - (TRUE/FALSE); flag to print processing information
-#' @param DatFile - Object (list) containing the .dat file - This is the output
+#' @param FileName (character string)- path (and name (e.g. snow.ctl)) of the control file
+#' @param verbose (logical)- (TRUE/FALSE); flag to print processing information
+#' @param DatFile (list)- Object containing the .dat file - This is the output
 #' of the [readGMACSdat()] function.
+#' @param nyrRetro (integer)- Number of year for the retrospective analysis
 #'
 #' @return the .ctl file as a named list.
 #'
@@ -1099,18 +1100,12 @@
 #   return(DatOut)
 # }
 # ----------------------------------------------------------
+
 readGMACSctl <- function(FileName = NULL,
                          verbose = TRUE,
                          DatFile = NULL,
                          nyrRetro = NULL) {
-  nsex <- DatFile$N_sexes
-  Start_Y <- DatFile$Start_Y
-  End_Y <- DatFile$End_Y
-  nyrRetro <- End_Y - nyrRetro
-  nclass <- DatFile$N_sizeC
-  N_fleet <- DatFile$N_fleet
 
-  DatOut <- list()
   # 1- Internal functions
   # -------------------------------------------------------------------------
   # @title get.num
@@ -1425,6 +1420,14 @@ readGMACSctl <- function(FileName = NULL,
   }
   # -------------------------------------------------------------------------
 
+  nsex <- DatFile$N_sexes
+  Start_Y <- DatFile$Start_Y
+  End_Y <- DatFile$End_Y
+  nyrRetro <- End_Y - nyrRetro
+  nclass <- DatFile$N_sizeC
+  N_fleet <- DatFile$N_fleet
+
+  DatOut <- list()
 
 
   # 2- Read the control file and find the first line containing numeric data
@@ -1481,7 +1484,7 @@ readGMACSctl <- function(FileName = NULL,
       "p2")
 
   if (verbose)
-    cat("-> Read key parameter control \n")
+    cat("\t-> Read key parameter control \n")
   # -------------------------------------------------------------------------
 
   # Custom input data
@@ -1531,7 +1534,7 @@ readGMACSctl <- function(FileName = NULL,
     }
   }
   if (verbose)
-    cat("-> Read allometry parameter control \n")
+    cat("\t-> Read allometry parameter control \n")
 
   # Fecundity for MMB/MMA calculation
   DatOut[["maturity"]] <-
@@ -1545,7 +1548,7 @@ readGMACSctl <- function(FileName = NULL,
                  "1" = get.vec(dat, Loc),
                  "2" = get.df(dat, Loc, nrow = nsex))
   if (verbose)
-    cat("-> Read Fecundity parameter control for MMB/MMA calculation \n")
+    cat("\t-> Read Fecundity parameter control for MMB/MMA calculation \n")
   # -------------------------------------------------------------------------
 
   # Growth parameter controls
@@ -1573,8 +1576,11 @@ readGMACSctl <- function(FileName = NULL,
                  # Number of size increment periods
                  "1" = get.num(dat, Loc),
                  "2" = get.vec(dat, Loc))
+
+
   # Year(s) with changes in growth matrix - size increment (blank if no change)
   tmpSizeIncVaries <- NULL
+
   for (s in 1:nsex)
     tmpSizeIncVaries <-
     c(tmpSizeIncVaries, DatOut[["nSizeIncVaries"]][s] - 1)
@@ -1585,17 +1591,31 @@ readGMACSctl <- function(FileName = NULL,
     } else {
       DatOut[["iYrsSizeIncChanges"]] <- get.vec(dat, Loc)
     }
-    # } else if (nsex > 1 & min(tmpSizeIncVaries) > 0) {
   } else if (nsex > 1 && max(tmpSizeIncVaries) > 0) {
-    tmpYearsizeVaries <- get.vec(dat, Loc)
+
+    # tmpYearsizeVaries <- get.vec(dat, Loc)
+    if(min(tmpSizeIncVaries)==0){
+      tmpYearsizeVaries <- get.vec(dat, Loc)
+    } else {
+      tmpYearsizeVaries <- get.df(dat, Loc, nrow = nsex)
+    }
+
     tmp <- matrix(NA, nrow = nsex, ncol = max(tmpSizeIncVaries))
+
     for (s in 1:nsex) {
       if (tmpSizeIncVaries[s] == 0) {
-        tmp[s, ] <- NA
+        tmp[s,] <- NA
+
       } else if (tmpSizeIncVaries[s] == 1) {
-        tmp[s, ] <- tmpYearsizeVaries[s]
+        tmp[s,1] <- tmpYearsizeVaries[s,1]
+
       } else {
-        tmp[s, ] <- tmpYearsizeVaries
+        if(min(tmpSizeIncVaries)==0){
+          tmp[s,] <- tmpYearsizeVaries
+
+        } else {
+          tmp[s,] <- tmpYearsizeVaries[s,]
+        }
       }
     }
     DatOut[["iYrsSizeIncChanges"]] <- tmp
@@ -1608,6 +1628,7 @@ readGMACSctl <- function(FileName = NULL,
                  # Number of molt periods
                  "1" = get.num(dat, Loc),
                  "2" = get.vec(dat, Loc))
+
   # Year(s) molt period changes (blank if no change)
   tmpMoltVaries <- NULL
   for (s in 1:nsex)
@@ -1620,18 +1641,35 @@ readGMACSctl <- function(FileName = NULL,
     } else {
       DatOut[["iYrsMoltChanges"]] <- get.vec(dat, Loc)
     }
+
   } else if (nsex > 1 && max(tmpMoltVaries) > 0) {
-    # DatOut[["iYrsMoltChanges"]] <- get.df(dat, Loc, nrow = nsex)
-    tmpYearMoltVaries <- get.vec(dat, Loc)
+
+    # tmpYearMoltVaries <- get.vec(dat, Loc)
+    if(min(tmpMoltVaries)==0){
+      tmpYearMoltVaries <- get.vec(dat, Loc)
+    } else {
+      tmpYearMoltVaries <- get.df(dat, Loc, nrow = nsex)
+    }
+
 
     tmp <- matrix(NA, nrow = nsex, ncol = max(tmpMoltVaries))
+
     for (s in 1:nsex) {
+
       if (tmpMoltVaries[s] == 0) {
-        tmp[s, ] <- NA
+        tmp[s,] <- NA
+
       } else if (tmpMoltVaries[s] == 1) {
-        tmp[s, ] <- tmpYearMoltVaries[s]
+        tmp[s,1] <- tmpYearMoltVaries[s,1]
+
       } else {
-        tmp[s, ] <- tmpYearMoltVaries
+        # tmp[s,] <- tmpYearMoltVaries
+        if(min(tmpMoltVaries)==0){
+          tmp[s,] <- tmpYearMoltVaries
+        } else {
+          tmp[s,] <- tmpYearMoltVaries[s,]
+
+        }
       }
     }
     DatOut[["iYrsMoltChanges"]] <- tmp
@@ -1649,36 +1687,43 @@ readGMACSctl <- function(FileName = NULL,
   for (s in 1:nsex)
   {
     if (DatOut[["bUseGrowthIncrementModel"]] == 1)
-      nSizeIncPar <-
-        nSizeIncPar + DatOut[["nSizeIncVaries"]][s] * 3 # LINEAR_GROWTHMODEL
+      nGrwth <-
+        nGrwth + DatOut[["nSizeIncVaries"]][s] * 3 # LINEAR_GROWTHMODEL
     if (DatOut[["bUseGrowthIncrementModel"]] == 2)
-      nSizeIncPar <-
-        nSizeIncPar + DatOut[["nSizeIncVaries"]][s] * (nclass + 1) # INDIVIDUAL_GROWTHMODEL1
+      nGrwth <-
+        nGrwth + DatOut[["nSizeIncVaries"]][s] * (nclass + 1) # INDIVIDUAL_GROWTHMODEL1
     if (DatOut[["bUseGrowthIncrementModel"]] == 3)
-      nSizeIncPar <-
-        nSizeIncPar + DatOut[["nSizeIncVaries"]][s] * (nclass + 1) # INDIVIDUAL_GROWTHMODEL2
+      nGrwth <-
+        nGrwth + DatOut[["nSizeIncVaries"]][s] * (nclass + 1) # INDIVIDUAL_GROWTHMODEL2
     if (DatOut[["bUseGrowthIncrementModel"]] == 5)
-      nSizeIncPar <-
-        nSizeIncPar + DatOut[["nSizeIncVaries"]][s] * 3 # GROWTH_VARYK
+      nGrwth <-
+        nGrwth + DatOut[["nSizeIncVaries"]][s] * 3 # GROWTH_VARYK
     if (DatOut[["bUseGrowthIncrementModel"]] == 6)
-      nSizeIncPar <-
-        nSizeIncPar + DatOut[["nSizeIncVaries"]][s] * 3 # GROWTH_VARYLINF
+      nGrwth <-
+        nGrwth + DatOut[["nSizeIncVaries"]][s] * 3 # GROWTH_VARYLINF
     if (DatOut[["bUseGrowthIncrementModel"]] == 7)
-      nSizeIncPar <-
-        nSizeIncPar + DatOut[["nSizeIncVaries"]][s] * 4 # GROWTH_VARYKLINF
+      nGrwth <-
+        nGrwth + DatOut[["nSizeIncVaries"]][s] * 4 # GROWTH_VARYKLINF
     if (DatOut[["bUseCustomMoltProbability"]] == 2)
-      nGrwth <-
-        nGrwth + DatOut[["nMoltVaries"]][s] * 2 # LOGISTIC_PROB_MOLT
+      nSizeIncPar <-
+        nSizeIncPar + DatOut[["nMoltVaries"]][s] * 2 # LOGISTIC_PROB_MOLT
     if (DatOut[["bUseCustomMoltProbability"]] == 3)
-      nGrwth <-
-        nGrwth + DatOut[["nMoltVaries"]][s] * (nclass) # FREE_PROB_MOLT
+      nSizeIncPar <-
+        nSizeIncPar + DatOut[["nMoltVaries"]][s] * (nclass) # FREE_PROB_MOLT
   }
-  nGrwth <- nGrwth + nSizeIncPar
+  # nGrwth <- nGrwth + nSizeIncPar
   DatOut[["nGrwth"]] <- nGrwth
   DatOut[["nSizeIncPar"]] <- nSizeIncPar
+
   DatOut[["Grwth_control"]] <-
     get.df(dat, Loc, nrow = nGrwth) # Growth parameters control
+
+  DatOut[["MoltProb_control"]] <-
+    get.df(dat, Loc, nrow = nSizeIncPar) # Growth parameters control
+
+
   colnames(DatOut[["Grwth_control"]]) <-
+    colnames(DatOut[["MoltProb_control"]]) <-
     c("Init_val",
       "Lower_Bd",
       "Upper_Bd",
@@ -1713,7 +1758,7 @@ readGMACSctl <- function(FileName = NULL,
   # +++++++++++++++++++++++++++++
 
   if (verbose)
-    cat("-> Read growth parameter controls \n")
+    cat("\t-> Read growth parameter controls \n")
   # -------------------------------------------------------------------------
 
   # Selectivity parameter controls
@@ -1755,6 +1800,7 @@ readGMACSctl <- function(FileName = NULL,
     get.df(dat, Loc, nrow = nsex) # Extra parameter for each pattern
   DatOut[["slx_max_at_1_in"]] <-
     get.vec(dat, Loc) # Selectivity for the maximum size class if forced to be 1?
+
   # Define the number of rows for each vulnerability matrix
   nRowsSelex <- getNrowsVulCtl(
     slx_period = DatOut[["slx_nsel_period_in"]],
@@ -1853,7 +1899,7 @@ readGMACSctl <- function(FileName = NULL,
       "Phase")
 
   if (verbose)
-    cat("-> Read Vulnerability parameter controls \n")
+    cat("\t-> Read Vulnerability parameter controls \n")
   # -------------------------------------------------------------------------
 
   # Priors for catchabilities of surveys
@@ -1879,7 +1925,7 @@ readGMACSctl <- function(FileName = NULL,
     )
 
   if (verbose)
-    cat("-> Read catchability parameter controls \n")
+    cat("\t-> Read catchability parameter controls \n")
   # -------------------------------------------------------------------------
 
   # Additional survey CV control
@@ -1907,7 +1953,7 @@ readGMACSctl <- function(FileName = NULL,
     DatOut[["add_cv_links"]] <- ""
   }
   if (verbose)
-    cat("-> Read additional CV controls \n")
+    cat("\t-> Read additional CV controls \n")
   # -------------------------------------------------------------------------
 
   # Penalties for fishing mortality control
@@ -1933,7 +1979,7 @@ readGMACSctl <- function(FileName = NULL,
       "Up_bd_Y_female_F"
     )
   if (verbose)
-    cat("-> Read fishing mortality penalty controls \n")
+    cat("\t-> Read fishing mortality penalty controls \n")
   # -------------------------------------------------------------------------
 
   # Size composition data control
@@ -1959,7 +2005,7 @@ readGMACSctl <- function(FileName = NULL,
     get.vec(dat, Loc) # Weight for likelihood
 
   if (verbose)
-    cat("-> Read size compositon data controls \n")
+    cat("\t-> Read size compositon data controls \n")
   # -------------------------------------------------------------------------
 
 
@@ -1982,22 +2028,26 @@ readGMACSctl <- function(FileName = NULL,
     get.num(dat, Loc) # Phase of estimation for M
   DatOut[["m_stdev"]] <-
     get.num(dat, Loc) # standard deviation in M deviations
+
   # Number of nodes for cubic spline or number of step-changes for option 3
+  # if(nsex == 1){
+  #   DatOut[["m_nNodes_sex"]] <- get.num(dat, Loc)
+  # } else {
+  #   tmp <- get.num(dat, Loc)
+  #   if(tmp == 0){
+  #     DatOut[["m_nNodes_sex"]] <- tmp
+  #   } else {
+  #     Loc <- Loc -1
+  #     DatOut[["m_nNodes_sex"]] <- get.df(dat, Loc, nsex)
+  #   }
+  # }
   DatOut[["m_nNodes_sex"]] <- get.df(dat, Loc, nsex)
-  if (is.na(DatOut[["m_nNodes_sex"]]))
-    DatOut[["m_nNodes_sex"]] <- 0
-  # Year position of the knots for each sex
-  # if(length(DatOut[["m_nNodes_sex"]]) == 1 &&
-  #    DatOut[["m_nNodes_sex"]] == 0){
-  #   DatOut[["m_nodeyear_sex"]] <- ""
-  # } else
 
 
-
-  if (length(DatOut[["m_nNodes_sex"]]) == 1 &&
+  if (dim(DatOut[["m_nNodes_sex"]])[1] == 1 &&
       DatOut[["m_nNodes_sex"]] == 0) {
     DatOut[["m_nodeyear_sex"]] <- ""
-  } else if (length(DatOut[["m_nNodes_sex"]]) == 1 &&
+  } else if (dim(DatOut[["m_nNodes_sex"]])[1] == 1 &&
              DatOut[["m_nNodes_sex"]] != 0) {
     #Need to be checked
     DatOut[["m_nodeyear_sex"]] <- get.num(dat, Loc)
@@ -2014,16 +2064,16 @@ readGMACSctl <- function(FileName = NULL,
       for (s in 1:nsex) {
         if (DatOut[["m_nNodes_sex"]][s, 1] == 1) {
           if (DatOut[["m_nNodes_sex"]][s, 1] == max(DatOut[["m_nNodes_sex"]])) {
-            tmp[s,] <- get.num(dat, Loc)
+            tmp[s, ] <- get.num(dat, Loc)
           } else {
-            tmp[s,] <-
+            tmp[s, ] <-
               c(get.num(dat, Loc), rep(NA, max(DatOut[["m_nNodes_sex"]]) - 1))
           }
         } else {
           if (DatOut[["m_nNodes_sex"]][s, 1] == max(DatOut[["m_nNodes_sex"]])) {
-            tmp[s,] <- get.vec(dat, Loc)
+            tmp[s, ] <- get.vec(dat, Loc)
           } else {
-            tmp[s,] <-
+            tmp[s, ] <-
               c(get.vec(dat, Loc), rep(NA, DatOut[["m_nNodes_sex"]][s, 1] - 1))
           }
 
@@ -2077,7 +2127,7 @@ readGMACSctl <- function(FileName = NULL,
   }
 
   if (verbose)
-    cat("-> Read natural moratlity controls \n")
+    cat("\t-> Read natural moratlity controls \n")
   # -------------------------------------------------------------------------
 
   # Tagging control
@@ -2089,7 +2139,7 @@ readGMACSctl <- function(FileName = NULL,
     get.num(dat, Loc) # Emphasis (likelihood weight) on tagging
 
   if (verbose)
-    cat("-> Read tagging controls \n")
+    cat("\t-> Read tagging controls \n")
   # -------------------------------------------------------------------------
 
   # Immature/mature natural mortality
@@ -2112,7 +2162,7 @@ readGMACSctl <- function(FileName = NULL,
       "Prior_2")
 
   if (verbose)
-    cat("-> Read immature/mature natural mortality controls \n")
+    cat("\t-> Read immature/mature natural mortality controls \n")
   # -------------------------------------------------------------------------
 
   # Other (additional) controls
@@ -2154,7 +2204,7 @@ readGMACSctl <- function(FileName = NULL,
     get.num(dat, Loc) # Years to compute equilibria
 
   if (verbose)
-    cat("-> Read additional controls \n")
+    cat("\t-> Read additional controls \n")
   # -------------------------------------------------------------------------
 
   # Emphasis factor (weights for likelihood) controls
@@ -2192,12 +2242,16 @@ readGMACSctl <- function(FileName = NULL,
     )
 
   if (verbose)
-    cat("-> Read Emphasis controls \n")
+    cat("\t-> Read Emphasis controls \n")
   # -------------------------------------------------------------------------
 
   # End of data file
   # -------------------------------------------------------------------------
   eof <- get.num(dat, Loc)
+  if(eof != 9999){
+    cat("\n\nSomething went wrong while reading the control file !!\n")
+    stop()
+  }
   if (verbose) {
     cat("====================================================\n")
     cat("Read of control file complete. Final value = ", eof, "\n")
