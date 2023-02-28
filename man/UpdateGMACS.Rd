@@ -4,7 +4,23 @@
 \alias{UpdateGMACS}
 \title{UpdateGMACS}
 \usage{
-UpdateGMACS()
+UpdateGMACS(dirSrc = NULL, dirNew = NULL)
+}
+\arguments{
+\item{dirSrc}{(character string)- This is the path to the folder that has been
+used to develop the new version of GMACS. Typically, this corresponds to the path
+to the \code{Dvpt_Version} folder, if following the basic workflow for updating
+GMACS.}
+
+\item{dirNew}{(character string)- This is the path to the folder that will hold
+the latest version of GMACS after the check steps. Typically, this corresponds
+to the path to the \code{Latest_Version} folder, if following the basic workflow
+for updating GMACS.}
+}
+\value{
+Copy all the files from the development folder to the latest_version
+folder and create the \code{GMACS_Version_details.txt} file that gives
+specifications about the version of GMACS that is updating.
 }
 \description{
 Function used when updating and releasing a new version of GMACS.
