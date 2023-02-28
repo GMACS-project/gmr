@@ -45,7 +45,7 @@ and personal.tpl files."><!-- mathjax --><script src="https://cdnjs.cloudflare.c
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu"><li>
-      <a href="../articles/001UseGmrToRunGMACS.html">Run GMACS</a>
+      <a href="../articles/1_UseGmrToRunGMACS.html">Run GMACS</a>
     </li>
   </ul></li>
 <li>
@@ -128,54 +128,55 @@ and personal.tpl files.</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">createGmacsExe</span><span class="op">(</span><span class="va">vv</span>, <span class="va">Dir</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span>, logFiles <span class="op">=</span> <span class="cn">FALSE</span>, ADMBpaths <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">createGmacsExe</span><span class="op">(</span><span class="va">vv</span>, <span class="va">Dir</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span>, logFiles <span class="op">=</span> <span class="cn">FALSE</span>, ADMBpaths <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>vv</dt>
-<dd><ul><li><p>integer index in <code>Dir</code> indicating folder to create executable in</p></li>
-</ul></dd>
+<dd><p>(integer/character string)- index in <code>Dir</code> indicating folder
+to create executable in. If set equal to <code>"all"</code>, the executable will be
+create in all the folders declared in <code>Dir</code>.</p></dd>
 
 
 <dt>Dir</dt>
-<dd><ul><li><p>vector of folder names</p></li>
-</ul></dd>
+<dd><p>(character string)- vector of folder names.</p></dd>
 
 
 <dt>verbose</dt>
-<dd><ul><li><p>flag (TRUE/FALSE) to print processing information</p></li>
-</ul></dd>
+<dd><p>(logical)- flag (TRUE/FALSE) to print processing information.</p></dd>
 
 
 <dt>logFiles</dt>
-<dd><ul><li><p>flag (TRUE/FALSE) to create log files during executable creation</p></li>
-</ul></dd>
+<dd><p>(logical)- flag (TRUE/FALSE) to create log files during
+executable creation.</p></dd>
 
 
 <dt>ADMBpaths</dt>
-<dd><p>(filepath): absolute or relative to current working directory
-path to file defining required ADMB paths. The default is <code>NULL</code>.</p></dd>
+<dd><p>(character string)- (filepath): absolute or relative to
+current working directory path to file defining required ADMB paths.
+The default is `NULL`.</p></dd>
 
 </dl></div>
     <div id="value">
     <h2>Value</h2>
     
 
-<p>nothing</p>
+<p>Nothing.</p>
     </div>
     <div id="details">
     <h2>Details</h2>
     <p>This function assumes that any additional cpp files are in a subfolder
-of <code>Dir</code> named "lib", with the associated header files in a subfolder named "include".
-It merges the two tpl files together, then uses <code>.buildGmacs()</code> to
-convert the gmacs.tpl code to a cpp files (gmacs.cpp and gmacs.htp), calls ADMB to compile all
-.cpp files required to build gmacs and creates the gmacs executable in the
-folder specified by <code>Dir[vv]</code>. The executable will be "gmacs.exe" on windows
-platforms and "gmacs" on linux-like (including MacOS) machines. Object files
-created during compilation from the additional cpp files will be in the <code>Dir</code>
-folder on Windows machines and in the <code>Dir/lib</code> folder on unix-like machines.
-These can be "cleaned" up using <code><a href="clean_root.html">clean_root()</a></code>.</p>
+of <code>Dir</code> named "lib", with the associated header files in a subfolder
+named "include".
+It merges the two tpl files together, then uses [.buildGmacs()] to
+convert the gmacs.tpl code to a cpp files (gmacs.cpp and gmacs.htp), calls
+ADMB to compile all .cpp files required to build gmacs and creates the gmacs
+executable in the folder specified by <code>Dir[vv]</code>. The executable will be
+"gmacs.exe" on windows platforms and "gmacs" on linux-like (including MacOS)
+machines. Object files created during compilation from the additional cpp files
+will be in the <code>Dir</code> folder on Windows machines and in the <code>Dir/lib</code>
+folder on unix-like machines. These can be "cleaned" up using [clean_root()].</p>
     </div>
 
   </div>
@@ -190,7 +191,7 @@ These can be "cleaned" up using <code><a href="clean_root.html">clean_root()</a>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.</p>
 </div>
 
       </footer></div>

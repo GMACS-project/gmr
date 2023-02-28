@@ -27,6 +27,7 @@ Depends:
     PBSadmb
 Imports: 
     ggplot2,
+    kableExtra,
     utils,
     shiny,
     gdata,

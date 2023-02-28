@@ -47,7 +47,7 @@ directory."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu"><li>
-      <a href="../articles/001UseGmrToRunGMACS.html">Run GMACS</a>
+      <a href="../articles/1_UseGmrToRunGMACS.html">Run GMACS</a>
     </li>
   </ul></li>
 <li>
@@ -132,9 +132,33 @@ directory.</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">UpdateGMACS</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">UpdateGMACS</span><span class="op">(</span>dirSrc <span class="op">=</span> <span class="cn">NULL</span>, dirNew <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></code></pre></div>
     </div>
 
+    <div id="arguments">
+    <h2>Arguments</h2>
+    <dl><dt>dirSrc</dt>
+<dd><p>(character string)- This is the path to the folder that has been
+used to develop the new version of GMACS. Typically, this corresponds to the path
+to the <code>Dvpt_Version</code> folder, if following the basic workflow for updating
+GMACS.</p></dd>
+
+
+<dt>dirNew</dt>
+<dd><p>(character string)- This is the path to the folder that will hold
+the latest version of GMACS after the check steps. Typically, this corresponds
+to the path to the <code>Latest_Version</code> folder, if following the basic workflow
+for updating GMACS.</p></dd>
+
+</dl></div>
+    <div id="value">
+    <h2>Value</h2>
+    
+
+<p>Copy all the files from the development folder to the latest_version
+folder and create the <code>GMACS_Version_details.txt</code> file that gives
+specifications about the version of GMACS that is updating.</p>
+    </div>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
@@ -148,7 +172,7 @@ directory.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.</p>
 </div>
 
       </footer></div>

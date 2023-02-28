@@ -88,7 +88,7 @@ navbar:
       icon: fas fa-file-contract fa-lg
       menu:
       - text: Run GMACS
-        href: articles/001UseGmrToRunGMACS.html
+        href: articles/1_UseGmrToRunGMACS.html
 
 search:
   exclude: news/index.html
@@ -160,6 +160,8 @@ reference:
 - subtitle: Read GMACS outputs
   contents:
   - readGMACSpar
+  - readGMACSallOUT
+  - readGMACSrep
   - readGMACSsimdat
   - read_admb
   - read_fit
@@ -245,9 +247,10 @@ reference:
   contents: .CallTerm
 - title: Plotting options and ggplot utilities
   desc: >
-    Set of functions for settings the type of plot, the rezolution,  the size and disposition of the graphics as well as the colors.
+    Set of functions for settings the type of plot, the rezolution, the size and disposition of the graphics as well as the colors.
   contents:
   - .gmr_options
+  - BaseThemeGMR
   - .cbPalette1
   - .cbPalette2
   - set_ggtheme
@@ -260,3 +263,6 @@ reference:
   - insertTime2
   - isWindowsOS
   - gmr-package
+  - GetVerSpec
+  - .getVerGMACS
+  - NewGMACSFeat
