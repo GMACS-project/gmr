@@ -106,5 +106,5 @@ plot_catch <- function(M, plot_res = FALSE, scales = "free_y",
         p <- p + geom_line(aes(x = as.integer(year), y = predicted, col = model), alpha = 0.4)
         p <- p + facet_wrap(~model + sex + fleet + type, scales = scales)
     }
-    print(p + .THEME+ theme(legend.position=c(x_leg,y_leg)))
+    print(p + .THEME)
 }
