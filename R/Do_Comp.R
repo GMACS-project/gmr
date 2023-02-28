@@ -368,7 +368,7 @@ Do_Comp <-
             verbose = verbose
           )
         gmr::Do_Comp(
-          #<-TODO: this is a recursive call: shiould it be recursive??
+          #<-TODO: this is a recursive call: should it be recursive??
           Spc = Spc,
           GMACS_version = GMACS_version,
           ASS = ASS,
@@ -383,9 +383,10 @@ Do_Comp <-
         )
         if (!is.null(GMACS_OUT))
           return(GMACS_OUT)
-        break()
+        # break()
+      } else {
+        stop("You need to run GMACS to realize comparisons.\n\t => The execution has been halted.")
       }
-      stop("No comparison is made. The execution has been halted.")
     }
 
 
