@@ -19,5 +19,13 @@ Function to clean gmacs output files in a folder when a
 simulation-estimation approach has been considered.
 }
 \details{
-
+Deletes files matching \code{"admodel.\*"},\code{"\*.bar"},\code{"\*.eva"},
+\code{"fmin.log"},\code{"\*.log"},\code{"\*.std"},\code{"gradient.\*"},
+\code{"\*.r0\*"},\code{"\*.p0\*"},\code{"\*.b0\*"},\code{"derivatives"},
+\code{"ders.dat"},\code{"mcout\*.\*"},\code{"checkfile.rep"},\code{"personal.rep"},
+\code{"gmacs_in.\*"},\code{"gmacs_files_in.dat"},\code{"\*.exe"},\code{"\*.a"},
+\code{"gmacs.par"},\code{"gmacs.dat"},\code{"gmacs.rep"},\code{"simdata.out"}.
+}
+\seealso{
+[clean_files()]
 }

@@ -35,14 +35,15 @@ clean_files<-function(path=".",
 #'
 #' @return nothing
 #'
-#' @details Uses \link{clean_files}.
-#' Deletes files matching "\*.obj","\*.cpp","\*.htp","gmacs.exe",and "gmacs.tpl" in the folder
-#' given by \code{path}.
+#' @seealso [clean_files()]
+#'
+#' @details
+#' Deletes files matching \code{"\*.obj"},\code{"\*.cpp"},\code{"\*.htp"},
+#' \code{"gmacs.exe"},and \code{"gmacs.tpl"} in the folder given by \code{path}.
 #'
 #' @export
-#' @md
 #'
-clean_root<-function(path=".",
+clean_root <- function(path=".",
                      verbose=TRUE){
   names=c("*.obj","*.cpp","*.htp","gmacs.exe","gmacs.tpl");
   clean_files(path=path,names=names,verbose=verbose);
@@ -59,16 +60,20 @@ clean_root<-function(path=".",
 #'
 #' @return nothing
 #'
-#' @details Uses \link{clean_files()}.
-#' Deletes files matching "admodel.\*","\*.bar","\*.eva","\*.cor","fmin.log","\*.log","\*.std","gradient.\*",
-#'          "\*.r0\*","\*.p0\*","\*.b0\*","derivatives","ders.dat","mcout\*.\*","checkfile.rep",
-#'          "personal.rep","gmacs_in.\*","gmacs_files_in.dat","\*.exe"
+#' @seealso [clean_files()]
+#'
+#' @details
+#' Deletes files matching \code{"admodel.\*"},\code{"\*.bar"},\code{"\*.eva"},
+#' \code{"fmin.log"},\code{"\*.log"},\code{"\*.std"},\code{"gradient.\*"},
+#' \code{"\*.r0\*"},\code{"\*.p0\*"},\code{"\*.b0\*"},\code{"derivatives"},
+#' \code{"ders.dat"},\code{"mcout\*.\*"},\code{"checkfile.rep"},
+#' \code{"personal.rep"},\code{"gmacs_in.\*"},\code{"gmacs_files_in.dat"},
+#' \code{"\*.exe"}.
 #'
 #' @export
-#' @md
 #'
 clean_bat<-function(path=".",verbose=TRUE){
-  names = c("admodel.*","*.bar","*.eva","*.cor","fmin.log","*.log","*.std","gradient.*",
+  names = c("admodel.*","*.bar","*.eva","fmin.log","*.log","*.std","gradient.*",
             "*.r0*","*.p0*","*.b0*","derivatives","ders.dat","mcout*.*","checkfile.rep",
             "personal.rep","gmacs_in.*","gmacs_files_in.dat","*.exe");
   clean_files(path=path,names=names,verbose=verbose);
@@ -84,17 +89,20 @@ clean_bat<-function(path=".",verbose=TRUE){
 #'
 #' @return nothing
 #'
-#' @details Uses \link{clean_files()}.
-#' Deletes files matching "admodel.\*","\*.bar","\*.eva","\*.cor","fmin.log","\*.log","\*.std","gradient.\*",
-#'          "\*.r0\*","\*.p0\*","\*.b0\*","derivatives","ders.dat","mcout\*.\*","checkfile.rep",
-#'          "personal.rep","gmacs_in.\*","gmacs_files_in.dat","\*.exe","\*.a", "gmacs.par",
-#'          "gmacs.dat","gmacs.rep","simdata.out"
+#' @seealso [clean_files()]
+#'
+#' @details
+#' Deletes files matching \code{"admodel.\*"},\code{"\*.bar"},\code{"\*.eva"},
+#' \code{"fmin.log"},\code{"\*.log"},\code{"\*.std"},\code{"gradient.\*"},
+#' \code{"\*.r0\*"},\code{"\*.p0\*"},\code{"\*.b0\*"},\code{"derivatives"},
+#' \code{"ders.dat"},\code{"mcout\*.\*"},\code{"checkfile.rep"},\code{"personal.rep"},
+#' \code{"gmacs_in.\*"},\code{"gmacs_files_in.dat"},\code{"\*.exe"},\code{"\*.a"},
+#' \code{"gmacs.par"},\code{"gmacs.dat"},\code{"gmacs.rep"},\code{"simdata.out"}.
 #'
 #' @export
-#' @md
 #'
-clean_bat_Sim<-function(path=".",verbose=TRUE){
-  names = c("admodel.*","*.bar","*.eva","*.cor","fmin.log","*.log","*.std","gradient.*",
+clean_bat_Sim <- function(path=".",verbose=TRUE){
+  names = c("admodel.*","*.bar","*.eva","fmin.log","*.log","*.std","gradient.*",
             "*.r0*","*.p0*","*.b0*","derivatives","ders.dat","mcout*.*","checkfile.rep",
             "personal.rep","gmacs_in.*","gmacs_files_in.dat","*.exe",
             "*.a","gmacs.par", "gmacs.dat","gmacs.rep","simdata.out");
