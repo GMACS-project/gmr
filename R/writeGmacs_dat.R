@@ -16,7 +16,7 @@
 #' @seealso \code{\link{readGMACS.dat}}
 #'
 #' @export
-#' @md
+#'
 #
 writeGmacs.dat <- function(Dir = NULL,
                           FileName = NULL,
@@ -41,10 +41,13 @@ writeGmacs.dat <- function(Dir = NULL,
   base::sink(FileName)
   cat("# ============================================================ #\n")
   cat("#                    GMACS main data file \n")
+  cat("# \n")
   cat("# *** \n")
   cat("#", Ver, "\n")
-  cat("#", Comp, "\n")
+  cat("# Last GMACS mofification made by: ", Comp, "\n")
+  cat("# Date of writing the gmacs.dat file:", .ac(Sys.time()))
   cat("# *** \n")
+  cat("# \n")
   cat("# Stock of interest: ", stock, "\n")
   cat("# Model name: ", model_name, "\n")
   cat("# Year of assessment: ", Ass_Year, "\n")
@@ -63,8 +66,10 @@ writeGmacs.dat <- function(Dir = NULL,
 
   cat("## jitter specifications\n")
   cat("# -------------------------------------- #\n")
-  cat("# Jitter | Sd\n")
+  cat("# Is Jittered?\n")
   cat(obj$Jitter, "\n")
+  cat("# sd Jitter?\n")
+  cat(obj$sd_Jitter, "\n")
   cat("\n")
 
   cat("## Output variance specifications\n")

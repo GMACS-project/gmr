@@ -68,10 +68,13 @@ writeGmacsctlfile <- function(Dir = NULL,
 
   cat("# ============================================================ #\n")
   cat("#                  GMACS main control file \n")
+  cat("# \n")
   cat("# *** \n")
   cat("#", Ver, "\n")
-  cat("#", Comp, "\n")
+  cat("# Last GMACS mofification made by: ", Comp, "\n")
+  cat("# Date of writing the control file:", .ac(Sys.time()))
   cat("# *** \n")
+  cat("# \n")
   cat("# Stock of interest: ", stock, "\n")
   cat("# Model name: ", model_name, "\n")
   cat("# Year of assessment: ", Ass_Year, "\n")
@@ -204,7 +207,7 @@ writeGmacsctlfile <- function(Dir = NULL,
   cat("# ************************************** #\n")
   cat("# If the custom growth model option = 1 then the molt probability function must be 1 \n")
   cat(obj$bUseCustomMoltProbability, "\n")
-  cat(" \n")
+  # cat(" \n")
 
   cat("# Maximum of size-classes to which recruitment must occur (males then females)\n")
   # if(nsex == 1){
@@ -258,7 +261,7 @@ writeGmacsctlfile <- function(Dir = NULL,
   cat("# ************************************** #\n")
   cat("# \n")
   cat("# Init_val | Lower_Bd | Upper_Bd | Phase | Prior_type | p1 | p2\n")
-  utils::write.table(obj$Grwth_control[1:obj$nSizeIncPar,], col.names = FALSE, row.names = FALSE)
+  utils::write.table(obj$Grwth_control[1:obj$nGrwth,], col.names = FALSE, row.names = FALSE)
   cat("\n")
 
   cat("# Molt probability controls\n")
@@ -277,7 +280,7 @@ writeGmacsctlfile <- function(Dir = NULL,
   cat("# ************************************** #\n")
   cat(" \n")
   cat("# Init_val | Lower_Bd | Upper_Bd | Phase | Prior_type | p1 | p2\n")
-  utils::write.table(obj$Grwth_control[(obj$nSizeIncPar+1):obj$nGrwth,], col.names = FALSE, row.names = FALSE)
+  utils::write.table(obj$MoltProb_control, col.names = FALSE, row.names = FALSE)
   cat("\n")
   cat("# Custom growth-increment matrix or size-transition matrix  (if any)\n")
   if(obj$bUseCustomGrowthMatrix == 1 || obj$bUseCustomGrowthMatrix == 2){

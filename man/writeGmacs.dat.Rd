@@ -19,7 +19,7 @@ writeGmacs.dat(
 \item{FileName}{(character string)- name of the new gmacs.dat file}
 
 \item{gmacsDat}{(character string)- Object (list) containing the ex gmacs.dat file - The list is
-created using the \code{\link[=readGMACS_dat]{readGMACS_dat()}} function.}
+created using the [readGMACS_dat()] function.}
 
 \item{stock}{(character string)- name of the stock of interest}
 
