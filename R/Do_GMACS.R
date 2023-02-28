@@ -60,25 +60,22 @@ Do_GMACS <- function(Spc = NULL,
     # Define the name of the file containing the different pathways needed to build
     # the GMACS executable
     suppressWarnings(PBSadmb::readADpaths(file.path(dirname(Dir[vv]), ADMBpaths)));
-    cat("\n Verifying the paths for ADMB, the C/C++ compiler and the editor ....\n")
+    cat("\nVerifying the paths for ADMB, the C/C++ compiler and the editor ....\n")
     if (!PBSadmb::checkADopts())
       stop(
         "The definition of the pathways to locate ADMB,the C/C++ compiler and/or the editer are wrong.\nPlease check the ADMBpaths file."
       )
 
-    cat(
-      "\n# ------------------------------------------------------------------- #\n"
-    )
-    cat("# ------------------------------------------------------------------- #\n")
-    cat("        Now building GMACS for the ", GMACS_version[vv], " \n")
-    cat("# ------------------------------------------------------------------- #\n")
-    cat("# ------------------------------------------------------------------- #\n")
-
-    # vv <- 1
-
     # 1.Get an executable for GMACS ----
     gmacs_exe <- ifelse(isWindowsOS(),"gmacs.exe","gmacs")
     if (compile[vv] == 1) {
+      cat("\n# ------------------------------------------------------------------- #\n")
+      cat("# ------------------------------------------------------------------- #\n")
+      cat("        Now building GMACS for the ", GMACS_version[vv], " \n")
+      cat("# ------------------------------------------------------------------- #\n")
+      cat("# ------------------------------------------------------------------- #\n")
+
+
       createGmacsExe(vv,Dir,verbose=ifelse(is.logical(verbose),verbose,FALSE))
     } else {
       if (!file.exists(file.path(Dir[vv], gmacs_exe))) {
