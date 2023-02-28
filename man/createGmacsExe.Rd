@@ -7,27 +7,23 @@
 createGmacsExe(vv, Dir, verbose = FALSE, logFiles = FALSE, ADMBpaths = NULL)
 }
 \arguments{
-\item{vv}{\itemize{
-\item integer index in \code{Dir} indicating folder to create executable in
-}}
+\item{vv}{(integer/character string)- index in \code{Dir} indicating folder
+to create executable in. If set equal to \code{"all"}, the executable will be
+create in all the folders declared in \code{Dir}.}
 
-\item{Dir}{\itemize{
-\item vector of folder names
-}}
+\item{Dir}{(character string)- vector of folder names.}
 
-\item{verbose}{\itemize{
-\item flag (TRUE/FALSE) to print processing information
-}}
+\item{verbose}{(logical)- flag (TRUE/FALSE) to print processing information.}
 
-\item{logFiles}{\itemize{
-\item flag (TRUE/FALSE) to create log files during executable creation
-}}
+\item{logFiles}{(logical)- flag (TRUE/FALSE) to create log files during
+executable creation.}
 
-\item{ADMBpaths}{(filepath): absolute or relative to current working directory
-path to file defining required ADMB paths. The default is \code{NULL}.}
+\item{ADMBpaths}{(character string)- (filepath): absolute or relative to
+current working directory path to file defining required ADMB paths.
+The default is `NULL`.}
 }
 \value{
-nothing
+Nothing.
 }
 \description{
 Function to create the GMACS executable from the gmacsbase.tpl
@@ -35,13 +31,14 @@ and personal.tpl files.
 }
 \details{
 This function assumes that any additional cpp files are in a subfolder
-of \code{Dir} named "lib", with the associated header files in a subfolder named "include".
-It merges the two tpl files together, then uses \code{\link[=.buildGmacs]{.buildGmacs()}} to
-convert the gmacs.tpl code to a cpp files (gmacs.cpp and gmacs.htp), calls ADMB to compile all
-.cpp files required to build gmacs and creates the gmacs executable in the
-folder specified by \code{Dir[vv]}. The executable will be "gmacs.exe" on windows
-platforms and "gmacs" on linux-like (including MacOS) machines. Object files
-created during compilation from the additional cpp files will be in the \code{Dir}
-folder on Windows machines and in the \code{Dir/lib} folder on unix-like machines.
-These can be "cleaned" up using \code{\link[=clean_root]{clean_root()}}.
+of \code{Dir} named "lib", with the associated header files in a subfolder
+named "include".
+It merges the two tpl files together, then uses [.buildGmacs()] to
+convert the gmacs.tpl code to a cpp files (gmacs.cpp and gmacs.htp), calls
+ADMB to compile all .cpp files required to build gmacs and creates the gmacs
+executable in the folder specified by \code{Dir[vv]}. The executable will be
+"gmacs.exe" on windows platforms and "gmacs" on linux-like (including MacOS)
+machines. Object files created during compilation from the additional cpp files
+will be in the \code{Dir} folder on Windows machines and in the \code{Dir/lib}
+folder on unix-like machines. These can be "cleaned" up using [clean_root()].
 }
