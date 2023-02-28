@@ -23,12 +23,12 @@ are going to work on. Default: `Dvpt_Version`.}
 \item{ADMBpaths}{(filepath): absolute or relative to current working directory
 path to file defining required ADMB paths. The default is `NULL`.}
 
-\item{verbose}{(TRUE/FALSE); flag to print processing information}
+\item{verbose}{(TRUE/FALSE); flag to print processing information.}
 
-\item{logFiles}{(TRUE/FALSE); flag to create PBSadmb log files}
+\item{logFiles}{(TRUE/FALSE); flag to create PBSadmb log files.}
 }
 \value{
-the new GMACS executable
+the new GMACS executable for the development version you are working on.
 }
 \description{
 Function used when updating and releasing a new version of GMACS.
@@ -39,7 +39,7 @@ function to provide a new executable.
 }
 \details{
 This function assumes you are calling it from the parent folder to
-that identified by \code{.nameFold}. In the course of creating the executable,
-the working directory is switched to \code{.nameFold}, but switched back to the
-parent folder when the function exits.
+that identified by \code{.nameFold}. In the course of creating the executable
+of a development version of GMACS, the working directory is switched to
+\code{.nameFold}, but switched back to the parent folder when the function exits.
 }
