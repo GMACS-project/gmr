@@ -17,7 +17,8 @@
         if(dim(df)[2]<11) df = data.frame(cbind(df, rep(0,dim(df)[1])))
         colnames(df) <- c("Model","Index","year","seas","fleet","sex","mature","cpue","cv","units","cpue_Timing")
         df$sex   <- .SEX[df$sex+1]
-        df$fleet <- .FLEET[df$fleet]
+        # df$fleet <- .FLEET[df$fleet]
+        df$fleet <- .All_FLEET[df$fleet]
         sd       <- sqrt(log(1 + df$cv^2))
         df$lb    <- exp(log(df$cpue) - 1.96*sd)
         df$ub    <- exp(log(df$cpue) + 1.96*sd)
@@ -62,8 +63,8 @@ plot_cpue <- function(M, subsetby = "", xlab = "Year", ylab = "CPUE", slab = "Se
         ylab <- paste0("log(", ylab, ")")
     }
 
-    xlab <- paste0("\n", xlab)
-    ylab <- paste0(ylab, "\n")
+    # xlab <- paste0("\n", xlab)
+    # ylab <- paste0(ylab, "\n")
 
     p  <- ggplot2::ggplot(mdf, ggplot2::aes(year, cpue)) +
         ggplot2::expand_limits(y = 0) +
@@ -101,7 +102,8 @@ plot_cpue <- function(M, subsetby = "", xlab = "Year", ylab = "CPUE", slab = "Se
     }
 
     p  <- p + labs(x = xlab, y = ylab)
-    print(p + .THEME + ggplot2::theme(legend.position=c(.7,.85)))
+    # print(p + .THEME + ggplot2::theme(legend.position=c(.7,.85)))
+    print(p + .THEME)
 }
 
 
@@ -117,8 +119,8 @@ plot_cpue <- function(M, subsetby = "", xlab = "Year", ylab = "CPUE", slab = "Se
 #'
 plot_cpue_res <- function(M, subsetby = "", xlab = "Year", ylab = "Residual", slab = "Sex")
 {
-    xlab <- paste0("\n", xlab)
-    ylab <- paste0(ylab, "\n")
+    # xlab <- paste0("\n", xlab)
+    # ylab <- paste0(ylab, "\n")
 
     mdf <- .get_cpue_df(M)
     if (subsetby != "") mdf <- subset(mdf, fleet == subsetby)
