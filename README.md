@@ -45,5 +45,5 @@ Now you can load the package and inspect the functions:
 
 Using the functions requires output from the General Model for Assessing
 Crustacean Stocks (GMACS) which is described in the
-[GMACS](https://github.com/GMACS-project/GMACS_Assessment_code/tree/main/GMACS/Latest_Version)
+[GMACS](https://github.com/GMACS-project/GMACS_Assessment_code/)
 repo.
