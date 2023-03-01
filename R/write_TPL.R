@@ -36,7 +36,7 @@ write_TPL <- function(vv = NULL,
 
     Insert <-
       insertTime2(object = add.text,
-                       pattern = ' !! TheHeader',
+                       pattern = '!! TheHeader',
                        .update = TRUE)
     # Insert <- insertTime(object = add.text, pattern = ' !! TheHeader', .update = TRUE)
     header <- Insert[[1]]
@@ -53,7 +53,7 @@ write_TPL <- function(vv = NULL,
   if (!.update)
     add.text <-
     insertTime(object = add.text,
-                    pattern = ' !! TheHeader',
+                    pattern = '!! TheHeader',
                     .update = FALSE)
   add.text <- paste0(add.text, collapse = "\n")
   add.text <- c(add.text, "\n", "")
