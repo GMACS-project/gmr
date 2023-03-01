@@ -7,13 +7,9 @@
 readGMACSdat(FileName = NULL, verbose = TRUE)
 }
 \arguments{
-\item{FileName}{\itemize{
-\item path (and name) of the data file (e.g. snow.data)
-}}
+\item{FileName}{(character string)- path (and name) of the data file (e.g. snow.data)}
 
-\item{verbose}{\itemize{
-\item (TRUE/FALSE); flag to print processing information
-}}
+\item{verbose}{(logical)- (TRUE/FALSE); flag to print processing information}
 }
 \value{
 the .dat file as a named list.

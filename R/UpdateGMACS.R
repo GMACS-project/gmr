@@ -5,19 +5,30 @@
 #' resulting from the Development version from this directory to the Latest_Version
 #' directory.
 #'
+#' @param dirSrc (character string)- This is the path to the folder that has been
+#' used to develop the new version of GMACS. Typically, this corresponds to the path
+#' to the \code{Dvpt_Version} folder, if following the basic workflow for updating
+#' GMACS.
+#' @param dirNew (character string)- This is the path to the folder that will hold
+#' the latest version of GMACS after the check steps. Typically, this corresponds
+#' to the path to the \code{Latest_Version} folder, if following the basic workflow
+#' for updating GMACS.
+#'
+#' @return Copy all the files from the development folder to the latest_version
+#' folder and create the \code{GMACS_Version_details.txt} file that gives
+#' specifications about the version of GMACS that is updating.
 #'
 #' @export
 #'
-#'
-#'
+#
+UpdateGMACS <- function(dirSrc = NULL,
+                        dirNew = NULL){
 
-UpdateGMACS <- function() {
 
-  dirSrc <- paste0(getwd(), "/Dvpt_Version/")
-  dirNew <- paste0(getwd(), "/Latest_Version/")
+  # 1. Specify the new implementation in the gmacsbase.tpl file ----
+  NewGMACSFeat(dirSrc)
 
-  # Copy all files from the Dvpt_Version to the Latest_Version
-
+  # 2. Copy all files from the Dvpt_Version to the Latest_Version ----
   cop.files <- list.files(dirSrc)[!list.files(dirSrc) %in% ("build")]
   file.copy(
     from = file.path(dirSrc, c(cop.files)),
@@ -27,19 +38,19 @@ UpdateGMACS <- function() {
     copy.date = TRUE
   )
 
-  stock.files <- list.files(paste(dirSrc, "build", sep = ""))
+  stock.files <- list.files(file.path(dirSrc, "build", sep = ""))
   stock.files <- stock.files[!stock.files %in% c("debug", "release")]
 
-  if (!is.null(which(stock.files == "AIGKC")))
-    stock.files <-
-    c(stock.files[!stock.files %in% "AIGKC"], paste("AIGKC", list.files(paste(
-      dirSrc, "build/AIGKC", sep = ""
-    )), sep = "/"))
+  # if (!is.null(which(stock.files == "AIGKC")))
+  #   stock.files <-
+  #   c(stock.files[!stock.files %in% "AIGKC"], paste("AIGKC", list.files(paste(
+  #     dirSrc, "build/AIGKC", sep = ""
+  #   )), sep = "/"))
 
 
   for (nm in 1:length(stock.files)) {
     # Clean the Latest_Version directory
-    tmp <- paste(dirNew, "build/", stock.files[nm], sep = "")
+    tmp <- file.path(dirNew, "build/", stock.files[nm], sep = "")
 
     while(length(list.files(path = tmp))>10){
       Sys.sleep(0.1)
@@ -51,7 +62,7 @@ UpdateGMACS <- function() {
     }
 
     # Clean the Dvpt_Version directory
-    tmp <- paste(dirSrc, "build/", stock.files[nm], sep = "")
+    tmp <- file.path(dirSrc, "build/", stock.files[nm], sep = "")
 
     while(length(list.files(path = tmp))>10){
       Sys.sleep(0.1)
@@ -67,11 +78,13 @@ UpdateGMACS <- function() {
 
     file.copy(
       from = file.path(tmp, nam),
-      to = paste(dirNew, "build/", stock.files[nm], sep = ""),
+      to = file.path(dirNew, "build/", stock.files[nm], sep = ""),
       overwrite = TRUE,
       recursive = TRUE,
       copy.date = TRUE
     )
   }
+  GetVerSpec(Dir = dirNew)
+
 }
 

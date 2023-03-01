@@ -19,7 +19,7 @@
         colnames(df) <- tolower(c("Model", "Year", "Seas", "Fleet", "Sex", "Type", "Shell", "Maturity", "Nsamp", as.character(A$mid_points)))
         colnames(pf) <- colnames(rf) <- colnames(df)
 
-        df$fleet    <- pf$fleet    <- rf$fleet    <- .FLEET[df$fleet]
+        df$fleet    <- pf$fleet    <- rf$fleet    <- .All_FLEET[df$fleet]
         df$sex      <- pf$sex      <- rf$sex      <- .SEX[df$sex+1]
         df$shell    <- pf$shell    <- rf$shell    <- .SHELL[df$shell+1]
         df$maturity <- pf$maturity <- rf$maturity <- .MATURITY[df$maturity+1]
@@ -102,14 +102,13 @@
 #' @param mlab the model label for the plot that appears above the key
 #' @param tlab the fleet label for the plot that appears above the key
 #' @param res boolean if residual or observed and predicted
-#' @param legend_loc (numeric vector); c(x,y) where x and y are the coordinates of the legend box
 #' @param ylim_max (numeric), defines the ylim.
 #'
 #' @return Plots of observed and predicted size composition values
 #' @export
 #'
 plot_size_comps <- function(M, which_plots = "all", xlab = "Mid-point of size-class (mm)", ylab = "Proportion",
-                            slab = "Sex", mlab = "Model", tlab = "Fleet", res = FALSE,legend_loc=c(1,1),ylim_max=0.3)
+                            slab = "Sex", mlab = "Model", tlab = "Fleet", res = FALSE,ylim_max=0.3)
 {
 
     ylab <- paste0(ylab, "\n")
@@ -150,7 +149,7 @@ plot_size_comps <- function(M, which_plots = "all", xlab = "Mid-point of size-cl
                        strip.text.x = element_text(margin= margin(1,0,1,0)),
                        panel.grid.major = element_blank(),
                        panel.grid.minor = element_blank(),
-                       legend.position=legend_loc,
+                       legend.position="bottom",
                        panel.border = element_blank(),
                        strip.background = element_rect(color="white",fill="white"))
         #p <- p + geom_text(aes(label = paste0("N = ", nsamp)), x = -Inf, y = Inf, hjust = -0.2, vjust = 1.5)
@@ -199,6 +198,7 @@ plot_size_comps <- function(M, which_plots = "all", xlab = "Mid-point of size-cl
     } else {
         print(plist[[which_plots]])
     }
+
 }
 
 

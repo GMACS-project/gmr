@@ -105,7 +105,7 @@ plot_recruitment <- function(M, xlab = "Year", ylab = "Recruitment (millions of 
       #geom_ribbon(aes(x = year, ymax = ub, ymin = lb, fill = sex), alpha = alpha)
     }  else
     {
-
+      p <- p + geom_line(aes(x = year, y = exp(log_rec), col = Model))
     }
 
 

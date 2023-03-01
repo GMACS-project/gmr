@@ -85,8 +85,13 @@ readGMACS.dat <- function(path = NULL, verbose = TRUE) {
   if (verbose)
     cat("-> Read names of GMACS files\n")
 
+  # Jitter specifications (1:yes / SD)
+  # DatOut[["Jitter"]] <-
+  #   get.vec(dat, Loc) # Jitter specifications (1:yes / SD)
   DatOut[["Jitter"]] <-
-    get.vec(dat, Loc) # Jitter specifications (1:yes / SD)
+    get.num(dat, Loc) # Is Jittered?
+  DatOut[["sd_Jitter"]] <-
+    get.num(dat, Loc) # sd Jittered
   if (verbose)
     cat("-> Read jitter specifications\n")
 
@@ -111,6 +116,12 @@ readGMACS.dat <- function(path = NULL, verbose = TRUE) {
   # End of data file
   # -------------------------------------------------------------------------
   eof <- get.num(dat, Loc)
+
+  if(eof != 9999){
+    cat("\n\nSomething went wrong while reading the gmacs.dat file !!\n")
+    stop()
+  }
+
   if (verbose) {
     cat("====================================================\n")
     cat("Read of gmacs.dat file complete. Final value = ", eof, "\n")

@@ -53,8 +53,8 @@
 plot_catch <- function(M, plot_res = FALSE, scales = "free_y",
                        xlab = "Year", ylab = "Catch", mlab = "Model")
 {
-    xlab <- paste0("\n", xlab)
-    ylab <- paste0(ylab, "\n")
+    # xlab <- paste0("\n", xlab)
+    # ylab <- paste0(ylab, "\n")
 
     mdf <- .get_catch_df(M)
     mdf$units[mdf$units == 1] <- "Units: biomass"
@@ -74,7 +74,8 @@ plot_catch <- function(M, plot_res = FALSE, scales = "free_y",
 
     p <- ggplot(mdf, aes(x = year, y = observed)) +
         geom_bar(stat = "identity", position = "dodge", alpha = 0.15) +
-        geom_linerange(aes(x = year, y = observed, ymax = ub, ymin = lb, position = "dodge"), size = 0.2, alpha = 0.5, col = "black") +
+        geom_linerange(aes(x = year, y = observed, ymax = ub, ymin = lb,
+                           position = "dodge"), size = 0.2, alpha = 0.5, col = "black") +
         labs(x = xlab, y = ylab)
 
     if (.OVERLAY)

@@ -3,12 +3,12 @@
 #' @description Read the gmacs.par file. This is an output of GMACS that contains
 #' estimates of all parameters
 #'
-#' @param Dir - path to the parameter file
-#' @param FileName - name of the parameter file - By default, "gmacs.par"
-#' @param verbose - (TRUE/FALSE); flag to print processing information
-#' @param DatFile - Object (list) containing the .dat file - This is the output
+#' @param Dir (character string)- path to the folder where the parameter file is stored.
+#' @param FileName (character string)- name of the parameter file - By default, "gmacs.par"
+#' @param verbose (logical)- flag to print processing information
+#' @param DatFile (list)- Object containing the .dat file - This is the output
 #' of the [readGMACSdat()] function.
-#' @param CtlFile - Object (list) containing the .ctl file - This is the output
+#' @param CtlFile (list)- Object (list) containing the .ctl file - This is the output
 #' of the [readGMACSctl()] function.
 #'
 #' @return the gmacs.par file as a named list. Where data frame are used, the
@@ -148,8 +148,8 @@ readGMACSpar <- function(Dir = NULL,
   if (verbose)
     cat("-- Reading growth parameters \n")
 
-  Grwth <- get.df(dat, Loc, nrow = CtlFile$nGrwth)
-  Grwth <- as.data.frame(cbind(paste("Grwth[",1:CtlFile$nGrwth,"]",sep=""),Grwth))
+  Grwth <- get.df(dat, Loc, nrow = (CtlFile$nGrwth + CtlFile$nSizeIncPar))
+  Grwth <- as.data.frame(cbind(paste("Grwth[",1:(CtlFile$nGrwth + CtlFile$nSizeIncPar),"]",sep=""),Grwth))
   colnames(Grwth) <- c("Param_ID","value")
   DatOut[["Grwth"]] <- Grwth # growth parameters
 
@@ -352,7 +352,7 @@ readGMACSpar <- function(Dir = NULL,
   # -------------------------------------------------------------------------
   if (verbose) {
     cat("====================================================\n")
-    cat("Read of control file complete.")
+    cat("Read of parameter file complete.")
     cat("\n")
   }
   return(DatOut)

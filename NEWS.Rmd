@@ -14,7 +14,7 @@ knitr::opts_chunk$set(
 ```
 
 
-# gmr 1.3.0.9001
+# gmr 1.3.4.9001
 *************************************************************************
 
 Here are some of the items for the next release:
@@ -24,6 +24,109 @@ Here are some of the items for the next release:
 - [ ] Create vignettes to build and run gmacs, make comparison
 - [ ] Create SAFE document templates
 - [ ] Add data and implement examples in the package
+
+
+
+
+# gmr 1.3.4
+*************************************************************************
+
+(GitHub issue/PR numbers in parentheses)
+
+This new release includes implementations related to the CPT modelling workshop
+hold in January 2023. Major implementations includes updates of i) plotting 
+functions, ii) functions allowing to read and write GMACS input/output files, 
+and iii) functions used when implementing and releasing a new version of GMACS (#20).
+
+## New functions
+
+  1. Functions to plot GMACS outputs
+  * `BaseThemeGMR()`: Specify the basic theme of `gmr` when plotting outputs
+  
+  2. Functions to read GMACS output files
+  * `readGMACSallOUT()`: reads the `gmacsall.out` file
+  * `readGMACSrep()`: read the `gmacs.rep` file
+  
+  3. Function to update GMACS
+  *`NewGMACSFeat()`: creates a summary file detailing the latest implementations
+  in the gmacsbase.TPL file, when they've been done and by whom.
+  
+## Updated functions
+
+  1. Functions to plot GMACS outputs
+  * `.get_F_df()`
+  * `.get_cpue_df()`
+  * `plot_catch()`
+  * `plot_recruitment()`
+  * `.get_sizeComps_df()`
+  * `plot_basicOutput()`
+  * `plot_catch()`
+  
+  2. Functions to read/write GMACS input/output files
+  * `readGMACS.dat()`
+  * `readGMACSdat()`
+  * `readGMACSctl()`
+  * `readGMACSfiles()`
+  * `readGMACSpar()`
+  * `readGMACSprj()`
+  * `readGMACSsimdat()`
+  * `writeGmacs.dat()`
+  * `writeGmacsctlfile()`
+  * `writeGmacsdatfile()`
+  * `writeGmacsprjfile()`
+  
+  3. Functions to update and release a new version of GMACS 
+  * `.GetGmacsExe()`
+  *`createGmacsExe()`
+  * `GMACS()`
+  * `UpdateGMACS()`
+  * `insertTime2()`
+
+
+# gmr 1.3.3
+*************************************************************************
+
+(GitHub issue/PR numbers in parentheses)
+
+This new release comes with the PR (#19) and updates the function to read the 
+control file and the one to realize simulations.
+
+## Updated functions
+
+  * `readGMACSctl()`: Number of nodes for cubic spline or number of step-changes 
+  for option 3 (#18)
+  * `SaveSimFiles()`: Save outputs of the simulation approach (#18)
+
+
+
+# gmr 1.3.2
+*************************************************************************
+
+(GitHub issue/PR numbers in parentheses)
+
+This new release allows to run the simulation under Linux.
+
+## Updated functions
+
+  * `RunGmacsSim()` (#17)
+
+
+# gmr 1.3.1
+*************************************************************************
+
+(GitHub issue/PR numbers in parentheses)
+
+This new release incorporates a new function to plot the basic outputs from GMACS 
+and give the possibility to specify a given file to set the directories needed to 
+call ADMB within R.
+
+## New functions
+
+  * `plot_basicOutput()`: function to plot the basic outputs of GMACS (#15)
+  
+## Updated functions
+
+  * `createGmacsExe()`: add the `ADMBpaths` argument in the function (#16)
 
 
 # gmr 1.3.0

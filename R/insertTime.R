@@ -83,19 +83,50 @@ insertTime2 <- function(object = NULL,
       c(object1, txt.header, object[(header + 1):length(object)])
   } else {
     New.ver <- NA
+    Dev.ID <- NA
+
+    Ex.vers <-
+      sub(pattern = '!! TheHeader =  adstring(\"## GMACS Version',
+          replacement = ";Version ",
+          x = txt.header,
+          fixed = TRUE)
+    Ex.vers <-
+      sub(pattern = '\");',
+          replacement = " ",
+          x = Ex.vers,
+          fixed = TRUE)
+    Ex.vers <- stringr::str_split(string = Ex.vers, pattern = ';')[[1]][2]
+    Ex.vers <- stringr::str_squish(Ex.vers)
+
 
     while (is.na(New.ver)) {
-      text = "You've been modifying GMACS. Please, provide a name for the new version.\nIt should be similar to: 'Verison 2.01.A'"
-      New.ver <- svDialogs::dlgInput(text, Sys.info())$res
+      text = "========================================\nYou've been modifying GMACS.\nPlease, provide a name for the new version.\n========================================\nThe name of the new version has to be of the form to: 'Version X.YY.X'.\n
+\n*** The last updated version number is indicated in the dialog box - Please update this number.***"
+
+      # New.ver <- svDialogs::dlgInput(message = text, Sys.info())$res
+      New.ver <- svDialogs::dlgInput(message = text, default = print(Ex.vers))$res
       Sys.sleep(0.1)
     }
+    New.ver <- stringr::str_squish(New.ver)
+
+    while(is.na(Dev.ID)){
+      text = "Please enter your initials (refer to the .tpl file)."
+      Dev.ID <- svDialogs::dlgInput(message = text, default = "AEP")$res
+      Sys.sleep(0.1)
+    }
+
+
+
+
     txt.header <-
-      paste(' !! TheHeader =  adstring("## GMACS ',
-            New.ver,
-            '; Compiled ',
+      paste(' !! TheHeader = adstring("## GMACS ',
+            New.ver,"; ** ", Dev.ID,
+            ' **; Compiled ',
             Sys.time(),
             '");',
             sep = "")
+    txt.header <- stringr::str_squish(txt.header)
+
     object <- list(header, txt.header)
   }
   return(object)

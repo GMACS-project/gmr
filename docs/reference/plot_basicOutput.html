@@ -44,7 +44,7 @@
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu"><li>
-      <a href="../articles/001UseGmrToRunGMACS.html">Run GMACS</a>
+      <a href="../articles/1_UseGmrToRunGMACS.html">Run GMACS</a>
     </li>
   </ul></li>
 <li>
@@ -130,7 +130,6 @@
 <span>  Stock <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  Dir <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  model_name <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  GMACSFileName <span class="op">=</span> <span class="st">"gmacs.dat"</span>,</span>
 <span>  out <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  Dir.out <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  save.out <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -141,40 +140,42 @@
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>Stock</dt>
-<dd><p>vector of strings specifying the name(s) of the stock
-considered in the analysis.</p></dd>
+<dd><p>(character string)- Specifies the name(s) of the stock
+considered. if <code>Stock='all'</code>, then the function will plot the basic
+outputs for all stocks that are "available" in the <code>"build"</code> directory.</p></dd>
 
 
 <dt>Dir</dt>
-<dd><p>vector of strings containing the directories for all
-<code>GMACS_version</code> used in this analysis.</p></dd>
+<dd><p>(character string)- vector of folder names of length <code>model_name</code> for all
+<code>GMACS_version/model</code> for which you want to plot the outputs. Each <code>Dir</code>
+correspond to the root folder where the <code>"build"</code> folder is stored.</p></dd>
 
 
 <dt>model_name</dt>
-<dd><p>vector of strings holding the name(s) of the
-GMACS versions/models that is/are used in the analysis.</p></dd>
-
-
-<dt>GMACSFileName</dt>
-<dd><p>name of the <code>gmacs.dat</code> file.
-Default <code>"gmacs.dat"</code>.</p></dd>
+<dd><p>(character string)- vector of strings specifying the name(s)
+of the GMACS version(s)/model(s) that is/are considered for plotting.</p></dd>
 
 
 <dt>out</dt>
-<dd><p>(logical); if <code>TRUE</code>; the plot will be saved on the <code>Dir.out</code>
+<dd><p>(logical)- if <code>TRUE</code>; the plots will be saved in the <code>Dir.out</code>
 directory.</p></dd>
 
 
 <dt>Dir.out</dt>
-<dd><p>(character string); path to the directory to save plots</p></dd>
+<dd><p>(character string)- Path directory where to save the plots. If
+<code>Stock='all'</code>, <code>Dir.out</code> is a vector of length equal to the number of
+stocks "available" in the <code>"build"</code> directory.
+(Warning: The function create a "plot" folder where outputs are saved).</p></dd>
 
 
 <dt>save.out</dt>
-<dd><p>(character string);</p></dd>
+<dd><p>(logical)- if <code>TRUE</code>, then the plots are saved using the
+format indicated in the <code>out.format</code> argument. If <code>FALSE</code>, then plots
+will be available in the plot windows of R.</p></dd>
 
 
 <dt>out.format</dt>
-<dd><p>Device to use to save the plot (currently only "pdf")</p></dd>
+<dd><p>(character string)- Device to use to save the plot (<code>"pdf"</code>, <code>"png"</code>, <code>"jpeg"</code>)</p></dd>
 
 </dl></div>
 

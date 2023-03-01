@@ -18,5 +18,9 @@ nothing
 Function to clean gmacs compilation-process files in the "root folder".
 }
 \details{
-
+Deletes files matching \code{"\*.obj"},\code{"\*.cpp"},\code{"\*.htp"},
+\code{"gmacs.exe"},and \code{"gmacs.tpl"} in the folder given by \code{path}.
+}
+\seealso{
+[clean_files()]
 }

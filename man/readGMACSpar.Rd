@@ -13,27 +13,17 @@ readGMACSpar(
 )
 }
 \arguments{
-\item{Dir}{\itemize{
-\item path to the parameter file
-}}
+\item{Dir}{(character string)- path to the folder where the parameter file is stored.}
 
-\item{FileName}{\itemize{
-\item name of the parameter file - By default, "gmacs.par"
-}}
+\item{FileName}{(character string)- name of the parameter file - By default, "gmacs.par"}
 
-\item{verbose}{\itemize{
-\item (TRUE/FALSE); flag to print processing information
-}}
+\item{verbose}{(logical)- flag to print processing information}
 
-\item{DatFile}{\itemize{
-\item Object (list) containing the .dat file - This is the output
-of the \code{\link[=readGMACSdat]{readGMACSdat()}} function.
-}}
+\item{DatFile}{(list)- Object containing the .dat file - This is the output
+of the \code{\link[=readGMACSdat]{readGMACSdat()}} function.}
 
-\item{CtlFile}{\itemize{
-\item Object (list) containing the .ctl file - This is the output
-of the \code{\link[=readGMACSctl]{readGMACSctl()}} function.
-}}
+\item{CtlFile}{(list)- Object (list) containing the .ctl file - This is the output
+of the \code{\link[=readGMACSctl]{readGMACSctl()}} function.}
 }
 \value{
 the gmacs.par file as a named list. Where data frame are used, the

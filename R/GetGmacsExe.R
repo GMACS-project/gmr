@@ -13,40 +13,43 @@
 #' are going to work on. Default: `Dvpt_Version`.
 #' @param ADMBpaths (filepath): absolute or relative to current working directory
 #' path to file defining required ADMB paths. The default is `NULL`.
-#' @param verbose (TRUE/FALSE); flag to print processing information
-#' @param logFiles (TRUE/FALSE); flag to create PBSadmb log files
+#' @param verbose (TRUE/FALSE); flag to print processing information.
+#' @param logFiles (TRUE/FALSE); flag to create PBSadmb log files.
 #'
 #' @details This function assumes you are calling it from the parent folder to
-#' that identified by \code{.nameFold}. In the course of creating the executable,
-#' the working directory is switched to \code{.nameFold}, but switched back to the
-#' parent folder when the function exits.
+#' that identified by \code{.nameFold}. In the course of creating the executable
+#' of a development version of GMACS, the working directory is switched to
+#' \code{.nameFold}, but switched back to the parent folder when the function exits.
 #'
 #'
-#' @return the new GMACS executable
+#' @return the new GMACS executable for the development version you are working on.
 #'
 #' @export
 #'
 #'
 .GetGmacsExe <- function(.nameFold = "Dvpt_Version",
                          .nameVer = NULL,
-                         ADMBpaths=NULL,
-                         verbose=FALSE,
-                         logFiles=FALSE) {
-
-
+                         ADMBpaths = NULL,
+                         verbose = FALSE,
+                         logFiles = FALSE) {
   # Define directory
 
   if(.nameFold != "Dvpt_Version"){
 
     check <- NA
     while (is.na(check)) {
-      text = paste("You have specified a file name other than 'Dvpt_Version' to work on GMACS and/or develop a new version.
-      Please confirm that the following directory is the one you want to work in (0:No, 1: Yes):\n",
+      text = paste("========================================\nYou have specified a folder name other than 'Dvpt_Version' to work on GMACS and/or develop a new version.\n========================================\n
+\nPlease confirm that the following directory is the one you want to work in (0:No, 1: Yes):\n",
                    print(paste0(getwd(), "/", .nameFold, "/")),sep="")
-      check <- svDialogs::dlgInput(text, Sys.info())$res
+      # check <- svDialogs::dlgInput(message = text, Sys.info())$res
+      check <- svDialogs::dlgInput(message = text, default = "(0:No, 1: Yes)")$res
       Sys.sleep(0.1)
     }
-    if(.an(check)==0) stop("Please redefine the directory you want to work in.")
+    if(.an(check)==0){
+      stop("Please redefine the directory you want to work in.")
+    } else if(.an(check) !=1 || !is.numeric(.an(check))){
+        stop("The only possibilities are 0 or 1.")
+      }
     GMACS_version <- .nameVer
   } else {GMACS_version <- "Dvpt_Version"}
 
@@ -72,10 +75,8 @@
       "The definition of the pathways to locate ADMB,the C/C++ compiler and/or the editer are wrong.\nPlease check the ADMBpaths file."
     )
 
-  cat("\n# ------------------------------------------------------------------- #\n")
   cat("# ------------------------------------------------------------------- #\n")
   cat("        Now building GMACS for the ", GMACS_version[vv], " \n")
-  cat("# ------------------------------------------------------------------- #\n")
   cat("# ------------------------------------------------------------------- #\n")
 
   # 1.Get an executable for GMACS ----

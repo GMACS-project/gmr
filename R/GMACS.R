@@ -61,24 +61,30 @@ GMACS <- function(Spc = NULL,
         invert = TRUE,
         value = TRUE
       )
+
     nam.Spc <- sort(Spc)
     Spc <- Spc[order(match(Spc, nam.Spc))]
 
-    if (which(Spc == "AIGKC") > 0) {
-      Spc <-
-        c(paste(Spc[which(Spc == "AIGKC")], c("/EAG", "/WAG"), sep = ""), Spc[-1])
-    }
+  #   if (which(Spc == "AIGKC") > 0) {
+  #     Spc <-
+  #       c(paste(Spc[which(Spc == "AIGKC")], c("/EAG", "/WAG"), sep = ""), Spc[-1])
+  #   }
   }
+  #
+  # for (nm in 1:length(Spc)) {
+  #   if (Spc[nm] == "WAG" ||
+  #       Spc[nm] == "EAG")
+  #     Spc[nm] <- paste0("AIGKC/", Spc[nm])
+  # }
 
-  for (nm in 1:length(Spc)) {
-    if (Spc[nm] == "WAG" ||
-        Spc[nm] == "EAG")
-      Spc[nm] <- paste0("AIGKC/", Spc[nm])
-  }
-
-  cat("\nThis analysis includes the following species:",
-      paste0(Spc, collapse = ", "),
+  # cat("\nThis analysis includes the following species:\n",
+  #     paste0(Spc, collapse = ", "),
+  #     "\n")
+  cat("\nThis analysis includes the following species:\n",
+      paste0("- ", Spc, collapse = "\n"),
       "\n")
+
+
   cat("\n")
 
   # 2. Check for consistency between options----

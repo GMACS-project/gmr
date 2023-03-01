@@ -55,7 +55,7 @@ prepSim <- function(Dir = NULL,
   if (!dir.exists(Dirsim)){
     if(verbose)
       cat("\n")
-    cat("\t->Creating the 'Simulations' folder in :\n", DirStock, "\n",sep="")
+    cat("\t-> Creating the 'Simulations' folder in :\n", DirStock, "\n",sep="")
     dir.create(file.path(Dirsim), recursive = TRUE)
   }
 
@@ -67,7 +67,7 @@ prepSim <- function(Dir = NULL,
   if (!dir.exists(DirTrue)){
     if(verbose)
       cat("\n")
-    cat("\t->Creating the 'True' folder in :\n", Dirsim, "\n",sep="")
+    cat("\t-> Creating the 'True' folder in :\n", Dirsim, "\n",sep="")
     dir.create(DirTrue, recursive = TRUE)
   }
 
@@ -213,7 +213,7 @@ GenSimFiles <- function(Isim = NULL,
   }
 
   writeGmacsPAR(Dir = DirTrue,
-                FileName = "gmacs.pin",
+                FileName = "gmacs2.pin",
                 gmacsPar = parPIN)
   # --------------------------------------
 
@@ -252,7 +252,7 @@ GenSimFiles <- function(Isim = NULL,
   # 7- Run the executable without estimation and copy the output to the RunFolder
   # ===================================== # ----
 
-  command <- paste(ifelse(.Platform$OS.type=="windows",gmacs_exe,paste0("./",gmacs_exe)), " -est", sep = "")
+  command <- paste(ifelse(.Platform$OS.type=="windows",gmacs_exe,paste0("./",gmacs_exe)), " -apin gmacs2.pin -est", sep = "")
   if(FunCall){
     tmp <- .CallTerm(command = command,
                      .Dir = DirTrue,
@@ -816,6 +816,9 @@ RunGmacsSim <- function(path = NULL,
     cpy_cmd = ifelse(.Platform$OS.type=="windows","Copy ","cp ");
     command3 <- paste0(cpy_cmd, "gmacsall.out ", namOut)
     ExeCommand(Com = command3, dir = DirRuns, verbose = verbose)
+
+    if(Isim == Nsim)
+      clean_bat_Sim(path = DirRuns, verbose = verbose)
   } # end Nsim
 
   close(pb)

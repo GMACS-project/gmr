@@ -19,6 +19,7 @@
 write_TPL <- function(vv = NULL,
                       Dir = NULL,
                       .update = NULL) {
+
   gmacsbase <- file.path(Dir[vv], "gmacsbase.tpl")
   if (file.exists(gmacsbase) == FALSE)
     stop(cat("\ngmacsbase.tpl does not exist\n"))

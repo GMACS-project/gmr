@@ -8,7 +8,6 @@ plot_basicOutput(
   Stock = NULL,
   Dir = NULL,
   model_name = NULL,
-  GMACSFileName = "gmacs.dat",
   out = TRUE,
   Dir.out = NULL,
   save.out = NULL,
@@ -16,26 +15,30 @@ plot_basicOutput(
 )
 }
 \arguments{
-\item{Stock}{vector of strings specifying the name(s) of the stock
-considered in the analysis.}
+\item{Stock}{(character string)- Specifies the name(s) of the stock
+considered. if \code{Stock='all'}, then the function will plot the basic
+outputs for all stocks that are "available" in the \code{"build"} directory.}
 
-\item{Dir}{vector of strings containing the directories for all
-\code{GMACS_version} used in this analysis.}
+\item{Dir}{(character string)- vector of folder names of length \code{model_name} for all
+\code{GMACS_version/model} for which you want to plot the outputs. Each \code{Dir}
+correspond to the root folder where the \code{"build"} folder is stored.}
 
-\item{model_name}{vector of strings holding the name(s) of the
-GMACS versions/models that is/are used in the analysis.}
+\item{model_name}{(character string)- vector of strings specifying the name(s)
+of the GMACS version(s)/model(s) that is/are considered for plotting.}
 
-\item{GMACSFileName}{name of the \code{gmacs.dat} file.
-Default \code{"gmacs.dat"}.}
-
-\item{out}{(logical); if \code{TRUE}; the plot will be saved on the \code{Dir.out}
+\item{out}{(logical)- if \code{TRUE}; the plots will be saved in the \code{Dir.out}
 directory.}
 
-\item{Dir.out}{(character string); path to the directory to save plots}
+\item{Dir.out}{(character string)- Path directory where to save the plots. If
+\code{Stock='all'}, \code{Dir.out} is a vector of length equal to the number of
+stocks "available" in the \code{"build"} directory.
+(Warning: The function create a "plot" folder where outputs are saved).}
 
-\item{save.out}{(character string);}
+\item{save.out}{(logical)- if \code{TRUE}, then the plots are saved using the
+format indicated in the \code{out.format} argument. If \code{FALSE}, then plots
+will be available in the plot windows of R.}
 
-\item{out.format}{Device to use to save the plot (currently only "pdf")}
+\item{out.format}{(character string)- Device to use to save the plot (\code{"pdf"}, \code{"png"}, \code{"jpeg"})}
 }
 \description{
 Plots the basic outputs of GMACS.

@@ -20,7 +20,8 @@
         df <- data.frame(A$ft, Model = names(M)[i])
         colnames(df) <- c(1:nseason, "model")
         df$year <- rep(A$mod_yrs, by = nfleet)
-        df$fleet <- rep(.FLEET, each = nyear*A$nsex)
+        # df$fleet <- rep(.FLEET, each = nyear*A$nsex)
+        df$fleet <- rep(.All_FLEET, each = nyear*A$nsex)
         df$sex <- rep("Sex",nrow(df))
         if(A$nsex==2)
           df$sex <- rep(rep(c("Male","Female"),each = nyear),nfleet)
@@ -48,7 +49,8 @@
         fdf <- rbind(fdf, df)
 
         df <- data.frame(Model = names(M)[i], fbar = exp(A$log_fbar))
-        df$fleet <- .FLEET
+        # df$fleet <- .FLEET
+        df$fleet <- .All_FLEET
         df <- df[which(df$fleet %in% unique(fdf$fleet)),]
         fbar <- rbind(fbar, df)
     }
@@ -116,5 +118,7 @@ plot_F <- function(M, scales = "free_y",
     #     #p <- p + geom_line(aes(x = as.integer(year), y = predicted, col = model), alpha = 0.4)
     #     p <- p + facet_wrap(~model + fleet + type, scales = scales)
     # }
-    print(p + .THEME+ ggplot2::theme(legend.position=c(in_leg_x,in_leg_y)))
+
+    # print(p + .THEME+ ggplot2::theme(legend.position=c(in_leg_x,in_leg_y)))
+    print(p + .THEME)
 }
