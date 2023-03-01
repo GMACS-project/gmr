@@ -1,4 +1,7 @@
 title: gmr
+home:
+  sidebar:
+    structure: [links, license, community, citation, authors]
 
 template:
   params:
@@ -15,9 +18,6 @@ deploy:
 
 navbar:
   type: inverse
-
-  title: gmr
-
   structure:
     left:
     - home
@@ -30,7 +30,6 @@ navbar:
     right:
     - github
     - Twitter
-
   components:
     home:
       icon: fa-home fa-lg

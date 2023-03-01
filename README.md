@@ -1,13 +1,12 @@
+<!-- README.md is generated from README.Rmd. Please edit that file -->
 <!-- badges: start -->
 
-[![GitHub release (latest by
-date)](https://img.shields.io/github/release/GMACS-project/gmr)](https://github.com/GMACS-project/gmr/releases)
-[![R-CMD-check](https://github.com/GMACS-project/gmr/workflows/R-CMD-check/badge.svg)](https://github.com/GMACS-project/gmr/actions)
+<a href="https://github.com/GMACS-project/gmr/releases" class="gmr-devel"><img src="https://img.shields.io/github/release/GMACS-project/gmr" alt="GitHub release (latest by date)" /></a>
+<a href="https://github.com/GMACS-project/gmr/actions" class="gmr-devel"><img src="https://github.com/GMACS-project/gmr/workflows/R-CMD-check/badge.svg" alt="R-CMD-check" /></a>
 <!-- badges: end -->
 
-<!-- README.md is generated from README.Rmd. Please edit that file -->
-
-# gmr - R package to work with a Generalized size-structured Model for Assessing Crustaceans ***GMACS***
+**An R package to work with the Generalized Model for Assessing
+Crustacean Stocks (GMACS)**
 
 `gmr` is an R package providing tools to work with
 *[GMACS](https://github.com/GMACS-project/GMACS_Assessment_code/tree/main/GMACS_versions/Latest_Version)*,
@@ -45,5 +44,5 @@ Now you can load the package and inspect the functions:
 
 Using the functions requires output from the General Model for Assessing
 Crustacean Stocks (GMACS) which is described in the
-[GMACS](https://github.com/GMACS-project/GMACS_Assessment_code/)
+[GMACS](https://github.com/GMACS-project/GMACS_Assessment_code/tree/main/GMACS_versions/Latest_Version)
 repo.

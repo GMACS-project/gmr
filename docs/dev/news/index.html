@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">gmr</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">1.3.2.1</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">1.3.4</span>
       </span>
     </div>
 
@@ -44,7 +44,7 @@
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu"><li>
-      <a href="../articles/001UseGmrToRunGMACS.html">Run GMACS</a>
+      <a href="../articles/1_UseGmrToRunGMACS.html">Run GMACS</a>
     </li>
   </ul></li>
 <li>
@@ -66,7 +66,7 @@
       <a href="../news/index.html">Changelog</a>
     </li>
     <li>
-      <a href="https://github.com/GMACS-project/gmr/releases/tag/V1.3.2.1" class="external-link">gmr V 1.3.2.1</a>
+      <a href="https://github.com/GMACS-project/gmr/releases/tag/V1.3.3" class="external-link">gmr V 1.3.3</a>
     </li>
     <li>
       <a href="https://github.com/GMACS-project/gmr/releases/tag/V1.3.0" class="external-link">gmr V 1.3.0</a>
@@ -121,7 +121,7 @@
     </div>
 
     <div class="section level2">
-<h2 class="page-header" data-toc-text="1.3.0.9001" id="gmr-1309001">gmr 1.3.0.9001<a class="anchor" aria-label="anchor" href="#gmr-1309001"></a></h2>
+<h2 class="page-header" data-toc-text="1.3.4.9001" id="gmr-1349001">gmr 1.3.4.9001<a class="anchor" aria-label="anchor" href="#gmr-1349001"></a></h2>
 <hr><p>Here are some of the items for the next release:</p>
 <ul class="task-list"><li>
 <input type="checkbox" disabled>Check all plotting functions</li>
@@ -134,6 +134,80 @@
 <li>
 <input type="checkbox" disabled>Add data and implement examples in the package</li>
 </ul></div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="1.3.4" id="gmr-134">gmr 1.3.4<a class="anchor" aria-label="anchor" href="#gmr-134"></a></h2>
+<hr><p>(GitHub issue/PR numbers in parentheses)</p>
+<p>This new release includes implementations related to the CPT modelling workshop hold in January 2023. Major implementations includes updates of i) plotting functions, ii) functions allowing to read and write GMACS input/output files, and iii) functions used when implementing and releasing a new version of GMACS (<a href="https://github.com/GMACS-project/gmr/issues/20" class="external-link">#20</a>).</p>
+<div class="section level3">
+<h3 id="new-functions-1-3-4">New functions<a class="anchor" aria-label="anchor" href="#new-functions-1-3-4"></a></h3>
+<ol style="list-style-type: decimal"><li>Functions to plot GMACS outputs</li></ol><ul><li>
+<code><a href="../reference/BaseThemeGMR.html">BaseThemeGMR()</a></code>: Specify the basic theme of <code>gmr</code> when plotting outputs</li></ul><ol style="list-style-type: decimal"><li>Functions to read GMACS output files</li></ol><ul><li>
+<code><a href="../reference/readGMACSallOUT.html">readGMACSallOUT()</a></code>: reads the <code>gmacsall.out</code> file</li>
+<li>
+<code><a href="../reference/readGMACSrep.html">readGMACSrep()</a></code>: read the <code>gmacs.rep</code> file</li>
+</ul><ol style="list-style-type: decimal"><li>Function to update GMACS *<code><a href="../reference/NewGMACSFeat.html">NewGMACSFeat()</a></code>: creates a summary file detailing the latest implementations in the gmacsbase.TPL file, when they’ve been done and by whom.</li></ol></div>
+<div class="section level3">
+<h3 id="updated-functions-1-3-4">Updated functions<a class="anchor" aria-label="anchor" href="#updated-functions-1-3-4"></a></h3>
+<ol style="list-style-type: decimal"><li>Functions to plot GMACS outputs</li></ol><ul><li><code><a href="../reference/dot-get_F_df.html">.get_F_df()</a></code></li>
+<li><code><a href="../reference/dot-get_cpue_df.html">.get_cpue_df()</a></code></li>
+<li><code><a href="../reference/plot_catch.html">plot_catch()</a></code></li>
+<li><code><a href="../reference/plot_recruitment.html">plot_recruitment()</a></code></li>
+<li><code><a href="../reference/dot-get_sizeComps_df.html">.get_sizeComps_df()</a></code></li>
+<li><code><a href="../reference/plot_basicOutput.html">plot_basicOutput()</a></code></li>
+<li><code><a href="../reference/plot_catch.html">plot_catch()</a></code></li>
+</ul><ol style="list-style-type: decimal"><li>Functions to read/write GMACS input/output files</li></ol><ul><li><code><a href="../reference/readGMACS.dat.html">readGMACS.dat()</a></code></li>
+<li><code><a href="../reference/readGMACSdat.html">readGMACSdat()</a></code></li>
+<li><code><a href="../reference/readGMACSctl.html">readGMACSctl()</a></code></li>
+<li><code><a href="../reference/readGMACSfiles.html">readGMACSfiles()</a></code></li>
+<li><code><a href="../reference/readGMACSpar.html">readGMACSpar()</a></code></li>
+<li><code><a href="../reference/readGMACSprj.html">readGMACSprj()</a></code></li>
+<li><code><a href="../reference/readGMACSsimdat.html">readGMACSsimdat()</a></code></li>
+<li><code><a href="../reference/writeGmacs.dat.html">writeGmacs.dat()</a></code></li>
+<li><code><a href="../reference/writeGmacsctlfile.html">writeGmacsctlfile()</a></code></li>
+<li><code><a href="../reference/writeGmacsdatfile.html">writeGmacsdatfile()</a></code></li>
+<li><code><a href="../reference/writeGmacsprjfile.html">writeGmacsprjfile()</a></code></li>
+</ul><ol style="list-style-type: decimal"><li>Functions to update and release a new version of GMACS</li></ol><ul><li>
+<code><a href="../reference/dot-GetGmacsExe.html">.GetGmacsExe()</a></code> *<code><a href="../reference/createGmacsExe.html">createGmacsExe()</a></code>
+</li>
+<li><code><a href="../reference/GMACS.html">GMACS()</a></code></li>
+<li><code><a href="../reference/UpdateGMACS.html">UpdateGMACS()</a></code></li>
+<li><code><a href="../reference/insertTime2.html">insertTime2()</a></code></li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="1.3.3" id="gmr-133">gmr 1.3.3<a class="anchor" aria-label="anchor" href="#gmr-133"></a></h2>
+<hr><p>(GitHub issue/PR numbers in parentheses)</p>
+<p>This new release comes with the PR (<a href="https://github.com/GMACS-project/gmr/issues/19" class="external-link">#19</a>) and updates the function to read the control file and the one to realize simulations.</p>
+<div class="section level3">
+<h3 id="updated-functions-1-3-3">Updated functions<a class="anchor" aria-label="anchor" href="#updated-functions-1-3-3"></a></h3>
+<ul><li>
+<code><a href="../reference/readGMACSctl.html">readGMACSctl()</a></code>: Number of nodes for cubic spline or number of step-changes for option 3 (<a href="https://github.com/GMACS-project/gmr/issues/18" class="external-link">#18</a>)</li>
+<li>
+<code><a href="../reference/SaveSimFiles.html">SaveSimFiles()</a></code>: Save outputs of the simulation approach (<a href="https://github.com/GMACS-project/gmr/issues/18" class="external-link">#18</a>)</li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="1.3.2" id="gmr-132">gmr 1.3.2<a class="anchor" aria-label="anchor" href="#gmr-132"></a></h2>
+<hr><p>(GitHub issue/PR numbers in parentheses)</p>
+<p>This new release allows to run the simulation under Linux.</p>
+<div class="section level3">
+<h3 id="updated-functions-1-3-2">Updated functions<a class="anchor" aria-label="anchor" href="#updated-functions-1-3-2"></a></h3>
+<ul><li>
+<code><a href="../reference/RunGmacsSim.html">RunGmacsSim()</a></code> (<a href="https://github.com/GMACS-project/gmr/issues/17" class="external-link">#17</a>)</li></ul></div>
+</div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="1.3.1" id="gmr-131">gmr 1.3.1<a class="anchor" aria-label="anchor" href="#gmr-131"></a></h2>
+<hr><p>(GitHub issue/PR numbers in parentheses)</p>
+<p>This new release incorporates a new function to plot the basic outputs from GMACS and give the possibility to specify a given file to set the directories needed to call ADMB within R.</p>
+<div class="section level3">
+<h3 id="new-functions-1-3-1">New functions<a class="anchor" aria-label="anchor" href="#new-functions-1-3-1"></a></h3>
+<ul><li>
+<code><a href="../reference/plot_basicOutput.html">plot_basicOutput()</a></code>: function to plot the basic outputs of GMACS (<a href="https://github.com/GMACS-project/gmr/issues/15" class="external-link">#15</a>)</li></ul></div>
+<div class="section level3">
+<h3 id="updated-functions-1-3-1">Updated functions<a class="anchor" aria-label="anchor" href="#updated-functions-1-3-1"></a></h3>
+<ul><li>
+<code><a href="../reference/createGmacsExe.html">createGmacsExe()</a></code>: add the <code>ADMBpaths</code> argument in the function (<a href="https://github.com/GMACS-project/gmr/issues/16" class="external-link">#16</a>)</li></ul></div>
+</div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="1.3.0" id="gmr-130">gmr 1.3.0<a class="anchor" aria-label="anchor" href="#gmr-130"></a></h2>
 <hr><p>(GitHub issue/PR numbers in parentheses)</p>

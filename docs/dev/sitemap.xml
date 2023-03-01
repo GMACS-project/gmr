@@ -10,6 +10,9 @@
     <loc>/articles/001_Use_gmr_to_Run_GMACS.html</loc>
   </url>
   <url>
+    <loc>/articles/1_UseGmrToRunGMACS.html</loc>
+  </url>
+  <url>
     <loc>/articles/index.html</loc>
   </url>
   <url>
@@ -20,6 +23,9 @@
   </url>
   <url>
     <loc>/news/index.html</loc>
+  </url>
+  <url>
+    <loc>/reference/BaseThemeGMR.html</loc>
   </url>
   <url>
     <loc>/reference/clean_bat.html</loc>
@@ -50,6 +56,9 @@
   </url>
   <url>
     <loc>/reference/dot-GetGmacsExe.html</loc>
+  </url>
+  <url>
+    <loc>/reference/dot-getVerGMACS.html</loc>
   </url>
   <url>
     <loc>/reference/dot-get_catch_df.html</loc>
@@ -115,6 +124,9 @@
     <loc>/reference/Gen_GmacsSim.html</loc>
   </url>
   <url>
+    <loc>/reference/GetVerSpec.html</loc>
+  </url>
+  <url>
     <loc>/reference/GMACS.html</loc>
   </url>
   <url>
@@ -137,6 +149,9 @@
   </url>
   <url>
     <loc>/reference/multiplot.html</loc>
+  </url>
+  <url>
+    <loc>/reference/NewGMACSFeat.html</loc>
   </url>
   <url>
     <loc>/reference/plot_basicOutput.html</loc>
@@ -238,6 +253,9 @@
     <loc>/reference/readGMACS.dat.html</loc>
   </url>
   <url>
+    <loc>/reference/readGMACSallOUT.html</loc>
+  </url>
+  <url>
     <loc>/reference/readGMACSctl.html</loc>
   </url>
   <url>
@@ -251,6 +269,9 @@
   </url>
   <url>
     <loc>/reference/readGMACSprj.html</loc>
+  </url>
+  <url>
+    <loc>/reference/readGMACSrep.html</loc>
   </url>
   <url>
     <loc>/reference/readGMACSsimdat.html</loc>

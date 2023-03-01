@@ -4,20 +4,20 @@ output:
     variant: markdown_github
 ---
 
-[GMACS]: https://github.com/GMACS-project/GMACS_Assessment_code/tree/main/GMACS/Latest_Version
+[GMACS]: https://github.com/GMACS-project/GMACS_Assessment_code/tree/main/GMACS_versions/Latest_Version
 
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
 
 
 <!-- badges: start -->
-[![GitHub release (latest by date)](https://img.shields.io/github/release/GMACS-project/gmr)](https://github.com/GMACS-project/gmr/releases)
-[![R-CMD-check](https://github.com/GMACS-project/gmr/workflows/R-CMD-check/badge.svg)](https://github.com/GMACS-project/gmr/actions)
+[![GitHub release (latest by date)](https://img.shields.io/github/release/GMACS-project/gmr)](https://github.com/GMACS-project/gmr/releases){.gmr-devel}
+[![R-CMD-check](https://github.com/GMACS-project/gmr/workflows/R-CMD-check/badge.svg)](https://github.com/GMACS-project/gmr/actions){.gmr-devel}
 <!-- badges: end -->
 
 
 
 
-
-<!-- README.md is generated from README.Rmd. Please edit that file -->
 
 ```{r, echo = FALSE}
 knitr::opts_chunk$set(
@@ -26,7 +26,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-# gmr - R package to work with a Generalized size-structured Model for Assessing Crustaceans **_GMACS_**
+  **An R package to work with the Generalized Model for Assessing Crustacean Stocks (GMACS)**
 
 `gmr` is an R package providing tools to work with *[GMACS]*, a generalized size-structured assessment model for Crustaceans. Specifically, it includes an extensive library of functions developed to build and run GMACS for one or several crustacean stock(s) and to plot outputs of the model.
 
