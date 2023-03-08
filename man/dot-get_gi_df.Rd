@@ -23,4 +23,6 @@ Get growth increment data
 }
 \author{
 D'Arcy N. Webber, SJD Martell
+
+D'Arcy N. Webber, SJD Martell
 }

@@ -29,6 +29,7 @@ write_TPL <- function(vv = NULL,
   gmacs <- file.path(Dir[vv], "gmacs.tpl")
   fs::file_create(gmacs)
 
+  # Write gmacsbase.tpl
   if (.update) {
     add.text <- readLines(gmacsbase)
     unlink(gmacsbase, recursive = FALSE, force = FALSE)
@@ -36,9 +37,8 @@ write_TPL <- function(vv = NULL,
 
     Insert <-
       insertTime2(object = add.text,
-                       pattern = '!! TheHeader',
+                       pattern = ' !! TheHeader',
                        .update = TRUE)
-    # Insert <- insertTime(object = add.text, pattern = ' !! TheHeader', .update = TRUE)
     header <- Insert[[1]]
     txt.header <- Insert[[2]]
 
@@ -49,11 +49,12 @@ write_TPL <- function(vv = NULL,
     close(fileConn)
   }
 
+  # Write gmacs.tpl
   add.text <- readLines(gmacsbase)
   if (!.update)
     add.text <-
     insertTime(object = add.text,
-                    pattern = '!! TheHeader',
+                    pattern = ' !! TheHeader',
                     .update = FALSE)
   add.text <- paste0(add.text, collapse = "\n")
   add.text <- c(add.text, "\n", "")
