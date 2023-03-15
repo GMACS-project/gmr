@@ -72,7 +72,7 @@ writeGmacsctlfile <- function(Dir = NULL,
   cat("# *** \n")
   cat("#", Ver, "\n")
   cat("# Last GMACS mofification made by: ", Comp, "\n")
-  cat("# Date of writing the control file:", .ac(Sys.time()))
+  cat("# Date of writing the control file:", .ac(Sys.time()), "\n")
   cat("# *** \n")
   cat("# \n")
   cat("# Stock of interest: ", stock, "\n")
@@ -617,6 +617,7 @@ writeGmacsctlfile <- function(Dir = NULL,
   cat("# Type of natural mortality\n")
   cat(obj$m_type, "\n")
   cat("# Is female M relative to M male?\n")
+  cat("# 0: No (absolute); 1: Yes (relative) \n")
   if(is.numeric(obj$MrelFem)){
     cat(obj$MrelFem, "\n")
   } else {
