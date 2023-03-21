@@ -24,7 +24,8 @@ LazyData: true
 RoxygenNote: 7.2.3
 Depends:
     R (>= 4.1.1),
-    PBSadmb
+    PBSadmb.
+    XML
 Imports: 
     ggplot2,
     kableExtra,
@@ -40,8 +41,7 @@ Imports:
     rstudioapi,
     svDialogs,
     ggridges,
-    magrittr,
-    XML
+    magrittr
 Suggests: 
     knitr,
     rmarkdown
