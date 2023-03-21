@@ -39,6 +39,4 @@ Plot growth from arbitrary start age
 }
 \author{
 SJD Martell, D'Arcy N. Webber
-
-SJD Martell, D'Arcy N. Webber
 }

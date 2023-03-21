@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">gmr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.3.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.3.5</span>
       </span>
     </div>
 
@@ -121,7 +121,7 @@
     </div>
 
     <div class="section level2">
-<h2 class="page-header" data-toc-text="1.3.4.9001" id="gmr-1349001">gmr 1.3.4.9001<a class="anchor" aria-label="anchor" href="#gmr-1349001"></a></h2>
+<h2 class="page-header" data-toc-text="1.3.5.9001" id="gmr-1359001">gmr 1.3.5.9001<a class="anchor" aria-label="anchor" href="#gmr-1359001"></a></h2>
 <hr><p>Here are some of the items for the next release:</p>
 <ul class="task-list"><li>
 <input type="checkbox" disabled>Check all plotting functions</li>
@@ -135,27 +135,65 @@
 <input type="checkbox" disabled>Add data and implement examples in the package</li>
 </ul></div>
     <div class="section level2">
+<h2 class="page-header" data-toc-text="1.3.5" id="gmr-135">gmr 1.3.5<a class="anchor" aria-label="anchor" href="#gmr-135"></a></h2>
+<hr><p>(GitHub issue/PR numbers in parentheses)</p>
+<p>This new release includes implementations related to the incorporation of i) environmental impacts and possibility of random walk in the vulnerability parameters (selectivity and retention parameters) (<a href="https://github.com/GMACS-project/gmr/issues/21" class="external-link">#21</a>).</p>
+<div class="section level3">
+<h3 id="updated-functions-1-3-5">Updated functions<a class="anchor" aria-label="anchor" href="#updated-functions-1-3-5"></a></h3>
+<ol style="list-style-type: decimal"><li>Functions to read GMACS input/output files</li>
+</ol><ul><li>
+<code><a href="../reference/readGMACSdat.html">readGMACSdat()</a></code>: incorporating the read of environmental indices.</li>
+<li>
+<code><a href="../reference/readGMACSctl.html">readGMACSctl()</a></code>: 1) change in the selectivity and retention matrices to allow environmental impacts and random walk; 2) Now read phase for random walk deviations;</li>
+</ul><ol style="list-style-type: decimal"><li>new internal function to count the number of random deviation parameters to be estimated.</li>
+</ol><ul><li>
+<code><a href="../reference/readGMACSpar.html">readGMACSpar()</a></code>: Accounting for the environmental parameters.</li>
+<li>
+<code><a href="../reference/readGMACSallOUT.html">readGMACSallOUT()</a></code>: Reading environmental parameters and deviations in vulnerability.</li>
+<li>
+<code><a href="../reference/writeGmacsctlfile.html">writeGmacsctlfile()</a></code>: account for environmental parameters and random walk deviations + formatting.</li>
+<li>
+<code><a href="../reference/writeGmacsdatfile.html">writeGmacsdatfile()</a></code>: account for environmental data and formatting.</li>
+<li>
+<code><a href="../reference/writeGmacsPAR.html">writeGmacsPAR()</a></code>: account for environmental parameters and deviations in vulnerability + formatting.</li>
+</ul><ol style="list-style-type: decimal"><li>Functions to update and release a new version of GMACS</li>
+</ol><p>The updates improve the workflow for updating GMACS.</p>
+<ul><li><code><a href="../reference/Do_Comp.html">Do_Comp()</a></code></li>
+<li><code><a href="../reference/Do_GMACS.html">Do_GMACS()</a></code></li>
+<li><code><a href="../reference/GMACS.html">GMACS()</a></code></li>
+<li><code><a href="../reference/UpdateGMACS.html">UpdateGMACS()</a></code></li>
+<li><code>getVerGMACS()</code></li>
+<li><code><a href="../reference/NewGMACSFeat.html">NewGMACSFeat()</a></code></li>
+</ul></div>
+</div>
+    <div class="section level2">
 <h2 class="page-header" data-toc-text="1.3.4" id="gmr-134">gmr 1.3.4<a class="anchor" aria-label="anchor" href="#gmr-134"></a></h2>
 <hr><p>(GitHub issue/PR numbers in parentheses)</p>
 <p>This new release includes implementations related to the CPT modelling workshop hold in January 2023. Major implementations includes updates of i) plotting functions, ii) functions allowing to read and write GMACS input/output files, and iii) functions used when implementing and releasing a new version of GMACS (<a href="https://github.com/GMACS-project/gmr/issues/20" class="external-link">#20</a>).</p>
 <div class="section level3">
 <h3 id="new-functions-1-3-4">New functions<a class="anchor" aria-label="anchor" href="#new-functions-1-3-4"></a></h3>
-<ol style="list-style-type: decimal"><li>Functions to plot GMACS outputs</li></ol><ul><li>
-<code><a href="../reference/BaseThemeGMR.html">BaseThemeGMR()</a></code>: Specify the basic theme of <code>gmr</code> when plotting outputs</li></ul><ol style="list-style-type: decimal"><li>Functions to read GMACS output files</li></ol><ul><li>
+<ol style="list-style-type: decimal"><li>Functions to plot GMACS outputs</li>
+</ol><ul><li>
+<code><a href="../reference/BaseThemeGMR.html">BaseThemeGMR()</a></code>: Specify the basic theme of <code>gmr</code> when plotting outputs</li>
+</ul><ol style="list-style-type: decimal"><li>Functions to read GMACS output files</li>
+</ol><ul><li>
 <code><a href="../reference/readGMACSallOUT.html">readGMACSallOUT()</a></code>: reads the <code>gmacsall.out</code> file</li>
 <li>
 <code><a href="../reference/readGMACSrep.html">readGMACSrep()</a></code>: read the <code>gmacs.rep</code> file</li>
-</ul><ol style="list-style-type: decimal"><li>Function to update GMACS *<code><a href="../reference/NewGMACSFeat.html">NewGMACSFeat()</a></code>: creates a summary file detailing the latest implementations in the gmacsbase.TPL file, when they’ve been done and by whom.</li></ol></div>
+</ul><ol style="list-style-type: decimal"><li>Function to update GMACS *<code><a href="../reference/NewGMACSFeat.html">NewGMACSFeat()</a></code>: creates a summary file detailing the latest implementations in the gmacsbase.TPL file, when they’ve been done and by whom.</li>
+</ol></div>
 <div class="section level3">
 <h3 id="updated-functions-1-3-4">Updated functions<a class="anchor" aria-label="anchor" href="#updated-functions-1-3-4"></a></h3>
-<ol style="list-style-type: decimal"><li>Functions to plot GMACS outputs</li></ol><ul><li><code><a href="../reference/dot-get_F_df.html">.get_F_df()</a></code></li>
+<ol style="list-style-type: decimal"><li>Functions to plot GMACS outputs</li>
+</ol><ul><li><code><a href="../reference/dot-get_F_df.html">.get_F_df()</a></code></li>
 <li><code><a href="../reference/dot-get_cpue_df.html">.get_cpue_df()</a></code></li>
 <li><code><a href="../reference/plot_catch.html">plot_catch()</a></code></li>
 <li><code><a href="../reference/plot_recruitment.html">plot_recruitment()</a></code></li>
 <li><code><a href="../reference/dot-get_sizeComps_df.html">.get_sizeComps_df()</a></code></li>
 <li><code><a href="../reference/plot_basicOutput.html">plot_basicOutput()</a></code></li>
 <li><code><a href="../reference/plot_catch.html">plot_catch()</a></code></li>
-</ul><ol style="list-style-type: decimal"><li>Functions to read/write GMACS input/output files</li></ol><ul><li><code><a href="../reference/readGMACS.dat.html">readGMACS.dat()</a></code></li>
+</ul><ol style="list-style-type: decimal"><li>Functions to read/write GMACS input/output files</li>
+</ol><ul><li><code><a href="../reference/readGMACS.dat.html">readGMACS.dat()</a></code></li>
 <li><code><a href="../reference/readGMACSdat.html">readGMACSdat()</a></code></li>
 <li><code><a href="../reference/readGMACSctl.html">readGMACSctl()</a></code></li>
 <li><code><a href="../reference/readGMACSfiles.html">readGMACSfiles()</a></code></li>
@@ -166,7 +204,8 @@
 <li><code><a href="../reference/writeGmacsctlfile.html">writeGmacsctlfile()</a></code></li>
 <li><code><a href="../reference/writeGmacsdatfile.html">writeGmacsdatfile()</a></code></li>
 <li><code><a href="../reference/writeGmacsprjfile.html">writeGmacsprjfile()</a></code></li>
-</ul><ol style="list-style-type: decimal"><li>Functions to update and release a new version of GMACS</li></ol><ul><li>
+</ul><ol style="list-style-type: decimal"><li>Functions to update and release a new version of GMACS</li>
+</ol><ul><li>
 <code><a href="../reference/dot-GetGmacsExe.html">.GetGmacsExe()</a></code> *<code><a href="../reference/createGmacsExe.html">createGmacsExe()</a></code>
 </li>
 <li><code><a href="../reference/GMACS.html">GMACS()</a></code></li>
@@ -193,7 +232,8 @@
 <div class="section level3">
 <h3 id="updated-functions-1-3-2">Updated functions<a class="anchor" aria-label="anchor" href="#updated-functions-1-3-2"></a></h3>
 <ul><li>
-<code><a href="../reference/RunGmacsSim.html">RunGmacsSim()</a></code> (<a href="https://github.com/GMACS-project/gmr/issues/17" class="external-link">#17</a>)</li></ul></div>
+<code><a href="../reference/RunGmacsSim.html">RunGmacsSim()</a></code> (<a href="https://github.com/GMACS-project/gmr/issues/17" class="external-link">#17</a>)</li>
+</ul></div>
 </div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="1.3.1" id="gmr-131">gmr 1.3.1<a class="anchor" aria-label="anchor" href="#gmr-131"></a></h2>
@@ -202,11 +242,13 @@
 <div class="section level3">
 <h3 id="new-functions-1-3-1">New functions<a class="anchor" aria-label="anchor" href="#new-functions-1-3-1"></a></h3>
 <ul><li>
-<code><a href="../reference/plot_basicOutput.html">plot_basicOutput()</a></code>: function to plot the basic outputs of GMACS (<a href="https://github.com/GMACS-project/gmr/issues/15" class="external-link">#15</a>)</li></ul></div>
+<code><a href="../reference/plot_basicOutput.html">plot_basicOutput()</a></code>: function to plot the basic outputs of GMACS (<a href="https://github.com/GMACS-project/gmr/issues/15" class="external-link">#15</a>)</li>
+</ul></div>
 <div class="section level3">
 <h3 id="updated-functions-1-3-1">Updated functions<a class="anchor" aria-label="anchor" href="#updated-functions-1-3-1"></a></h3>
 <ul><li>
-<code><a href="../reference/createGmacsExe.html">createGmacsExe()</a></code>: add the <code>ADMBpaths</code> argument in the function (<a href="https://github.com/GMACS-project/gmr/issues/16" class="external-link">#16</a>)</li></ul></div>
+<code><a href="../reference/createGmacsExe.html">createGmacsExe()</a></code>: add the <code>ADMBpaths</code> argument in the function (<a href="https://github.com/GMACS-project/gmr/issues/16" class="external-link">#16</a>)</li>
+</ul></div>
 </div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="1.3.0" id="gmr-130">gmr 1.3.0<a class="anchor" aria-label="anchor" href="#gmr-130"></a></h2>
@@ -214,7 +256,8 @@
 <p>This is a minor version update of <code>gmr</code> that includes new functions to i) work with the simulation module of GMACS, ii) read input and some output files of GMACS and, iii) write the GMACS input files.</p>
 <div class="section level3">
 <h3 id="new-functions-1-3-0">New functions<a class="anchor" aria-label="anchor" href="#new-functions-1-3-0"></a></h3>
-<ol style="list-style-type: decimal"><li>Functions to read GMACS input files</li></ol><ul><li>
+<ol style="list-style-type: decimal"><li>Functions to read GMACS input files</li>
+</ol><ul><li>
 <code><a href="../reference/readGMACSfiles.html">readGMACSfiles()</a></code>: Function to read all the GMACS input files</li>
 <li>
 <code><a href="../reference/readGMACS.dat.html">readGMACS.dat()</a></code>: Function to read the gmacs.dat file</li>
@@ -224,8 +267,11 @@
 <code><a href="../reference/readGMACSctl.html">readGMACSctl()</a></code>: Function to read the control file</li>
 <li>
 <code>readGMACSprj</code>: Function to read the projection file All these functions return the input files as a named list.</li>
-</ul><ol style="list-style-type: decimal"><li>Functions to write the GMACS input/output files <em><code><a href="../reference/writeGmacs.dat.html">writeGmacs.dat()</a></code>: function to write the gmacs.dat file </em><code><a href="../reference/writeGmacsdatfile.html">writeGmacsdatfile()</a></code>: function to write data file <em><code><a href="../reference/writeGmacsctlfile.html">writeGmacsctlfile()</a></code>: function to write the control file </em><code><a href="../reference/writeGmacsprjfile.html">writeGmacsprjfile()</a></code>: function to write the projection file *<code><a href="../reference/writeGmacsPAR.html">writeGmacsPAR()</a></code>: function to write the gmacs.par file</li></ol><ul><li>
-<code><a href="../reference/GMACSversion.html">GMACSversion()</a></code>: Function to extract the Version number of GMACS</li></ul><ol style="list-style-type: decimal"><li>Generate simulation using GMACS <em><code><a href="../reference/prepSim.html">prepSim()</a></code>: function to get the original input files for the simulation approach </em><code><a href="../reference/GenSimFiles.html">GenSimFiles()</a></code>: function to get generate the input files to get the simulated data for each simulation <em><code><a href="../reference/SimData.html">SimData()</a></code>: Function to generate the data </em><code><a href="../reference/SaveSimFiles.html">SaveSimFiles()</a></code>: Function to save the outputs of each simulation-estimation run <em><code><a href="../reference/Gen_GmacsSim.html">Gen_GmacsSim()</a></code>: Function to generates the simulated data for a set of simulation </em><code><a href="../reference/RunGmacsSim.html">RunGmacsSim()</a></code>: Function to run the GMACS simulation-estimation *<code><a href="../reference/clean_bat_Sim.html">clean_bat_Sim()</a></code>: Function to clean gmacs simulation-estimation approach</li></ol></div>
+</ul><ol style="list-style-type: decimal"><li>Functions to write the GMACS input/output files <em><code><a href="../reference/writeGmacs.dat.html">writeGmacs.dat()</a></code>: function to write the gmacs.dat file </em><code><a href="../reference/writeGmacsdatfile.html">writeGmacsdatfile()</a></code>: function to write data file <em><code><a href="../reference/writeGmacsctlfile.html">writeGmacsctlfile()</a></code>: function to write the control file </em><code><a href="../reference/writeGmacsprjfile.html">writeGmacsprjfile()</a></code>: function to write the projection file *<code><a href="../reference/writeGmacsPAR.html">writeGmacsPAR()</a></code>: function to write the gmacs.par file</li>
+</ol><ul><li>
+<code><a href="../reference/GMACSversion.html">GMACSversion()</a></code>: Function to extract the Version number of GMACS</li>
+</ul><ol style="list-style-type: decimal"><li>Generate simulation using GMACS <em><code><a href="../reference/prepSim.html">prepSim()</a></code>: function to get the original input files for the simulation approach </em><code><a href="../reference/GenSimFiles.html">GenSimFiles()</a></code>: function to get generate the input files to get the simulated data for each simulation <em><code><a href="../reference/SimData.html">SimData()</a></code>: Function to generate the data </em><code><a href="../reference/SaveSimFiles.html">SaveSimFiles()</a></code>: Function to save the outputs of each simulation-estimation run <em><code><a href="../reference/Gen_GmacsSim.html">Gen_GmacsSim()</a></code>: Function to generates the simulated data for a set of simulation </em><code><a href="../reference/RunGmacsSim.html">RunGmacsSim()</a></code>: Function to run the GMACS simulation-estimation *<code><a href="../reference/clean_bat_Sim.html">clean_bat_Sim()</a></code>: Function to clean gmacs simulation-estimation approach</li>
+</ol></div>
 <div class="section level3">
 <h3 id="updated-functions-1-3-0">Updated functions<a class="anchor" aria-label="anchor" href="#updated-functions-1-3-0"></a></h3>
 <ul><li><code><a href="../reference/Do_GMACS.html">Do_GMACS()</a></code></li>
@@ -298,7 +344,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>

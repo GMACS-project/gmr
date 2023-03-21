@@ -18,101 +18,165 @@ knitr::opts_chunk$set(
 
 ```{r setup, echo=TRUE}
 
+# I- Install/Update gmr and load packages ----
+
+rm(list = ls())     # Clean your R session
+
+# Set the working directory as the directory of this document
 setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
 
+# check your directory
+getwd()
 
-# Some functions used to run admb in R
-# install.packages("PBSadmb")
-library(PBSadmb)
-library(knitr)
-library(svDialogs)
-library(miceadds)
+# Install and load the packages
 
+# 1.Install devtools and gdata on your machine
+if (!require("devtools")) {
+  # install devtools
+  install.packages("devtools")
+}
+
+if (!require("gdata")) {
+  # needed to manipulate data
+  install.packages("gdata")
+}
+
+# 2. Install / update gmr package
+Src <- "GMACS-project/gmr"
+# Get the latest version of gmr? (0: no; 1: install for the first time; 2: update the package)
+Update <-
+  0
+# Inidicate the library directory to remove the gmr package from
+mylib <-
+  "~/R/win-library/4.1"
+
+#  remotes::install_github() will work to install gmr on your machine
+if (Update == 1)
+  devtools::install_github(Src)
+
+# Updating to the latest version of gmr
+if (Update == 2) {
+  remove.packages("gmr", lib = mylib)
+  devtools::install_github(Src)
+}
+
+# Load the gmr package
 library(gmr)
+# -----------------------------------------------------------
+
+
 ```
+
+```{r Compile GMACS, echo=TRUE, message=FALSE, warning=FALSE, include=FALSE}
+
+# II- Compile and build GMACS ----
+
+# Set the working directories:
+Dir_Dvpt_Vers <- file.path(here::here(), "Dvpt_Version")
+Dir_Last_Vers <- file.path(here::here(), "Latest_Version")
+
+# Define the name of the file containing the different pathways needed to build
+# the GMACS executable - The ADpaths_Windows.txt file has to be used for windows
+# machine and the ADpaths_MacOS.txt for Linux-like machine (including MacOS)
+# /!\ his file need to be modified so the paths will fit to your machine
+ADMBpaths <- ifelse(.Platform$OS.type == "windows",
+                    "ADpaths_Windows.txt",
+                    "ADpaths_MacOS.txt")
+
+# Now run the createGmacsExe() function to get the executable for the
+# latest version (if applicable)
+createGmacsExe(
+  vv = 2,
+  Dir = c(Dir_Dvpt_Vers, Dir_Last_Vers),
+  verbose = FALSE,
+  ADMBpaths = ADMBpaths
+)
+# -----------------------------------------------------------
+
+```
+
+
 
 ```{r Define runs and versions, echo=TRUE, message=FALSE, warning=FALSE, include=FALSE}
 
-# Species of interest
-.Spc <-c(
-  # "SMBKC"
+# Define the working directories
+
+# Stock of interest - Here we are going to test all stocks
+# Vector of character string
+# For one stock in particular (e.g., EAG), use the following command:
+# Stock <-c(
+#   "EAG","WAG"
+# )
+Stock <-c(
+  # "SMBKC", "EAG"
   "all"
-  # "WAG",
-  # "EAG"
-  )
-
-# Names of the GMACS version to consider for run
-.GMACS_version <- c(
-  "Dvpt_Version",
-  "Latest_Version"
-  )
-
-# Define directory
-# /!\ If the last assessment is used here, the directory for this 
-# folder will be: paste0(dirname(getwd()), "/Assessments/")
-
-.VERSIONDIR <- c(
-  paste0(getwd(), "/Dvpt_Version/"),
-  paste0(getwd(), "/Latest_Version/")
 )
 
+# Names of the GMACS version to consider
+# Character string
+# Here we focus on the development version ("Dvpt_Version")
+GMACS_version <- c(
+  "Latest_Version"
+)
+
+# Define directories (path to the version you are working on)
+# Character string 
+VERSIONDIR <- Dir_Last_Vers
+
 # Use Last Assessment for comparison?
-# If yes, you must provide the names of the model for each species in the variable .ASSMOD_NAMES
-# Those model folder must have to be hold in the folder Assessments
-.ASS <- FALSE
+# Logical
+# If yes, you must provide the names of the model(s) you want to consider for 
+# comparison for each stock in the variable named ASSMOD_NAMES. 
+# Those models folders must have to be hold in the "Assessments" folder of 
+# the GMACS_Assessment_code repository.
+ASS <- FALSE
 
-# names of the model for the last assessment - Only useful if comparison is made.
-# if all stocks are considered they have to be ordered as follow:
-# "AIGKC/EAG" / "AIGKC/WAG" / "BBRKC" / "SMBKC" / "SNOW"
-.ASSMOD_NAMES <- NULL
-                # c("model_21_1e",
-                #   "model_21_1e",
-                #   "model_21_1",
-                #   "model_16_0",
-                #   "model_21_g")
-
-# Need to conpile the model?
-  # vector of length(.GMACS_version)
-  # 0: GMACS is not compiled. This assumes that an executable exists in the directory of the concerned version.
-  # 1: GMACS is compiles
-.COMPILE <- c(1,1)
+# Do ou need to compile GMACS?
+# vector of interger of length(.GMACS_version)
+# 0: GMACS does not need to be compiled. This assumes that an executable exists in the directory of the concerned version.
+# 1: GMACS needs to be compiled
+COMPILE <- 0       # You already compile and build the executable
 
 # Run GMACS
-.RUN_GMACS <- TRUE
+# Logical
+# Here, we want to get an assessment for each stock
+RUN_GMACS <- TRUE
 
-# Use latets available data for the assessment?
-.LastAssDat <- TRUE
-
-# Define the directories for ADMB
-.ADMBpaths <- "ADpaths.txt"
-
-
-# Do comparison?
-.MAKE_Comp <- TRUE
+# Use latest available data for the assessment?
+# Logical
+# If TRUE, the model will be using the input files available in the "Assessment_data"
+# folder of the GMACS_Assessment_code repository. 
+# Remind that if you implemented a version in which you made modifications on the
+# input files (either the .ctl, .dat, or .prj files) you don't want to use the 
+# original files because it won't work.
+LastAssDat <- FALSE
 
 # Show Rterminal
-.VERBOSE <- TRUE
+# Do you want to see what is going on? (similar to verbose <- TRUE)
+# Logical
+VERBOSE <- TRUE
+
+# Do comparisons?
+# Logical
+# This is not the topic right now
+MAKE_Comp <- FALSE
 
 ```
 
 ```{r, echo=TRUE, results='asis'}
 
-
-# source("Run_GMACS_Function.R")
-source("Additional_functions.R")
-
 res <- GMACS(
-  Spc = .Spc,
-  GMACS_version = .GMACS_version,
-  Dir = .VERSIONDIR,
-  ASS = .ASS,
-  AssMod_names = .ASSMOD_NAMES,
-  compile = .COMPILE,
-  run = .RUN_GMACS,
-  LastAssDat = .LastAssDat,
-  ADMBpaths = .ADMBpaths,
-  make.comp = .MAKE_Comp,
-  verbose <- .VERBOSE
+  Spc = Stock,
+  GMACS_version = GMACS_version,
+  Dir = VERSIONDIR,
+  ASS = ASS,
+  compile = COMPILE,
+  run = RUN_GMACS,
+  LastAssDat = LastAssDat,
+  ADMBpaths = ADMBpaths,
+  make.comp = MAKE_Comp,
+  verbose = VERBOSE,
+  cleanOut = TRUE
 )
 
 ```
