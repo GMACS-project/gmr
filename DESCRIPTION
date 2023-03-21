@@ -40,7 +40,8 @@ Imports:
     rstudioapi,
     svDialogs,
     ggridges,
-    magrittr
+    magrittr,
+    XML
 Suggests: 
     knitr,
     rmarkdown
