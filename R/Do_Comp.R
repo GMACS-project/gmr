@@ -28,6 +28,8 @@
 #' \code{GMACS_version} considered in the analysis.
 #' @param out.pdf Logical. Do you want to get the table of comparison in a pdf format?
 #' @inheritParams PBSadmb::convAD
+#' @param cleanRun (logical) - Specify if the `Dir` has to be cleaned after
+#' the run. See the \code{\link{clean_bat()}} function.
 #'
 #' @seealso \code{\link{Do_GMACS}}, \code{.buildGMACS} for
 #' building the executable.
@@ -276,7 +278,14 @@ Do_Comp <-
            ADMBpaths = NULL,
            make.comp = NULL,
            verbose = NULL,
-           out.pdf = FALSE) {
+           out.pdf = FALSE,
+           cleanRun = NULL
+           ) {
+
+    # Turn off cleaning after run if not precised
+    if(is.null(cleanRun))
+      cleanRun <- FALSE
+
     # .MODELDIR <- Dir
     addDir <- matrix(data = "",
                      nrow = length(Dir),
@@ -365,7 +374,8 @@ Do_Comp <-
             LastAssDat = LastAssDat,
             ADMBpaths = ADMBpaths,
             make.comp = make.comp,
-            verbose = verbose
+            verbose = verbose,
+            cleanRun = cleanRun
           )
         gmr::Do_Comp(
           #<-TODO: this is a recursive call: should it be recursive??
@@ -379,7 +389,8 @@ Do_Comp <-
           LastAssDat = LastAssDat,
           ADMBpaths = ADMBpaths,
           make.comp = make.comp,
-          verbose = verbose
+          verbose = verbose,
+          cleanRun = cleanRun
         )
         if (!is.null(GMACS_OUT))
           return(GMACS_OUT)

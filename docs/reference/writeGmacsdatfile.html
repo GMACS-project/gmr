@@ -18,7 +18,7 @@ R a pre-existent Spc.dat file."><!-- mathjax --><script src="https://cdnjs.cloud
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">gmr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.3.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.3.5</span>
       </span>
     </div>
 
@@ -128,24 +128,30 @@ R a pre-existent Spc.dat file.</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">writeGmacsdatfile</span><span class="op">(</span>
-  Dir <span class="op">=</span> <span class="cn">NULL</span>,
-  FileName <span class="op">=</span> <span class="cn">NULL</span>,
-  DatFile <span class="op">=</span> <span class="cn">NULL</span>,
-  stock <span class="op">=</span> <span class="st">""</span>,
-  model_name <span class="op">=</span> <span class="st">""</span>,
-  Ass_Year <span class="op">=</span> <span class="st">""</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">writeGmacsdatfile</span><span class="op">(</span></span>
+<span>  Dir <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  FileName <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  overwrite <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  DatFile <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  stock <span class="op">=</span> <span class="st">""</span>,</span>
+<span>  model_name <span class="op">=</span> <span class="st">""</span>,</span>
+<span>  Ass_Year <span class="op">=</span> <span class="st">""</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>Dir</dt>
-<dd><p>(character string)- path where to save the new Spc.dat file</p></dd>
+<dd><p>(character string)- path where to save the new Spc.dat file.</p></dd>
 
 
 <dt>FileName</dt>
-<dd><p>(character string)- name of the new Spc.dat file</p></dd>
+<dd><p>(character string)- name of the new Spc.dat file.</p></dd>
+
+
+<dt>overwrite</dt>
+<dd><p>(logical)- Specify if the existing file should be overwritten.
+The default value is <code>overwrite = FALSE</code>.</p></dd>
 
 
 <dt>DatFile</dt>
@@ -188,7 +194,7 @@ created using the <code><a href="readGMACSdat.html">readGMACSdat()</a></code> fu
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>

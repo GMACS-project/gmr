@@ -14,7 +14,7 @@ knitr::opts_chunk$set(
 ```
 
 
-# gmr 1.3.4.9001
+# gmr 1.3.5.9001
 *************************************************************************
 
 Here are some of the items for the next release:
@@ -25,8 +25,42 @@ Here are some of the items for the next release:
 - [ ] Create SAFE document templates
 - [ ] Add data and implement examples in the package
 
+# gmr 1.3.5
+*************************************************************************
 
+(GitHub issue/PR numbers in parentheses)
 
+This new release includes implementations related to the incorporation of 
+i) environmental impacts and possibility of random walk in the vulnerability 
+parameters (selectivity and retention parameters) (#21).
+
+## Updated functions
+
+  1. Functions to read GMACS input/output files
+  * `readGMACSdat()`: incorporating the read of environmental indices.
+  * `readGMACSctl()`: 1) change in the selectivity and retention matrices to allow 
+  environmental impacts and random walk; 2) Now read phase for random walk deviations;
+  3) new internal function to count the number of random deviation parameters to be 
+  estimated.
+  * `readGMACSpar()`: Accounting for the environmental parameters.
+  * `readGMACSallOUT()`: Reading environmental parameters and deviations in
+  vulnerability.
+  * `writeGmacsctlfile()`: account for environmental parameters and random walk 
+  deviations + formatting.
+  * `writeGmacsdatfile()`: account for environmental data and formatting.
+  * `writeGmacsPAR()`: account for environmental parameters and deviations in 
+  vulnerability + formatting.
+  
+  2. Functions to update and release a new version of GMACS
+  
+  The updates improve the workflow for updating GMACS.
+  
+  * `Do_Comp()`
+  * `Do_GMACS()`
+  * `GMACS()`
+  * `UpdateGMACS()`
+  * `getVerGMACS()`
+  * `NewGMACSFeat()`
 
 # gmr 1.3.4
 *************************************************************************

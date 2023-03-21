@@ -30,6 +30,8 @@
 #' @param make.comp Logical. If TRUE, comparisons will be made between the various
 #' \code{GMACS_version}s considered in the analysis.
 #' @inheritParams PBSadmb::convAD
+#' @param cleanRun (logical) - Specify if the `Dir` has to be cleaned after
+#' the run. See the \code{\link{clean_bat()}} function.
 #'
 #' @seealso \code{\link{Do_Comp}} for comparisons, \code{\link{createGmacsExe}} for
 #' building the executable.
@@ -51,7 +53,8 @@ Do_GMACS <- function(Spc = NULL,
                      LastAssDat = NULL,
                      ADMBpaths = NULL,
                      make.comp = NULL,
-                     verbose = NULL) {
+                     verbose = NULL,
+                     cleanRun = NULL) {
 
   for (vv in 1:length(Dir)) {
 
@@ -186,6 +189,7 @@ Do_GMACS <- function(Spc = NULL,
     # Run GMACS
     cat("\nNow entering assesments:\n")
     cat("\n")
+
     for (nm in 1:length(Spc)) {
       cat("Starting assessment for:", Spc[nm], "\n")
       # id <- GMACS_term(.Dir = paste(Dir[vv], "build/", Spc[nm], sep=""), verbose = verbose)
@@ -213,6 +217,7 @@ Do_GMACS <- function(Spc = NULL,
           if (id_term[nm, 5] == "Done" && is.na(ct[nm])) {
             ct[nm] <- nm
             cat("\nAssessment completed for :", Spc[nm], "\n")
+
             if (length(which(is.na(id_term[, 4]))) > 0)
               cat("\n", length(which(is.na(
                 id_term[, 4]
@@ -225,6 +230,24 @@ Do_GMACS <- function(Spc = NULL,
           length(which(id_term[, 5] == "Done")) == length(Spc)) {
         if (unique(id_term[, 4] == 0)) {
           cat("\nAll assessment have been carried out.\n")
+
+          # run clean functions to delete files
+          if(cleanRun){
+            for (nm in 1:length(Spc)) {
+              if (verbose) {
+                if(nm == 1)
+                  cat("Now cleaning the following repertory(ies):\n")
+                cat(
+                  "\t =>",
+                  file.path(Dir[vv], "build", Spc[nm]), "\n")
+              }
+              pathRun <- file.path(Dir[vv], "build", Spc[nm])
+              clean_bat(path = pathRun, verbose = FALSE)
+            }
+          }
+
+
+
         } else {
           for (nm in 1:length(Spc)) {
             #eval(parse(text = paste(Spc[nm], 'list()', sep = "")))

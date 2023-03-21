@@ -1,8 +1,9 @@
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 <!-- badges: start -->
 
-<a href="https://github.com/GMACS-project/gmr/releases" class="gmr-devel"><img src="https://img.shields.io/github/release/GMACS-project/gmr" alt="GitHub release (latest by date)" /></a>
-<a href="https://github.com/GMACS-project/gmr/actions" class="gmr-devel"><img src="https://github.com/GMACS-project/gmr/workflows/R-CMD-check/badge.svg" alt="R-CMD-check" /></a>
+[![GitHub release (latest by
+date)](https://img.shields.io/github/release/GMACS-project/gmr)](https://github.com/GMACS-project/gmr/releases)
+[![R-CMD-check](https://github.com/GMACS-project/gmr/workflows/R-CMD-check/badge.svg)](https://github.com/GMACS-project/gmr/actions)
 <!-- badges: end -->
 
 **An R package to work with the Generalized Model for Assessing

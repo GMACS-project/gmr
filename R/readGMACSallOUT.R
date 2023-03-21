@@ -287,8 +287,8 @@ readGMACSallOUT <- function(FileName = NULL,
   # -------------------------------------------------------------------------
 
 
-  # 2- Read REPORT file ----
-  # Read the REPORT file and find the first line containing numeric data
+  # 2- Read Gmacsall.out file ----
+  # Read the Gmacsall.out file and find the first line containing numeric data
 
   if (verbose) {
     cat("\n====================================================\n")
@@ -424,7 +424,8 @@ readGMACSallOUT <- function(FileName = NULL,
     cat("-- Reading penalties \n")
 
   nam_Penal <- c("MeanF", "MeanF_dev", "M_devs", "Rec_ini", "Rec_dev","Sex_ratio",
-                 "Molt_Prob","Free_Selectivity","Init_N_at_len", "Fdevs", "Fdovs")
+                 "Molt_Prob","Free_Selectivity","Init_N_at_len", "Fdevs", "Fdovs",
+                 "SelDevs")
   nPenal <- length(nam_Penal)
   pen_out <- NULL
   for(p in 1:nPenal){
@@ -498,6 +499,44 @@ readGMACSallOUT <- function(FileName = NULL,
 
   if (verbose)
     cat("\t-> Read the asymptotic retention parameters \n")
+  # -------------------------------------------------------------------------
+
+  # Extract the time-varying parameters for the vulnerability
+  # -------------------------------------------------------------------------
+  if (verbose)
+    cat("-- Reading environmental parameters for vulnerability  \n")
+  if(CtlFile$nslx_envpars > 0){
+    Envpar_Slx <- fill_para(dat, Loc, nrow = CtlFile$nslx_envpars)
+    Envpar_Slx <- as.data.frame(cbind(paste("Envpar_Slx",1:CtlFile$nslx_envpars,sep="_"),Envpar_Slx))
+  } else {
+    Envpar_Slx <- fill_para(dat, Loc, nrow = 1)
+    Envpar_Slx <- as.data.frame(cbind(paste("Envpar_Slx",0,sep="_"),Envpar_Slx))
+  }
+  colnames(Envpar_Slx) <- nam_para
+  Param[["Envpar_Slx"]] <- Envpar_Slx # Estimated environmental parameters
+
+  if (verbose)
+    cat("\t-> Read the environmental parameters for vulnerability \n")
+  # -------------------------------------------------------------------------
+
+  # Extract vulnerability deviations
+  # -------------------------------------------------------------------------
+  # These deviations include the environmental impacts if applicable
+  if (verbose)
+    cat("-- Reading vulnerabity deviations  \n")
+
+  if(CtlFile$NSlx_devs_param > 0){
+    Slx_Devs <- fill_para(dat, Loc, nrow = CtlFile$NSlx_devs_param)
+    Slx_Devs <- as.data.frame(cbind(paste("Slx_Devs",1:CtlFile$NSlx_devs_param,sep="_"),Slx_Devs))
+  } else {
+    Slx_Devs <- fill_para(dat, Loc, nrow = 1)
+    Slx_Devs <- as.data.frame(cbind(paste("Slx_Devs",0,sep="_"),Slx_Devs))
+  }
+  colnames(Slx_Devs) <- nam_para
+  Param[["Slx_Devs"]] <- Slx_Devs # Estimated selectivty deviations
+
+  if (verbose)
+    cat("\t-> Read the deviations for vulnerability \n")
   # -------------------------------------------------------------------------
 
   # Extract the mean fishing mortality rate parameters

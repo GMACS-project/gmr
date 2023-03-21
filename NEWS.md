@@ -1,25 +1,34 @@
--   [gmr 1.3.4.9001](#gmr-1.3.4.9001)
--   [gmr 1.3.4](#gmr-1.3.4)
-    -   [New functions](#new-functions)
-    -   [Updated functions](#updated-functions)
--   [gmr 1.3.3](#gmr-1.3.3)
-    -   [Updated functions](#updated-functions-1)
--   [gmr 1.3.2](#gmr-1.3.2)
-    -   [Updated functions](#updated-functions-2)
--   [gmr 1.3.1](#gmr-1.3.1)
-    -   [New functions](#new-functions-1)
-    -   [Updated functions](#updated-functions-3)
--   [gmr 1.3.0](#gmr-1.3.0)
-    -   [New functions](#new-functions-2)
-    -   [Updated functions](#updated-functions-4)
--   [gmr 1.2.0](#gmr-1.2.0)
-    -   [New functions](#new-functions-3)
-    -   [Updated functions](#updated-functions-5)
--   [gmr 0.1.1](#gmr-0.1.1)
-    -   [New functions](#new-functions-4)
--   [gmr 0.1.0](#gmr-0.1.0)
+-   <a href="#gmr-1.3.5.9001" id="toc-gmr-1.3.5.9001">gmr 1.3.5.9001</a>
+-   <a href="#gmr-1.3.5" id="toc-gmr-1.3.5">gmr 1.3.5</a>
+    -   <a href="#updated-functions" id="toc-updated-functions">Updated
+        functions</a>
+-   <a href="#gmr-1.3.4" id="toc-gmr-1.3.4">gmr 1.3.4</a>
+    -   <a href="#new-functions" id="toc-new-functions">New functions</a>
+    -   <a href="#updated-functions-1" id="toc-updated-functions-1">Updated
+        functions</a>
+-   <a href="#gmr-1.3.3" id="toc-gmr-1.3.3">gmr 1.3.3</a>
+    -   <a href="#updated-functions-2" id="toc-updated-functions-2">Updated
+        functions</a>
+-   <a href="#gmr-1.3.2" id="toc-gmr-1.3.2">gmr 1.3.2</a>
+    -   <a href="#updated-functions-3" id="toc-updated-functions-3">Updated
+        functions</a>
+-   <a href="#gmr-1.3.1" id="toc-gmr-1.3.1">gmr 1.3.1</a>
+    -   <a href="#new-functions-1" id="toc-new-functions-1">New functions</a>
+    -   <a href="#updated-functions-4" id="toc-updated-functions-4">Updated
+        functions</a>
+-   <a href="#gmr-1.3.0" id="toc-gmr-1.3.0">gmr 1.3.0</a>
+    -   <a href="#new-functions-2" id="toc-new-functions-2">New functions</a>
+    -   <a href="#updated-functions-5" id="toc-updated-functions-5">Updated
+        functions</a>
+-   <a href="#gmr-1.2.0" id="toc-gmr-1.2.0">gmr 1.2.0</a>
+    -   <a href="#new-functions-3" id="toc-new-functions-3">New functions</a>
+    -   <a href="#updated-functions-6" id="toc-updated-functions-6">Updated
+        functions</a>
+-   <a href="#gmr-0.1.1" id="toc-gmr-0.1.1">gmr 0.1.1</a>
+    -   <a href="#new-functions-4" id="toc-new-functions-4">New functions</a>
+-   <a href="#gmr-0.1.0" id="toc-gmr-0.1.0">gmr 0.1.0</a>
 
-# gmr 1.3.4.9001
+# gmr 1.3.5.9001
 
 ------------------------------------------------------------------------
 
@@ -30,6 +39,49 @@ Here are some of the items for the next release:
 -   [ ] Create vignettes to build and run gmacs, make comparison
 -   [ ] Create SAFE document templates
 -   [ ] Add data and implement examples in the package
+
+# gmr 1.3.5
+
+------------------------------------------------------------------------
+
+(GitHub issue/PR numbers in parentheses)
+
+This new release includes implementations related to the incorporation
+of i) environmental impacts and possibility of random walk in the
+vulnerability parameters (selectivity and retention parameters) (#21).
+
+## Updated functions
+
+1.  Functions to read GMACS input/output files
+
+-   `readGMACSdat()`: incorporating the read of environmental indices.
+-   `readGMACSctl()`: 1) change in the selectivity and retention
+    matrices to allow environmental impacts and random walk; 2) Now read
+    phase for random walk deviations;
+
+1.  new internal function to count the number of random deviation
+    parameters to be estimated.
+
+-   `readGMACSpar()`: Accounting for the environmental parameters.
+-   `readGMACSallOUT()`: Reading environmental parameters and deviations
+    in vulnerability.
+-   `writeGmacsctlfile()`: account for environmental parameters and
+    random walk deviations + formatting.
+-   `writeGmacsdatfile()`: account for environmental data and
+    formatting.
+-   `writeGmacsPAR()`: account for environmental parameters and
+    deviations in vulnerability + formatting.
+
+1.  Functions to update and release a new version of GMACS
+
+The updates improve the workflow for updating GMACS.
+
+-   `Do_Comp()`
+-   `Do_GMACS()`
+-   `GMACS()`
+-   `UpdateGMACS()`
+-   `getVerGMACS()`
+-   `NewGMACSFeat()`
 
 # gmr 1.3.4
 

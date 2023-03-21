@@ -41,40 +41,23 @@ UpdateGMACS <- function(dirSrc = NULL,
   stock.files <- list.files(file.path(dirSrc, "build", sep = ""))
   stock.files <- stock.files[!stock.files %in% c("debug", "release")]
 
-  # if (!is.null(which(stock.files == "AIGKC")))
-  #   stock.files <-
-  #   c(stock.files[!stock.files %in% "AIGKC"], paste("AIGKC", list.files(paste(
-  #     dirSrc, "build/AIGKC", sep = ""
-  #   )), sep = "/"))
-
-
   for (nm in 1:length(stock.files)) {
     # Clean the Latest_Version directory
     tmp <- file.path(dirNew, "build/", stock.files[nm], sep = "")
 
-    while(length(list.files(path = tmp))>10){
+    while(length(list.files(path = tmp, recursive = FALSE))>12){
       Sys.sleep(0.1)
-      term <-
-        .CallTerm(command = "clean.bat",
-                  .Dir = tmp,
-                  verbose = FALSE)
-      rstudioapi::terminalKill(id = term)
+      clean_bat(path = tmp, verbose = FALSE)
     }
 
     # Clean the Dvpt_Version directory
     tmp <- file.path(dirSrc, "build/", stock.files[nm], sep = "")
 
-    while(length(list.files(path = tmp))>10){
+    while(length(list.files(path = tmp, recursive = FALSE))>12){
       Sys.sleep(0.1)
-
-      term <-
-        .CallTerm(command = "clean.bat",
-                  .Dir = tmp,
-                  verbose = FALSE)
-      rstudioapi::terminalKill(id = term)
+      clean_bat(path = tmp, verbose = FALSE)
     }
     nam <- list.files(path = tmp)
-
 
     file.copy(
       from = file.path(tmp, nam),

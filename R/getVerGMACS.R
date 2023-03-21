@@ -52,12 +52,13 @@ GetVerSpec <- function(Dir = NULL){
   Vers <- text[header]
 
   # 2. Get the last comment
-  LastComm <- which(stringr::str_detect(text, pattern = "//"))
-  LastComm <- LastComm[length(LastComm)]
-  LastComm <- text[LastComm]
+  LastComm <- which(stringr::str_detect(text, pattern = "// ================================================ //"))
+  LastComm2 <- which(stringr::str_detect(text, pattern = "//"))
+  LastComm2 <- LastComm2[length(LastComm2)]
+  LastComm <- text[(LastComm+1):LastComm2]
 
   Vers <-
-    sub(pattern = '!! TheHeader =  adstring(\"## GMACS Version',
+    sub(pattern = ' !! TheHeader = adstring(\"## GMACS Version',
         replacement = ";- GMACS version: ",
         x = Vers,
         fixed = TRUE)
@@ -82,13 +83,16 @@ GetVerSpec <- function(Dir = NULL){
                   replacement = "- Last update(s) have been made by",
                   x = Auth_nam)
 
+
   fileConn <- file(out)
   writeLines(text = paste0(Vers[1],"\n",
                            Vers[3],"\n",
                            Auth_nam,"\n",
                            "\n",
                            "- Details about the last modification:","\n",
-                           LastComm,
+                           paste(LastComm, collapse = "\n"),
                            sep = ""), fileConn)
+  # writeLines(text = paste(LastComm, collapse = "\n"), fileConn)
   close(fileConn)
+
 }

@@ -445,6 +445,27 @@ readGMACSdat <- function(FileName = NULL,
     cat("-> Read growth data. \n")
   # -------------------------------------------------------------------------
 
+  # ENVIRONMENTAL DATA
+  # -------------------------------------------------------------------------
+  DatOut[["NenvIndics"]] <-
+    get.num(dat, Loc) # Number of environmental indices
+  if (DatOut$NenvIndics > 0) {
+    # Years cover for each index
+    DatOut[["EnvYrs"]] <-
+      get.df(dat, Loc, nrow = DatOut$NenvIndics)
+    # Environmental data
+    NenvData = 0
+    for (e in 1:DatOut$NenvIndics)
+      NenvData = NenvData + DatOut$EnvYrs[e,2] - DatOut$EnvYrs[e,1] + 1
+    DatOut[["NenvData"]] <- NenvData
+    DatOut[["EnvData"]] <-
+      get.df(dat, Loc, nrow = NenvData)
+    names(DatOut[["EnvData"]]) <- c("Index", "Year", "Value")
+  }
+  if (verbose)
+    cat("-> Read environmental data. \n")
+  # -------------------------------------------------------------------------
+
   # End of data file
   # -------------------------------------------------------------------------
   eof <- get.num(dat, Loc)
