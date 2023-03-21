@@ -21,7 +21,7 @@ NewGMACSFeat <- function(dirSrc) {
   Vers <- text[header]
   Vers <-
     sub(
-      pattern = '!! TheHeader =  adstring(\"## GMACS Version',
+      pattern = stringr::str_squish('!! TheHeader = adstring(\"## GMACS Version'),
       replacement = ";(Upgrade GMACS to version",
       x = Vers,
       fixed = TRUE
@@ -37,11 +37,13 @@ NewGMACSFeat <- function(dirSrc) {
 You've been implementing new features in GMACS.\nPlease, provide the number of new
 features you implemented.
 ========================================
-\n***
+
 You'll be then asked to provide details for each item. For example:
-item 1: 'Added lots of diagnostic output when reading input files'
-item 2: 'Added ECHOSTR, WriteCtlStr, WriteProjStr macros for 1'
-item 3: 'Reformatted calc_relative_abundance in preparation for adding ability to handle immature data'\n
+
+  - item 1: 'Added lots of diagnostic output when reading input files'
+  - item 2: 'Added ECHOSTR, WriteCtlStr, WriteProjStr macros for 1'
+  - item 3: 'Reformatted calc_relative_abundance in preparation for adding ability to handle immature data'
+
 ***
 "
     Nimpl <- svDialogs::dlgInput(message = text,
@@ -49,8 +51,11 @@ item 3: 'Reformatted calc_relative_abundance in preparation for adding ability t
     Sys.sleep(0.1)
   }
 
-  TxtImpl <- NA
-  while (is.na(TxtImpl)) {
+  TxtImpl <- NULL
+
+  while (is.null(TxtImpl)) {
+    tmpTxtImpl <- NULL
+
     for (i in 1:Nimpl) {
       eval(parse(text = paste0(
         "Impl_", i, " <- readline(prompt = 'Item ", i, " : ')"
@@ -60,20 +65,71 @@ item 3: 'Reformatted calc_relative_abundance in preparation for adding ability t
         "Impl_", i, " <- paste0('- ", i, ". ', Impl_", i, ")"
       )))
 
-    }
-    if (i == Nimpl)
-      eval(parse(text =
-                   paste0(
-                     'TxtImpl <-paste(',
-                     paste(' Impl_', 1:Nimpl, sep = '', collapse = ','),
-                     ')'
-                   )))
+      eval(parse(text = paste0(
+        "Imp_nchar <- base::nchar(Impl_", i, ")"
+      )))
 
+      maxChar <- ifelse(test = i == 1,
+                        yes = 140 - 50,
+                        no = 140)
+
+      if (Imp_nchar > maxChar) {
+        eval(parse(
+          text = paste0(
+            "Impl_",
+            i,
+            " <- stringr::str_wrap(Impl_",
+            i,
+            ", width = ",
+            maxChar,
+            ",
+                                    indent = 0,
+                                    exdent = 0,
+                                    whitespace_only = TRUE)"
+          )
+        ))
+
+        eval(parse(
+          text = paste0(
+            "tmp <- unlist(stringr::str_split(Impl_",
+            i,
+            ", pattern = '\n'))"
+          )
+        ))
+
+        if (length(tmp) > 1) {
+          startl <- ifelse(test = i == 1,
+                           yes = 2,
+                           no = 1)
+          for (l in startl:length(tmp))
+            tmp[l] <- paste0("// ", tmp[l])
+        }
+        eval(parse(text = paste0("Impl_", i, " <- tmp")))
+      }
+
+      eval(parse(text = paste0(
+        "tmpTxtImpl <- c(tmpTxtImpl, Impl_", i, ")"
+      )))
+
+      if (i == Nimpl)
+        TxtImpl <- tmpTxtImpl
+    }
     Sys.sleep(0.1)
   }
-  TxtImpl <- paste(Vers, TxtImpl, sep = " ")
-  TxtImpl <- paste(TxtImpl, "\n")
+
+  Vers1 <-
+    stringr::str_replace(string = Vers,
+                         pattern = '"',
+                         replacement = '')
+
+  TxtImpl[1] <- paste(Vers1, TxtImpl[1], sep = " ")
+  TxtImpl <-
+    c("// ================================================ //",
+      TxtImpl)
 
   # 2. Append the comment to gmacsbase.tpl
-  cat(TxtImpl, file = gmacsbase, append = TRUE)
+  cat(TxtImpl,
+      sep = "\n",
+      file = gmacsbase,
+      append = TRUE)
 }

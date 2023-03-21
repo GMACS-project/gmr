@@ -16,7 +16,8 @@ Do_Comp(
   ADMBpaths = NULL,
   make.comp = NULL,
   verbose = NULL,
-  out.pdf = FALSE
+  out.pdf = FALSE,
+  cleanRun = NULL
 )
 }
 \arguments{
@@ -54,6 +55,9 @@ paths for the R variables admbpath, gccpath, and editor.}
 \item{verbose}{logical: if \code{TRUE}, report the shell call an its messages to the R console.}
 
 \item{out.pdf}{Logical. Do you want to get the table of comparison in a pdf format?}
+
+\item{cleanRun}{(logical) - Specify if the `Dir` has to be cleaned after
+the run. See the \code{\link{clean_bat()}} function.}
 }
 \value{
 For each stock considered in the analysis, this function returns a

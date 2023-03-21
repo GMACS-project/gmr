@@ -15,7 +15,8 @@ GMACS(
   LastAssDat = NULL,
   ADMBpaths = NULL,
   make.comp = NULL,
-  verbose = NULL
+  verbose = NULL,
+  cleanOut = NULL
 )
 }
 \arguments{
@@ -51,6 +52,9 @@ paths for the R variables admbpath, gccpath, and editor.}
 \code{GMACS_version} considered in the analysis.}
 
 \item{verbose}{logical: if \code{TRUE}, report the shell call an its messages to the R console.}
+
+\item{cleanOut}{(logical) - Specify if the `Dir` has to be cleaned after
+the run. See the \code{\link{clean_bat()}} function. Default \code{cleanRun = FALSE}.}
 }
 \description{
 For each stock and version considered in the analysis, this function

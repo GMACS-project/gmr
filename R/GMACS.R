@@ -26,6 +26,8 @@
 #' paths for the R variables admbpath, gccpath, and editor.
 #' @param make.comp Logical. If TRUE, comparisons will be made between the various
 #' \code{GMACS_version} considered in the analysis.
+#' @param cleanOut (logical) - Specify if the `Dir` has to be cleaned after
+#' the run. See the \code{\link{clean_bat()}} function. Default \code{cleanRun = FALSE}.
 #' @inheritParams PBSadmb::convAD
 #'
 #' @seealso \code{\link{Do_GMACS}}, \code{.buildGMACS} for
@@ -45,7 +47,8 @@ GMACS <- function(Spc = NULL,
                   LastAssDat = NULL,
                   ADMBpaths = NULL,
                   make.comp = NULL,
-                  verbose = NULL) {
+                  verbose = NULL,
+                  cleanOut = NULL) {
   # 1. Set specific directories----
   if (is.null(Spc)) {
     cat("\nPlease provide the name of the stock considered in the analysis.\n")
@@ -160,6 +163,10 @@ GMACS <- function(Spc = NULL,
     stop("Provide several versions of GMACS that you wish to compare\n")
   }
 
+  # Turn off cleaning after run if not precised
+  if(is.null(cleanOut))
+    cleanOut <- FALSE
+
 
   # 3. Realize the analysis----
 
@@ -175,7 +182,8 @@ GMACS <- function(Spc = NULL,
       LastAssDat = LastAssDat,
       ADMBpaths = ADMBpaths,
       make.comp = make.comp,
-      verbose = verbose
+      verbose = verbose,
+      cleanRun = cleanOut
     )
   } else {
     if (make.comp && !run)
@@ -191,7 +199,8 @@ GMACS <- function(Spc = NULL,
           LastAssDat = LastAssDat,
           ADMBpaths = ADMBpaths,
           make.comp = make.comp,
-          verbose = verbose
+          verbose = verbose,
+          cleanRun = cleanOut
         )
     # print(tables)
   }
