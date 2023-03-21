@@ -333,6 +333,45 @@ readGMACSctl <- function(FileName = NULL,
     return(out)
     # ===================================================== #
   }
+
+  # @title NSlx_devs
+  #
+  # @description Find the number of vulnerability deviation parameters.
+  #
+  # @param vul - matrix of selectivity and retention control (rbind)
+  #
+  # @return the number of vulnerability deviations
+
+  NSlx_devs <- function(vul = NULL) {
+    NSlx_devs_param <- 0
+
+    for (x in 1:dim(vul)[1]) {
+      rd_walk <- .an(unlist(vul[x, ] %>%  dplyr::select(Rand_Walk)))
+
+      if (rd_walk > 0) {
+
+        Start_year_RW <- .an(unlist(vul[x, ] %>%  dplyr::select(Start_year_RW)))
+        End_year_RW <- .an(unlist(vul[x, ] %>%  dplyr::select(End_year_RW)))
+
+
+        if (rd_walk == 1) {
+          NSlx_devs_param <- NSlx_devs_param + (End_year_RW - Start_year_RW)
+        } else if (rd_walk == 2) {
+          NSlx_devs_param <- NSlx_devs_param + (End_year_RW - Start_year_RW + 1)
+        } else {
+          cat(
+            "\nOption for random walk parameterization are only 0/1/2. Please review
+ the selectivity parameter control definition.\n"
+          )
+          stop()
+        }
+      } else {
+        NSlx_devs_param <- NSlx_devs_param + 0
+      }
+    }
+    return(NSlx_devs_param)
+  }
+
   # -------------------------------------------------------------------------
 
   nsex <- DatFile$N_sexes
@@ -808,23 +847,35 @@ readGMACSctl <- function(FileName = NULL,
 
   DatOut[["NumAsympRet"]] <-
     get.num(dat, Loc) # Number of asymptotic selectivity parameter
-  DatOut[["AsympSel_control"]] <-
-    get.df(dat, Loc, nrow = DatOut[["NumAsympRet"]]) # Asymptotic parameter control
-  colnames(DatOut[["AsympSel_control"]]) <-
-    c("Fleet",
-      "Sex",
-      "Year",
-      "Init_val",
-      "Lower_Bd",
-      "Upper_Bd",
-      "Phase")
-
-  # Environmental parameters and random walk selectivity definition
+  if (DatOut[["NumAsympRet"]] > 0) {
+    DatOut[["AsympSel_control"]] <-
+      get.df(dat, Loc, nrow = DatOut[["NumAsympRet"]]) # Asymptotic parameter control
+    colnames(DatOut[["AsympSel_control"]]) <-
+      c("Fleet",
+        "Sex",
+        "Year",
+        "Init_val",
+        "Lower_Bd",
+        "Upper_Bd",
+        "Phase")
+  }
+  # Environmental parameters selectivity definition
   nslx_envpars <- c(DatOut[["Selex_control"]]$Env_Link,DatOut[["Ret_control"]]$Env_Link)
   nslx_envpars <- length(which(nslx_envpars>0))
   DatOut[["nslx_envpars"]] <- nslx_envpars
-  # Extract parameters
-  DatOut[["SlxEnvPar"]] <- get.df(dat, Loc, nrow = nslx_envpars)
+  if (DatOut[["nslx_envpars"]]) {
+    # Extract parameters
+    DatOut[["SlxEnvPar"]] <- get.df(dat, Loc, nrow = nslx_envpars)
+    colnames(DatOut[["SlxEnvPar"]]) <- c(
+      "Init_val",
+      "Lower_Bd",
+      "Upper_Bd",
+      "Phase"
+    )
+  }
+  # Random walk selectivity definition
+  vul <- rbind(DatOut[["Selex_control"]], DatOut[["Ret_control"]])
+  DatOut[["NSlx_devs_param"]] <- NSlx_devs(vul = vul)
 
   # Estimation phase for the deviation parameter (random walk)
   DatOut[["devParPhase"]] <- get.num(dat, Loc)
@@ -981,7 +1032,11 @@ readGMACSctl <- function(FileName = NULL,
   } else if (dim(DatOut[["m_nNodes_sex"]])[1] == 1 &&
              DatOut[["m_nNodes_sex"]] != 0) {
     #Need to be checked
-    DatOut[["m_nodeyear_sex"]] <- get.num(dat, Loc)
+    if(DatOut[["m_nNodes_sex"]] == 1){
+      DatOut[["m_nodeyear_sex"]] <- get.num(dat, Loc)
+    } else {
+      DatOut[["m_nodeyear_sex"]] <- get.vec(dat, Loc)
+    }
   } else {
     if (nsex == 1) {
       if (DatOut[["m_nNodes_sex"]] == 1) {
@@ -1172,9 +1227,10 @@ readGMACSctl <- function(FileName = NULL,
     "Fdovs",
     "Vul_devs"
   )
+  DatOut$Penalty_emphasis <- NULL
   for(i in 1:length(namEmph)){
     eval(parse(text = paste0(
-      "DatOut[['",namEmph[i],"']] <- get.num(dat,Loc)"
+      "DatOut$Penalty_emphasis[['",namEmph[i],"']] <- get.num(dat,Loc)"
     )))
 
   }

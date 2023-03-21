@@ -69,39 +69,39 @@ writeGmacsctlfile <- function(Dir = NULL,
   cat("# ============================================================ #\n")
   cat("#                  GMACS main control file \n")
   cat("# \n")
-  cat("# *** \n")
-  cat("#", Ver, "\n")
-  cat("# Last GMACS mofification made by: ", Comp, "\n")
-  cat("# Date of writing the control file:", .ac(Sys.time()), "\n")
-  cat("# *** \n")
+  cat("#_*** \n")
+  cat("#_", Ver, "\n")
+  cat("#_Last GMACS mofification made by: ", Comp, "\n")
+  cat("#_Date of writing the control file:", .ac(Sys.time()), "\n")
+  cat("#_*** \n")
   cat("# \n")
-  cat("# Stock of interest: ", stock, "\n")
-  cat("# Model name: ", model_name, "\n")
-  cat("# Year of assessment: ", Ass_Year, "\n")
+  cat("#_Stock of interest: ", stock, "\n")
+  cat("#_Model name: ", model_name, "\n")
+  cat("#_Year of assessment: ", Ass_Year, "\n")
   cat("# ============================================================ #\n")
   cat("\n")
   cat("# -------------------------------------- #\n")
-  cat("## Key parameter controls\n")
+  cat("##_Key parameter controls\n")
   cat("# -------------------------------------- #\n")
-  cat("# ntheta - Number of leading parameters (guestimated)\n")
+  cat("#_ntheta - Number of leading parameters (guestimated)\n")
   cat(obj$ntheta, "\n")
   cat("#\n")
-  cat("# Core parameters\n")
+  cat("#_Core parameters\n")
   cat("# ************************************** #\n")
-  cat("# For each parameter columns are:\n")
-  cat("# Init_val: Initial value for the parameter (must lie between lower and upper bounds)\n")
-  cat("# Lower_Bd & Upper_Bd: Range for the parameter\n")
-  cat("# Phase: Set equal to a negative number not to estimate\n")
-  cat("# Available prior types:\n")
-  cat("# -> 0 = Uniform   - parameters are the range of the uniform prior\n")
-  cat("# -> 1 = Normal    - parameters are the mean and sd\n")
-  cat("# -> 2 = Lognormal - parameters are the mean and sd of the log\n")
-  cat("# -> 3 = Beta      - parameters are the two beta parameters [see dbeta]\n")
-  cat("# -> 4 = Gamma     - parameters are the two gamma parameters [see dgamma]\n")
-  cat("# p1; p2: priors\n")
+  cat("#_For each parameter columns are:\n")
+  cat("#_Init_val: Initial value for the parameter (must lie between lower and upper bounds)\n")
+  cat("#_Lower_Bd & Upper_Bd: Range for the parameter\n")
+  cat("#_Phase: Set equal to a negative number not to estimate\n")
+  cat("#_Available prior types:\n")
+  cat("#_-> 0 = Uniform   - parameters are the range of the uniform prior\n")
+  cat("#_-> 1 = Normal    - parameters are the mean and sd\n")
+  cat("#_-> 2 = Lognormal - parameters are the mean and sd of the log\n")
+  cat("#_-> 3 = Beta      - parameters are the two beta parameters [see dbeta]\n")
+  cat("#_-> 4 = Gamma     - parameters are the two gamma parameters [see dgamma]\n")
+  cat("#_p1; p2: priors\n")
   cat("# ************************************** #\n")
   cat("# \n")
-  cat("# Init_val | Lower_Bd | Upper_Bd | Phase | Prior_type | p1 | p2\n")
+  cat("#_Init_val_| Lower_Bd_| Upper_Bd_| Phase_| Prior_type_| p1_| p2\n")
   utils::write.table(obj$theta_control,
                      row.names = FALSE,
                      col.names = FALSE)
@@ -109,32 +109,32 @@ writeGmacsctlfile <- function(Dir = NULL,
   cat("\n")
 
   cat("# -------------------------------------- #\n")
-  cat("## Allometry\n")
+  cat("##_Allometry\n")
   cat("# -------------------------------------- #\n")
-  cat("# Length-weight type/method\n")
-  cat("# 1 = Length-weight relationship (vector of sex specific parameters: w_l = a[s]*l^b[s])\n")
-  cat("# 2 = Input vector of mean weight-at-size by sex (dim=[1:nclass])\n")
-  cat("# 3 = Input matrix of mean weight-at-size by sex and year (dim=[nsex*Nyear; nclass])\n")
+  cat("#_Length-weight type/method\n")
+  cat("#_1 = Length-weight relationship (vector of sex specific parameters: w_l = a[s]*l^b[s])\n")
+  cat("#_2 = Input vector of mean weight-at-size by sex (dim=[1:nclass])\n")
+  cat("#_3 = Input matrix of mean weight-at-size by sex and year (dim=[nsex*Nyear; nclass])\n")
   cat(obj$lw_type, "\n")
 
   if(obj$lw_type == 1){
-    cat("# lw_alfa\n")
+    cat("#_lw_alfa\n")
     cat(obj$lw_alfa, "\n")
-    cat("# lw_beta\n")
+    cat("#_lw_beta\n")
     cat(obj$lw_beta, "\n")
 
   } else if(obj$lw_type == 2){
 
     if(nsex == 0 || nsex == 1){
       base::switch(.ac(nsex),
-                   "0" = cat("# Vector of combined (males & females) mean weight-at-size\n"),
-                   "1" = cat("# vector of male mean weight-at-size\n"))
+                   "0" = cat("#_Vector of combined (males & females) mean weight-at-size\n"),
+                   "1" = cat("#_vector of male mean weight-at-size\n"))
       utils::write.table(obj$mean_wt_in, col.names = FALSE, row.names = FALSE)
 
     } else {
-      cat("# vector of male mean weight-at-size\n")
+      cat("#_vector of male mean weight-at-size\n")
       utils::write.table(obj$mean_wt_in[1,], col.names = FALSE, row.names = FALSE)
-      cat("# vector of female mean weight-at-size\n")
+      cat("#_vector of female mean weight-at-size\n")
       utils::write.table(obj$mean_wt_in[2,], col.names = FALSE, row.names = FALSE)
     }
 
@@ -142,15 +142,15 @@ writeGmacsctlfile <- function(Dir = NULL,
 
     if(nsex == 0 || nsex == 1){
       base::switch(.ac(nsex),
-                   "0" = cat("# Matrix of combined (males & females) mean weight-at-size\n"),
-                   "1" = cat("# Matrix of male mean weight-at-size\n"))
+                   "0" = cat("#_Matrix of combined (males & females) mean weight-at-size\n"),
+                   "1" = cat("#_Matrix of male mean weight-at-size\n"))
       utils::write.table(obj$mean_wt_in, col.names = FALSE, row.names = FALSE)
     } else {
       tmp <- End_Y + 1 - Start_Y + 1
-      cat("# Matrix of male mean weight-at-size\n")
+      cat("#_Matrix of male mean weight-at-size\n")
       utils::write.table(obj$mean_wt_in[1:tmp,], col.names = FALSE, row.names = FALSE)
       cat("\n")
-      cat("# Matrix of female mean weight-at-size\n")
+      cat("#_Matrix of female mean weight-at-size\n")
       utils::write.table(obj$mean_wt_in[(tmp+1):dim(obj$mean_wt_in)[1],], col.names = FALSE, row.names = FALSE)
     }
   }
@@ -158,67 +158,67 @@ writeGmacsctlfile <- function(Dir = NULL,
   cat("\n")
 
   cat("# -------------------------------------- #\n")
-  cat("## Fecundity for MMB/MMA calculation\n")
+  cat("##_Fecundity for MMB/MMA calculation\n")
   cat("# -------------------------------------- #\n")
-  cat("# Maturity definition: Proportion of mature at size by sex\n")
+  cat("#_Maturity definition: Proportion of mature at size by sex\n")
   utils::write.table(obj$maturity, col.names = FALSE, row.names = FALSE)
-  cat("# Legal definition of the proportion of mature at size by sex\n")
+  cat("#_Legal definition of the proportion of mature at size by sex\n")
   utils::write.table(obj$legal_maturity, col.names = FALSE, row.names = FALSE)
   cat("# -------------------------------------- #\n")
   cat("\n")
 
   cat("# -------------------------------------- #\n")
-  cat("## Growth parameter controls\n")
+  cat("##_Growth parameter controls\n")
   cat("# -------------------------------------- #\n")
   cat(" \n")
-  cat("# Two lines for each parameter are required if the model considers two sexes, one line is not\n")
+  cat("#_Two lines for each parameter are required if the model considers two sexes, one line is not\n")
   cat(" \n")
 
-  cat("# Growth transition matrix definition\n")
+  cat("#_Growth transition matrix definition\n")
   cat("# ************************************** #\n")
-  cat("# 1 = Fixed growth transition matrix (requires molt probability)\n")
-  cat("# 2 = Fixed size transition matrix (molt probability is ignored)\n")
-  cat("# 3 = Growth increment is gamma distributed\n")
-  cat("# 4 = Size after growth is gamma distributed\n")
-  cat("# 5 = kappa varies among individuals\n")
-  cat("# 6 = Linf varies among individuals\n")
-  cat("# 7 = kappa and Ling varies among individuals\n")
-  cat("# 8 = Growth increment is normally distributed\n")
+  cat("#_1 = Fixed growth transition matrix (requires molt probability)\n")
+  cat("#_2 = Fixed size transition matrix (molt probability is ignored)\n")
+  cat("#_3 = Growth increment is gamma distributed\n")
+  cat("#_4 = Size after growth is gamma distributed\n")
+  cat("#_5 = kappa varies among individuals\n")
+  cat("#_6 = Linf varies among individuals\n")
+  cat("#_7 = kappa and Ling varies among individuals\n")
+  cat("#_8 = Growth increment is normally distributed\n")
   cat("# ************************************** #\n")
   cat(obj$bUseCustomGrowthMatrix, "\n")
   cat(" \n")
 
-  cat("# Growth increment model matrix\n")
+  cat("#_Growth increment model matrix\n")
   cat("# ************************************** #\n")
-  cat("# 0 = Pre-specified growth increment\n")
-  cat("# 1 = linear (alpha; beta parameters)\n")
-  cat("# 2 = Estimated by size-class\n")
-  cat("# 3 = Pre-specified by size-class (empirical approach)\n")
+  cat("#_0 = Pre-specified growth increment\n")
+  cat("#_1 = linear (alpha; beta parameters)\n")
+  cat("#_2 = Estimated by size-class\n")
+  cat("#_3 = Pre-specified by size-class (empirical approach)\n")
   cat("# ************************************** #\n")
   cat(obj$bUseGrowthIncrementModel,"\n")
   cat(" \n")
 
-  cat("# Molt probability function\n")
+  cat("#_Molt probability function\n")
   cat("# ************************************** #\n")
-  cat("# 0 = Pre-specified probability of molting\n")
-  cat("# 1 = Constant probability of molting (flat approach)\n")
-  cat("# 2 = Logistic function\n")
-  cat("# 3 = Free estimated parameters\n")
+  cat("#_0 = Pre-specified probability of molting\n")
+  cat("#_1 = Constant probability of molting (flat approach)\n")
+  cat("#_2 = Logistic function\n")
+  cat("#_3 = Free estimated parameters\n")
   cat("# ************************************** #\n")
-  cat("# If the custom growth model option = 1 then the molt probability function must be 1 \n")
+  cat("#_If the custom growth model option = 1 then the molt probability function must be 1 \n")
   cat(obj$bUseCustomMoltProbability, "\n")
   # cat(" \n")
 
-  cat("# Maximum of size-classes to which recruitment must occur (males then females)\n")
+  cat("#_Maximum of size-classes to which recruitment must occur (males then females)\n")
   # if(nsex == 1){
   cat(obj$nSizeClassRec, "\n")
   # } else {
   # utils::write.table(obj$nSizeClassRec, col.names = FALSE, row.names = FALSE)
   # }
-  cat("# Number of blocks of growth matrix parameters (i.e., number of size-increment period)\n")
+  cat("#_Number of blocks of growth matrix parameters (i.e., number of size-increment period)\n")
   cat(obj$nSizeIncVaries, "\n")
-  cat("# Year(s) with changes in the growth matrix\n")
-  cat("# -> 1 line per sex - blank if no change (i.e., if the number of blocks of growth matrix parameters = 1)\n")
+  cat("#_Year(s) with changes in the growth matrix\n")
+  cat("#_-> 1 line per sex - blank if no change (i.e., if the number of blocks of growth matrix parameters = 1)\n")
   tmp <- NULL
   for(s in 1:nsex){
     if((obj$nSizeIncVaries[s]-1)>0){
@@ -227,10 +227,10 @@ writeGmacsctlfile <- function(Dir = NULL,
   }
   cat(unlist(tmp), "\n")
 
-  cat("# Number of blocks of molt probability\n")
+  cat("#_Number of blocks of molt probability\n")
   cat(obj$nMoltVaries, "\n")
-  cat("# Year(s) with changes in molt probability\n")
-  cat("# -> 1 line per sex - blank if no change (i.e., if the number of blocks of growth matrix parameters = 1)\n")
+  cat("#_Year(s) with changes in molt probability\n")
+  cat("#_-> 1 line per sex - blank if no change (i.e., if the number of blocks of growth matrix parameters = 1)\n")
   tmp <- NULL
   for(s in 1:nsex){
     if((obj$nMoltVaries[s]-1)>0){
@@ -241,55 +241,55 @@ writeGmacsctlfile <- function(Dir = NULL,
   utils::write.table(tmp, col.names = FALSE, row.names = FALSE)
 
 
-  cat("# Are the beta parameters relative to a base level?\n")
+  cat("#_Are the beta parameters relative to a base level?\n")
   cat(obj$BetaParRelative, "\n")
   cat("\n")
 
-  cat("# Growth increment model controls\n")
+  cat("#_Growth increment model controls\n")
   cat("# ************************************** #\n")
-  cat("# For each parameter columns are:\n")
-  cat("# Init_val: Initial value for the parameter (must lie between lower and upper bounds)\n")
-  cat("# Lower_Bd & Upper_Bd: Range for the parameter\n")
-  cat("# Phase: Set equal to a negative number not to estimate\n")
-  cat("# Available prior types:\n")
-  cat("# -> 0 = Uniform   - parameters are the range of the uniform prior\n")
-  cat("# -> 1 = Normal    - parameters are the mean and sd\n")
-  cat("# -> 2 = Lognormal - parameters are the mean and sd of the log\n")
-  cat("# -> 3 = Beta      - parameters are the two beta parameters [see dbeta]\n")
-  cat("# -> 4 = Gamma     - parameters are the two gamma parameters [see dgamma]\n")
-  cat("# p1; p2: priors\n")
+  cat("#_For each parameter columns are:\n")
+  cat("#_Init_val: Initial value for the parameter (must lie between lower and upper bounds)\n")
+  cat("#_Lower_Bd & Upper_Bd: Range for the parameter\n")
+  cat("#_Phase: Set equal to a negative number not to estimate\n")
+  cat("#_Available prior types:\n")
+  cat("#_-> 0 = Uniform   - parameters are the range of the uniform prior\n")
+  cat("#_-> 1 = Normal    - parameters are the mean and sd\n")
+  cat("#_-> 2 = Lognormal - parameters are the mean and sd of the log\n")
+  cat("#_-> 3 = Beta      - parameters are the two beta parameters [see dbeta]\n")
+  cat("#_-> 4 = Gamma     - parameters are the two gamma parameters [see dgamma]\n")
+  cat("#_p1; p2: priors\n")
   cat("# ************************************** #\n")
   cat("# \n")
-  cat("# Init_val | Lower_Bd | Upper_Bd | Phase | Prior_type | p1 | p2\n")
+  cat("#_Init_val_| Lower_Bd_| Upper_Bd_| Phase_| Prior_type_| p1_| p2\n")
   utils::write.table(obj$Grwth_control[1:obj$nGrwth,], col.names = FALSE, row.names = FALSE)
   cat("\n")
 
-  cat("# Molt probability controls\n")
+  cat("#_Molt probability controls\n")
   cat("# ************************************** #\n")
-  cat("# For each parameter columns are:\n")
-  cat("# Init_val: Initial value for the parameter (must lie between lower and upper bounds)\n")
-  cat("# Lower_Bd & Upper_Bd: Range for the parameter\n")
-  cat("# Phase: Set equal to a negative number not to estimate\n")
-  cat("# Available prior types:\n")
-  cat("# -> 0 = Uniform   - parameters are the range of the uniform prior\n")
-  cat("# -> 1 = Normal    - parameters are the mean and sd\n")
-  cat("# -> 2 = Lognormal - parameters are the mean and sd of the log\n")
-  cat("# -> 3 = Beta      - parameters are the two beta parameters [see dbeta]\n")
-  cat("# -> 4 = Gamma     - parameters are the two gamma parameters [see dgamma]\n")
-  cat("# p1; p2: priors\n")
+  cat("#_For each parameter columns are:\n")
+  cat("#_Init_val: Initial value for the parameter (must lie between lower and upper bounds)\n")
+  cat("#_Lower_Bd & Upper_Bd: Range for the parameter\n")
+  cat("#_Phase: Set equal to a negative number not to estimate\n")
+  cat("#_Available prior types:\n")
+  cat("#_-> 0 = Uniform   - parameters are the range of the uniform prior\n")
+  cat("#_-> 1 = Normal    - parameters are the mean and sd\n")
+  cat("#_-> 2 = Lognormal - parameters are the mean and sd of the log\n")
+  cat("#_-> 3 = Beta      - parameters are the two beta parameters [see dbeta]\n")
+  cat("#_-> 4 = Gamma     - parameters are the two gamma parameters [see dgamma]\n")
+  cat("#_p1; p2: priors\n")
   cat("# ************************************** #\n")
   cat(" \n")
-  cat("# Init_val | Lower_Bd | Upper_Bd | Phase | Prior_type | p1 | p2\n")
+  cat("#_Init_val_| Lower_Bd_| Upper_Bd_| Phase_| Prior_type_| p1_| p2\n")
   utils::write.table(obj$MoltProb_control, col.names = FALSE, row.names = FALSE)
   cat("\n")
-  cat("# Custom growth-increment matrix or size-transition matrix  (if any)\n")
+  cat("#_Custom growth-increment matrix or size-transition matrix (if any)\n")
   if(obj$bUseCustomGrowthMatrix == 1 || obj$bUseCustomGrowthMatrix == 2){
     utils::write.table(obj$CustomGrowthMatrix, col.names = FALSE, row.names = FALSE)
   } else {
     cat("# \n")
   }
   cat("\n")
-  cat("# Custom molt probability matrix  (if any)\n")
+  cat("#_Custom molt probability matrix  (if any)\n")
   if(obj$bUseCustomMoltProbability == 0){
     utils::write.table(obj$CustomMoltProbabilityMatrix, col.names = FALSE, row.names = FALSE)
   } else {
@@ -299,37 +299,37 @@ writeGmacsctlfile <- function(Dir = NULL,
   cat("\n")
 
   cat("# -------------------------------------- #\n")
-  cat("## Vulnerability parameter controls\n")
+  cat("##_Vulnerability parameter controls\n")
   cat("# \n")
-  cat("# Vulnerability is the combination of selectivity and retention selectivity.\n")
-  cat("# Gmacs requires that each gear has a vulnerability.\n")
+  cat("#_Vulnerability is the combination of selectivity and retention selectivity.\n")
+  cat("#_Gmacs requires that each gear has a vulnerability.\n")
   cat("# \n")
   cat("# -------------------------------------- #\n")
   cat("# \n")
-  cat("# For each of the vulnerability component (selectivity and retention), the following need to be specified:\n")
+  cat("#_For each of the vulnerability component (selectivity and retention), the following need to be specified:\n")
   cat("# ************************************** #\n")
-  cat("# Component periods: Number of component time periods\n")
-  cat("# Sex specific component: 0 = No; 1 = Yes\n")
-  cat("# Vulnerability types\n")
-  cat("# -> <0 = Mirror vulnerability component\n")
-  cat("# -> 0 = Nonparameric component (one parameter per class)\n")
-  cat("# -> 1 = Nonparameric component (one parameter per class, constant from last specified class)\n")
-  cat("# -> 2 = Logistic component (inflection point and slope)\n")
-  cat("# -> 3 = Logistic component (50% and 95% selection)\n")
-  cat("# -> 4 = Double normal component (3 parameters)\n")
-  cat("# -> 5 = Flat equal to zero (1 parameter; phase must be negative)\n")
-  cat("# -> 6 = Flat equal to one (1 parameter; phase must be negative) \n")
-  cat("# -> 7 = Flat-topped double normal component (4 parameters) \n")
-  cat("# -> 8 = Declining logistic component with initial values (50% and 95% selection plus extra) \n")
-  cat("# -> 9 = Cubic-spline (specified with knots and values at knots) \n")
-  cat("# -> 10 = One parameter logistic component (inflection point and slope) \n")
-  cat("# Is the fleet within another? (0 = No; 1 = Yes)\n")
-  cat("# Extra parameters for each pattern - 1 line per sex\n")
+  cat("#_Component periods: Number of component time periods\n")
+  cat("#_Sex specific component: 0 = No; 1 = Yes\n")
+  cat("#_Vulnerability types\n")
+  cat("#_-> <0 = Mirror vulnerability component\n")
+  cat("#_-> 0 = Nonparameric component (one parameter per class)\n")
+  cat("#_-> 1 = Nonparameric component (one parameter per class, constant from last specified class)\n")
+  cat("#_-> 2 = Logistic component (inflection point and slope)\n")
+  cat("#_-> 3 = Logistic component (50% and 95% selection)\n")
+  cat("#_-> 4 = Double normal component (3 parameters)\n")
+  cat("#_-> 5 = Flat equal to zero (1 parameter; phase must be negative)\n")
+  cat("#-> 6 = Flat equal to one (1 parameter; phase must be negative) \n")
+  cat("#_-> 7 = Flat-topped double normal component (4 parameters) \n")
+  cat("#_-> 8 = Declining logistic component with initial values (50% and 95% selection plus extra) \n")
+  cat("#_-> 9 = Cubic-spline (specified with knots and values at knots) \n")
+  cat("#_-> 10 = One parameter logistic component (inflection point and slope) \n")
+  cat("#_Is the fleet within another? (0 = No; 1 = Yes)\n")
+  cat("#_Extra parameters for each pattern - 1 line per sex\n")
   cat("# \n")
-  cat("# Is the maximum selectivity at size forced to equal 1 or not ?\n")
+  cat("#_Is the maximum selectivity at size forced to equal 1 or not ?\n")
   cat("# ************************************** #\n")
   cat(" \n")
-  cat("# The number of columns corresponds to the number of fleets (fisheries and surveys)\n")
+  cat("#_The number of columns corresponds to the number of fleets (fisheries and surveys)\n")
 
   cat("# Selectivity\n")
   N_index <- length(obj$slx_nsel_period_in)
@@ -338,84 +338,91 @@ writeGmacsctlfile <- function(Dir = NULL,
   if(!is.null(Fleet_names)){
     cat("# ",paste0(Fleet_names, collapse = " | "), "\n")
   }
-  cat(obj$slx_nsel_period_in, "# Number of selectivity time period per fleet\n")
-  cat(obj$slx_bsex_in, "# Sex specific selectivity\n")
+  cat(obj$slx_nsel_period_in, "#_Number of selectivity time period per fleet\n")
+  cat(obj$slx_bsex_in, "#_Sex specific selectivity\n")
   if(nsex==1){
-    cat(obj$slx_type_in, "# Selectivity type\n")
+    cat(obj$slx_type_in, "#_Selectivity type\n")
   } else {
     tmp1 <- obj$slx_type_in[1,]
-    cat(unlist(tmp1), "# Male selectivity type\n")
+    cat(unlist(tmp1), "#_Male selectivity type\n")
     tmp2 <- obj$slx_type_in[2,]
-    cat(unlist(tmp2), "# Female selectivity type\n")
+    cat(unlist(tmp2), "#_Female selectivity type\n")
   }
-  cat(obj$slx_include_in, "# Insertion of fleet in another\n")
+  cat(obj$slx_include_in, "#_Insertion of fleet in another\n")
   if(nsex==1){
-    cat(obj$slx_extra_in, "# Extra parameter for each pattern\n")
+    cat(obj$slx_extra_in, "#_Extra parameter for each pattern\n")
   } else {
     tmp1 <- obj$slx_extra_in[1,]
-    cat(unlist(tmp1), "# extra parameters for each pattern by fleet (males)\n")
+    cat(unlist(tmp1), "#_Extra parameters for each pattern by fleet (males)\n")
     tmp2 <- obj$slx_extra_in[2,]
-    cat(unlist(tmp2), "# extra parameters for each pattern by fleet (females)\n")
+    cat(unlist(tmp2), "#_Extra parameters for each pattern by fleet (females)\n")
   }
   cat("# \n")
-  cat("# Retention\n")
-  cat("# ", paste("Gear-", 1: length(obj$slx_nsel_period_in), sep= "", collapse = " | "))
+  cat("#_Retention\n")
+  cat("#_", paste("Gear-", 1: length(obj$slx_nsel_period_in), sep= "", collapse = " | "), sep="")
   if(!is.null(Fleet_names)){
-    cat("# ",paste0(Fleet_names, collapse = " | "), "\n")
+    cat("#_",paste0(Fleet_names, collapse = "_| "), "\n", sep="")
   }
-  cat(obj$ret_nret_period_in, "# Number of Retention time period per fleet\n")
-  cat(obj$ret_bsex_in, "# Sex specific Retention\n")
+  cat(obj$ret_nret_period_in, "#_Number of Retention time period per fleet\n")
+  cat(obj$ret_bsex_in, "#_Sex specific Retention\n")
   if(nsex==1){
-    cat(obj$ret_type_in, "# Selectivity type\n")
+    cat(obj$ret_type_in, "#_Selectivity type\n")
   } else {
     tmp1 <- obj$ret_type_in[1,]
-    cat(unlist(tmp1), "# Male Retention type\n")
+    cat(unlist(tmp1), "#_Male Retention type\n")
     tmp2 <- obj$ret_type_in[2,]
-    cat(unlist(tmp2), "# Female Retention type\n")
+    cat(unlist(tmp2), "#_Female Retention type\n")
   }
   if(nsex==1){
-    cat(obj$slx_nret, "# retention flag (0 = No, 1 = Yes)\n")
+    cat(obj$slx_nret, "#_retention flag (0 = No, 1 = Yes)\n")
   } else {
     tmp1 <- obj$slx_nret[1,]
-    cat(unlist(tmp1), "# Male retention flag (0 = No, 1 = Yes)\n")
+    cat(unlist(tmp1), "#_Male retention flag (0 = No, 1 = Yes)\n")
     tmp2 <- obj$slx_nret[2,]
-    cat(unlist(tmp2), "# Female retention flag (0 = No, 1 = Yes)\n")
+    cat(unlist(tmp2), "#_Female retention flag (0 = No, 1 = Yes)\n")
   }
   if(nsex==1){
-    cat(obj$ret_extra_in, "# Extra parameter for each pattern\n")
+    cat(obj$ret_extra_in, "#_Extra parameter for each pattern\n")
   } else {
     tmp1 <- obj$ret_extra_in[1,]
-    cat(unlist(tmp1), "# extra parameters for each pattern by fleet (males)\n")
+    cat(unlist(tmp1), "#_Extra parameters for each pattern by fleet (males)\n")
     tmp2 <- obj$ret_extra_in[2,]
-    cat(unlist(tmp2), "# extra parameters for each pattern by fleet (females)\n")
+    cat(unlist(tmp2), "#_Extra parameters for each pattern by fleet (females)\n")
   }
-  cat(obj$slx_max_at_1_in, "# Selectivity for the maximum size class if forced to be 1?\n")
+  cat(obj$slx_max_at_1_in, "#_Selectivity for the maximum size class if forced to be 1?\n")
   cat(" \n")
   cat("# ====================================== #\n")
   cat("# ====================================== #\n")
 
   cat("\n")
-  cat("# Selectivity parameter controls\n")
+  cat("#_Selectivity parameter controls\n")
   cat("# ************************************** #\n")
-  cat("# For each parameter (for each gear) columns are:\n")
-  cat("# Fleet: The index of the fleet (positive for capture selectivity)\n")
-  cat("# Index: Parameter count\n")
-  cat("# Par_no: Parameter count within the current pattern\n")
-  cat("# Sex: 0 = both; 1 = male; 2 = female\n")
-  cat("# Init_val: Initial value for the parameter (must lie between lower and upper bounds)\n")
-  cat("# Lower_Bd & Upper_Bd: Range for the parameter\n")
-  cat("# Available prior types:\n")
-  cat("# -> 0 = Uniform   - parameters are the range of the uniform prior\n")
-  cat("# -> 1 = Normal    - parameters are the mean and sd\n")
-  cat("# -> 2 = Lognormal - parameters are the mean and sd of the log\n")
-  cat("# -> 3 = Beta      - parameters are the two beta parameters [see dbeta]\n")
-  cat("# -> 4 = Gamma     - parameters are the two gamma parameters [see dgamma]\n")
-  cat("# p1; p2: priors\n")
-  cat("# Phase: Set equal to a negative number not to estimate\n")
-  cat("# Start / End block: years to define the current block structure\n")
+  cat("#_For each parameter (for each gear) columns are:\n")
+  cat("#_Fleet: The index of the fleet (positive for capture selectivity)\n")
+  cat("#_Index: Parameter count\n")
+  cat("#_Par_no: Parameter count within the current pattern\n")
+  cat("#_Sex: 0 = both; 1 = male; 2 = female\n")
+  cat("#_Init_val: Initial value for the parameter (must lie between lower and upper bounds)\n")
+  cat("#_Lower_Bd & Upper_Bd: Range for the parameter\n")
+  cat("#_Available prior types:\n")
+  cat("#_-> 0 = Uniform   - parameters are the range of the uniform prior\n")
+  cat("#_-> 1 = Normal    - parameters are the mean and sd\n")
+  cat("#_-> 2 = Lognormal - parameters are the mean and sd of the log\n")
+  cat("#_-> 3 = Beta      - parameters are the two beta parameters [see dbeta]\n")
+  cat("#_-> 4 = Gamma     - parameters are the two gamma parameters [see dgamma]\n")
+  cat("#_p1; p2: priors\n")
+  cat("#_Phase: Set equal to a negative number not to estimate\n")
+  cat("#_Start / End block: years to define the current block structure\n")
+  cat("#_Env_Link: Is there any environmental link for this parameter (0 = no; 1 = yes)\n")
+  cat("#_Link_Par: If 'Env_Link'=1; indicate the link to the environmental parameter\n")
+  cat("#_(i.e., which parameter (column) in the Envdata matrix)\n")
+  cat("#_Rand_Walk: Is there a random walk (0/1/2)- If so (1/2), which type :\n")
+  cat("#_1 = First order autoregressive process; 2 = gaussian white noise\n")
+  cat("#_Start_RdWalk / End_RdWalk: years (start/end) to define the period for random walk deviations\n")
+  cat("#_Sigma_RdWalk: sigma for the random walk\n")
   cat("# ************************************** #\n")
   cat(" \n")
-  cat("# Fleet | Index | Par_no | Sex | Init_val | Lower_Bd | Upper_Bd | Prior_type | p1 | p2 | Phase | Start_Block | End_Block\n")
+  cat("#_Fleet_| Index_| Par_no_| Sex_| Init_val_| Lower_Bd_| Upper_Bd_| Prior_type_| p1_| p2_| Phase_| Start_Block_| End_Block_| Env_Link_| Link_Par_| Rand_Walk_| Start_RdWalk_| End_RdWalk_| Sigma_RdWalk\n", sep = "")
   for(g in 1:N_index){
     tmp <- obj$Selex_control[which(obj$Selex_control$Fleet==g),]
     if(!is.null(Fleet_names)){
@@ -430,27 +437,34 @@ writeGmacsctlfile <- function(Dir = NULL,
     }
   }
   cat("\n")
-  cat("# Retention parameter controls\n")
+  cat("#_Retention parameter controls\n")
   cat("# ************************************** #\n")
-  cat("# For each parameter (for each gear) columns are:\n")
-  cat("# Fleet: The index of the fleet (negative for retention)\n")
-  cat("# Index: Parameter count\n")
-  cat("# Par_no: Parameter count within the current pattern\n")
-  cat("# Sex: 0 = both; 1 = male; 2 = female\n")
-  cat("# Init_val: Initial value for the parameter (must lie between lower and upper bounds)\n")
-  cat("# Lower_Bd & Upper_Bd: Range for the parameter\n")
-  cat("# Available prior types:\n")
-  cat("# -> 0 = Uniform   - parameters are the range of the uniform prior\n")
-  cat("# -> 1 = Normal    - parameters are the mean and sd\n")
-  cat("# -> 2 = Lognormal - parameters are the mean and sd of the log\n")
-  cat("# -> 3 = Beta      - parameters are the two beta parameters [see dbeta]\n")
-  cat("# -> 4 = Gamma     - parameters are the two gamma parameters [see dgamma]\n")
-  cat("# p1; p2: priors\n")
-  cat("# Phase: Set equal to a negative number not to estimate\n")
-  cat("# Start / End block: years to define the current block structure\n")
+  cat("#_For each parameter (for each gear) columns are:\n")
+  cat("#_Fleet: The index of the fleet (negative for retention)\n")
+  cat("#_Index: Parameter count\n")
+  cat("#_Par_no: Parameter count within the current pattern\n")
+  cat("#_Sex: 0 = both; 1 = male; 2 = female\n")
+  cat("#_Init_val: Initial value for the parameter (must lie between lower and upper bounds)\n")
+  cat("#_Lower_Bd & Upper_Bd: Range for the parameter\n")
+  cat("#_Available prior types:\n")
+  cat("#_-> 0 = Uniform   - parameters are the range of the uniform prior\n")
+  cat("#_-> 1 = Normal    - parameters are the mean and sd\n")
+  cat("#_-> 2 = Lognormal - parameters are the mean and sd of the log\n")
+  cat("#_-> 3 = Beta      - parameters are the two beta parameters [see dbeta]\n")
+  cat("#_-> 4 = Gamma     - parameters are the two gamma parameters [see dgamma]\n")
+  cat("#_p1; p2: priors\n")
+  cat("#_Phase: Set equal to a negative number not to estimate\n")
+  cat("#_Start / End block: years to define the current block structure\n")
+  cat("#_Env_Link: Is there any environmental link for this parameter (0 = no; 1 = yes)\n")
+  cat("#_Link_Par: If 'Env_Link'=1; indicate the link to the environmental parameter\n")
+  cat("#_(i.e., which parameter (column) in the Envdata matrix)\n")
+  cat("#_Rand_Walk: Is there a random walk (0/1/2)- If so (1/2), which type :\n")
+  cat("#_1 = First order autoregressive process; 2 = gaussian white noise\n")
+  cat("#_Start_RdWalk / End_RdWalk: years (start/end) to define the period for random walk deviations\n")
+  cat("#_Sigma_RdWalk: sigma for the random walk\n")
   cat("# ************************************** #\n")
   cat(" \n")
-  cat("# Fleet | Index | Par_no | Sex | Init_val | Lower_Bd | Upper_Bd | Prior_type | p1 | p2 | Phase | Start_Block | End_Block\n")
+  cat("#_Fleet_| Index_| Par_no_| Sex_| Init_val_| Lower_Bd_| Upper_Bd_| Prior_type_| p1_| p2_| Phase_| Start_Block_| End_Block_| Env_Link_| Link_Par_| Rand_Walk_| Start_RdWalk_| End_RdWalk_| Sigma_RdWalk\n", sep = "")
   for(g in 1:N_index){
     tmp <- obj$Ret_control[which(obj$Ret_control$Fleet==(-1*g)),]
     if(!is.null(Fleet_names)){
@@ -465,19 +479,48 @@ writeGmacsctlfile <- function(Dir = NULL,
     }
   }
   cat("\n")
-  cat("# Number of asymptotic retention parameter\n")
+  cat("#_Number of asymptotic retention parameter\n")
   cat(obj$NumAsympRet, "\n")
-  cat("# Asymptotic parameter controls\n")
+  cat("#_Asymptotic parameter controls\n")
   cat("# ************************************** #\n")
-  cat("# Fleet: The index of the fleet (negative for retention)\n")
-  cat("# Sex: 0 = both; 1 = male; 2 = female\n")
-  cat("# Year: year of interest \n")
-  cat("# Init_val: Initial value for the parameter (must lie between lower and upper bounds)\n")
-  cat("# Lower_Bd & Upper_Bd: Range for the parameter\n")
+  cat("#_Fleet: The index of the fleet (negative for retention)\n")
+  cat("#_Sex: 0 = both; 1 = male; 2 = female\n")
+  cat("#_Year: year of interest \n")
+  cat("#_Init_val: Initial value for the parameter (must lie between lower and upper bounds)\n")
+  cat("#_Lower_Bd & Upper_Bd: Range for the parameter\n")
+  cat("#_Phase: Set equal to a negative number not to estimate\n")
   cat("# ************************************** #\n")
-  cat("# Fleet | Sex | Year | Init_val | Lower_Bd | Upper_Bd | Phase \n")
+  cat("#_Fleet_| Sex_| Year_| Init_val_| Lower_Bd_| Upper_Bd_| Phase \n")
   utils::write.table(obj$AsympSel_control, col.names = FALSE, row.names = FALSE)
   cat("# -------------------------------------- #\n")
+  cat("\n")
+
+  cat("\n")
+  cat("#_Environmental parameters Control\n")
+  cat("# ************************************** #\n")
+  cat("#_Init_val: Initial value for the parameter (must lie between lower and upper bounds)\n")
+  cat("#_Lower_Bd & Upper_Bd: Range for the parameter\n")
+  cat("#_Phase: Set equal to a negative number not to estimate\n")
+  cat("#_Init_val_| Lower_Bd_| Upper_Bd_| Phase \n")
+  cat("# \n")
+  cat("#_One line for each parameter ordered as the parameters are in the\n")
+  cat("#_control matrices\n")
+  cat("# ************************************** #\n")
+  cat("\n")
+  cat("#_Vulnerability impact")
+  cat("#_Init_val_| Lower_Bd_| Upper_Bd_| Phase \n")
+  if(obj$nslx_envpars > 0)
+    utils::write.table(obj$SlxEnvPar, col.names = FALSE, row.names = FALSE)
+  cat("# -------------------------------------- #\n")
+  cat("\n")
+
+  cat("#_Deviation parameter phase for the random walk in vulnerability parameters\n")
+  cat("#_Need to be defined\n")
+  if(!is.null(obj$devParPhase)){
+    cat(obj$devParPhase, "\n")
+  } else {
+    cat("-1")
+  }
   cat("\n")
 
   cat("# -------------------------------------- #\n")
@@ -732,13 +775,31 @@ writeGmacsctlfile <- function(Dir = NULL,
   cat("# -------------------------------------- #\n")
   cat("# Weights on catches for the likelihood component\n")
   cat(obj$catch_emphasis, "\n")
+  cat("\n")
   cat("# Penalties on deviations\n")
   cat("# ************************************** #\n")
   cat("# ",paste(c("Fdev_total", "Fdov_total", "Fdev_year", "Fdov_year"), sep = "", collapse = " | "), "\n")
   utils::write.table(obj$Penalty_fdevs, col.names = FALSE, row.names = FALSE)
-  cat("# Account for priors \n")
+  cat("\n")
+  cat("# Account for priors (penalties)\n")
   cat("# ************************************** #\n")
-  cat("# ", paste(c(
+  # cat("# ", paste(c(
+  #   "Log_fdevs",
+  #   "meanF",
+  #   "Mdevs",
+  #   "Rec_devs",
+  #   "Initial_devs",
+  #   "Fst_dif_dev",
+  #   "Mean_sex-Ratio",
+  #   "Molt_prob",
+  #   "Free_selectivity",
+  #   "Init_n_at_len",
+  #   "Fvecs",
+  #   "Fdovs",
+  #   "Vul_devs"
+  # ), sep = "", collapse = " | "), "\n")
+  # utils::write.table(obj$Penalty_emphasis, col.names = FALSE, row.names = FALSE)
+  namPenal <- c(
     "Log_fdevs",
     "meanF",
     "Mdevs",
@@ -750,9 +811,13 @@ writeGmacsctlfile <- function(Dir = NULL,
     "Free_selectivity",
     "Init_n_at_len",
     "Fvecs",
-    "Fdovs"
-  ), sep = "", collapse = " | "), "\n")
-  utils::write.table(obj$Penalty_emphasis, col.names = FALSE, row.names = FALSE)
+    "Fdovs",
+    "Vul_devs"
+  )
+  for(i in 1:length(namPenal)){
+    cat(obj$Penalty_emphasis[[i]], "\t#_",namPenal[i],"\n")
+  }
+  cat("\n")
   cat("# -------------------------------------- #\n")
   cat("\n")
 

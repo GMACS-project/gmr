@@ -185,6 +185,44 @@ readGMACSpar <- function(Dir = NULL,
     cat("-> Read the asymptotic retention parameters \n")
   # -------------------------------------------------------------------------
 
+  # Extract the time-varying parameters for the vulnerability
+  # -------------------------------------------------------------------------
+  if (verbose)
+    cat("-- Reading environmental parameters for vulnerability  \n")
+  if(CtlFile$nslx_envpars > 0){
+    Envpar_Slx <- get.df(dat, Loc, nrow = CtlFile$nslx_envpars)
+    Envpar_Slx <- as.data.frame(cbind(paste("Envpar_Slx",1:CtlFile$nslx_envpars,sep="_"),Envpar_Slx))
+  } else {
+    Envpar_Slx <- get.df(dat, Loc, nrow = 1)
+    Envpar_Slx <- as.data.frame(cbind(paste("Envpar_Slx",0,sep="_"),Envpar_Slx))
+  }
+  colnames(Envpar_Slx) <- c("Param_ID","value")
+  DatOut[["Envpar_Slx"]] <- Envpar_Slx # Estimated environmental parameters
+
+  if (verbose)
+    cat("\t-> Read the environmental parameters for vulnerability \n")
+  # -------------------------------------------------------------------------
+
+  # Extract vulnerability deviations
+  # -------------------------------------------------------------------------
+  # These deviations include the environmental impacts if applicable
+  if (verbose)
+    cat("-- Reading vulnerabity deviations  \n")
+
+  if(CtlFile$NSlx_devs_param > 0){
+    Slx_Devs <- get.df(dat, Loc, nrow = CtlFile$NSlx_devs_param)
+    Slx_Devs <- as.data.frame(cbind(paste("Slx_Devs",1:CtlFile$NSlx_devs_param,sep="_"),Slx_Devs))
+  } else {
+    Slx_Devs <- get.df(dat, Loc, nrow = 1)
+    Slx_Devs <- as.data.frame(cbind(paste("Slx_Devs",0,sep="_"),Slx_Devs))
+  }
+  colnames(Slx_Devs) <- c("Param_ID","value")
+  DatOut[["Slx_Devs"]] <- Slx_Devs # Estimated selectivty deviations
+
+  if (verbose)
+    cat("\t-> Read the deviations for vulnerability \n")
+  # -------------------------------------------------------------------------
+
   # Extract the mean fishing mortality rate parameters
   # -------------------------------------------------------------------------
   if (verbose)

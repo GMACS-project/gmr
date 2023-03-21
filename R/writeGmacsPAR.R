@@ -74,6 +74,19 @@ writeGmacsPAR <- function(Dir = NULL,
   cat("# -------------------------------------- #\n")
   cat("\n")
 
+  cat("# Environmental parameters: \n")
+  cat("# -------------------------------------- #\n")
+  cat("# vulnerability: \n")
+  writeDF(dat = obj$Envpar_Slx)
+  cat("# -------------------------------------- #\n")
+  cat("\n")
+
+  cat("# Vulnerability deviations: \n")
+  cat("# -------------------------------------- #\n")
+  writeDF(dat = obj$Slx_Devs)
+  cat("# -------------------------------------- #\n")
+  cat("\n")
+
   cat("# Mean fishing mortality rate parameters: \n")
   cat("# -------------------------------------- #\n")
   writeDF(dat = obj$Fbar)

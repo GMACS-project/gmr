@@ -7,6 +7,7 @@
 writeGmacsdatfile(
   Dir = NULL,
   FileName = NULL,
+  overwrite = FALSE,
   DatFile = NULL,
   stock = "",
   model_name = "",
@@ -14,9 +15,12 @@ writeGmacsdatfile(
 )
 }
 \arguments{
-\item{Dir}{(character string)- path where to save the new Spc.dat file}
+\item{Dir}{(character string)- path where to save the new Spc.dat file.}
 
-\item{FileName}{(character string)- name of the new Spc.dat file}
+\item{FileName}{(character string)- name of the new Spc.dat file.}
+
+\item{overwrite}{(logical)- Specify if the existing file should be overwritten.
+The default value is \code{overwrite = FALSE}.}
 
 \item{DatFile}{(character string)- Object (list) containing the ex Spc.dat file - The list is
 created using the \code{\link[=readGMACSdat]{readGMACSdat()}} function.}

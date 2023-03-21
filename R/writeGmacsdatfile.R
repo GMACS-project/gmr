@@ -278,13 +278,14 @@ writeGmacsdatfile <- function(Dir = NULL,
   cat("\n")
   cat("#_Number of environmental time series (different indices)\n")
   cat(obj$NenvIndics, "\n")
-  cat("#_Year ranges for each index (One line per index)\n")
+  cat("#_Year ranges for each index (One line per index - From 1 to N env indices)\n")
   cat("#_Start_year_| End_year\n")
   if(obj$NenvIndics > 0){
     # cat(obj$EnvYrs, "\n")
     utils::write.table(obj$EnvYrs,
                        row.names = FALSE,
                        col.names = FALSE)
+    cat("\n")
   } else {
     cat("\n")
   }
@@ -295,10 +296,10 @@ writeGmacsdatfile <- function(Dir = NULL,
     utils::write.table(obj$EnvData,
                        row.names = FALSE,
                        col.names = FALSE)
+    cat("\n")
   } else {
     cat("\n")
   }
-
   cat("#_-------------------------------------- #\n")
   cat("\n")
 
