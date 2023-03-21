@@ -24,8 +24,7 @@ LazyData: true
 RoxygenNote: 7.2.3
 Depends:
     R (>= 4.1.1),
-    PBSadmb,
-    XML
+    PBSadmb
 Imports: 
     ggplot2,
     kableExtra,
