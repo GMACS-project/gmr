@@ -303,6 +303,18 @@ readGMACSallOUT <- function(FileName = NULL,
   nyrRetro <- End_Y - nyrRetro
   nclass <- DatFile$N_sizeC
   N_fleet <- DatFile$N_fleet
+  nmature <- DatFile$N_maturity
+  nshell <- DatFile$N_shell_cdt
+
+  nam_sex <- base::switch(.ac(nsex),
+                          "1" = "Unsex",
+                          "2" = c("males", "females"))
+  nam_mat <- base::switch(.ac(nmature),
+                          "1" = "BothMature",
+                          "2" = c("Mature","Immature"))
+  nam_shell <- base::switch(.ac(nshell),
+                            "1" = "Undet_shell",
+                            "2" = c("New_shell","Old_shell"))
 
   # Read Report file
   dat <- readLines(FileName, warn = FALSE)
@@ -355,7 +367,8 @@ readGMACSallOUT <- function(FileName = NULL,
     tmp <- getLine(dat, Loc, LocDatOut)
 
     eval(parse(text = paste(
-      "Lik_type <- rbind(Lik_type,data.frame(row.names = tmp$nam_var,",nam_type[1]," = tmp$vals[1],",nam_type[2]," = tmp$vals[2]))",sep="")
+      "Lik_type <- rbind(Lik_type,data.frame(row.names = tmp$nam_var,",
+      nam_type[1]," = tmp$vals[1],",nam_type[2]," = tmp$vals[2]))",sep="")
     ))
   }
   DatOut[["Lik_type"]] <- Lik_type
@@ -816,6 +829,9 @@ readGMACSallOUT <- function(FileName = NULL,
     cat("\t-> Read Management (derived) quantities \n")
   # -------------------------------------------------------------------------
 
+  # Useful to name colnames and rownames
+  .sex <- rep(nam_sex, each = (End_Y + 1 - Start_Y + 1))
+  .year <- rep(Start_Y:(End_Y+1), nsex)
 
   # Model characteristics ----
   if (verbose)
@@ -862,6 +878,12 @@ readGMACSallOUT <- function(FileName = NULL,
 
   DatOut <-
     do.df(dat, DatOut, Loc, LocDatOut, nrow = nsex * (End_Y + 1 - Start_Y + 1))
+  .old <- colnames(DatOut$mean_wt)
+  .new <- paste0("SizeC_", 1:nclass)
+  DatOut$mean_wt <- DatOut$mean_wt %>%
+    dplyr::mutate(sex = .sex, year = .year) %>%
+    dplyr::select(year, sex, dplyr::everything()) %>%
+    dplyr::rename_with(~ .new, dplyr::all_of(.old))
 
   if (verbose)
     cat("\t-> Read mean weight at size \n")
@@ -877,6 +899,12 @@ readGMACSallOUT <- function(FileName = NULL,
       "1" = do.vec(dat, DatOut, Loc, LocDatOut),
       "2" = do.df(dat, DatOut, Loc, LocDatOut, nrow = nsex)
     )
+  if(nsex != 1){
+    DatOut$maturity <- DatOut$maturity %>%
+      dplyr::mutate(sex = nam_sex) %>%
+      dplyr::select(sex, dplyr::everything()) %>%
+      dplyr::rename_with(~ .new, dplyr::all_of(.old))
+  }
 
   if (verbose)
     cat("\t-> Read maturity \n")
@@ -892,17 +920,68 @@ readGMACSallOUT <- function(FileName = NULL,
       "Size_data",
       "Stock_Recruit",
       "Tagging_data")
+
+  nam_rowsdf <- c("CatchDF", "SurveyDF", "SizeFreq_df")
+  nam_rowsR <- c("FirstYearDevs", "InitDevs", "SexRatioDevs")
+  nam_rowsG <- if(CtlFile$bUseGrowthIncrementModel == 1 & DatFile$GrowthObsType == 1){
+    paste(nam_sex, "Growth_IncDat",sep = "_")
+  } else if (DatFile$GrowthObsType == 2 || DatFile$GrowthObsType == 3){
+    paste(nam_sex, "SizeClass_change",sep = "_")
+  }
+
   nlikes <- length(nam_likes)
   tmp <- get.namVar(dat, Loc, LocDatOut)
   eval(parse(text = paste0("DatOut$", tmp, " <- list()")))
+
   for (l in 1:nlikes) {
-    eval(parse(
-      text = paste0("DatOut$", tmp, "$", nam_likes[l], " <- get.vec(dat, Loc)")
-    ))
+    namRows <- if(nam_likes[l] %in% c("Catch_data","Index_data","Size_data")){
+      eval(parse(text = paste0(
+        "paste0('",nam_rowsdf[l],"', 1:DatFile$N_",nam_rowsdf[l],")"
+      )))
+    } else if(nam_likes[l] == "Stock_Recruit"){
+      nam_rowsR
+    } else {
+      nam_rowsG
+    }
+    if(nam_likes[l] == "Size_data")
+      namRows <- namRows[unique(CtlFile$iCompAggregator)]
+
+    eval(parse(text = paste0(
+      "DatOut$", tmp, "$", nam_likes[l], " <- get.vec(dat, Loc)"
+    )))
+
+    eval(parse(text = paste0(
+      "DatOut$", tmp, "$", nam_likes[l], " <- as.data.frame(DatOut$",tmp, "$",
+      nam_likes[l], ", row.names = namRows)"
+    )))
+    eval(parse(text = paste0(
+      "colnames(DatOut$", tmp, "$", nam_likes[l], ") <- 'nloglike'"
+    )))
   }
+
   # nlogPenalty
   DatOut <- do.vec(dat, DatOut, Loc, LocDatOut)
+  namPenal <- c(
+    "Log_fdevs",
+    "meanF",
+    "Mdevs",
+    "Rec_devs",
+    "Initial_devs",
+    "Fst_dif_dev",
+    "Mean_sex-Ratio",
+    "Molt_prob",
+    "Free_selectivity",
+    "Init_n_at_len",
+    "Fvecs",
+    "Fdovs",
+    "Vul_devs"
+  )
+  DatOut$nlogPenalty <- as.data.frame(DatOut$nlogPenalty, row.names = namPenal)
+  colnames(DatOut$nlogPenalty) <- "nlogPenalty"
+
   # priorDensity
+  # priorDensity for each estimated parameters
+  # NVarpar values - Need to implement with the names
   DatOut <- do.vec(dat, DatOut, Loc, LocDatOut)
 
   if (verbose)
@@ -917,9 +996,8 @@ readGMACSallOUT <- function(FileName = NULL,
   # dCatchData
   DatOut <-
     do.df(dat, DatOut, Loc, LocDatOut, nrow = sum(DatFile$Nrows_CatchDF))
-
-  colnames(DatOut$dCatchData) <- c("year","seas",'fleet','sex','obs','CV','Type','units','mult','effort','discard_mortality')
-
+  namCatch <- c("Year","Season",'Fleet',"Sex","Obs","CV","Partition","Units","Multiplier","Effort","Discard_mortality")
+  colnames(DatOut$dCatchData) <- namCatch
 
   # obs_catch
   tmp <- get.namVar(dat, Loc, LocDatOut)
@@ -1026,7 +1104,7 @@ readGMACSallOUT <- function(FileName = NULL,
           Loc,
           LocDatOut,
           nrow = length(Start_Y:End_Y) * DatFile$N_CatchDF)
-  colnames(DatOut$dCatchData_out) <- colnames(DatOut$dCatchData)
+  colnames(DatOut$dCatchData_out) <- namCatch
 
   if (verbose)
     cat("\t-> Read catch data and derivates \n")
@@ -1040,7 +1118,8 @@ readGMACSallOUT <- function(FileName = NULL,
   DatOut <-
     do.df(dat, DatOut, Loc, LocDatOut, nrow = DatFile$Nrows_SvDF)
   colnames(DatOut$dSurveyData) <-
-    c('Index','year','seas','fleet','sex','Mature','Abundance','CV','units','Timing')
+    c("Index","Year","Season","Fleet","Sex","Maturity","Obs","CV","Units","CPUE_time")
+
   # cpue_cv_add
   DatOut <- do.vec(dat, DatOut, Loc, LocDatOut)
   # obs_cpue
@@ -1051,9 +1130,21 @@ readGMACSallOUT <- function(FileName = NULL,
   DatOut <- do.vec(dat, DatOut, Loc, LocDatOut)
   # survey_q
   DatOut <- do.vec(dat, DatOut, Loc, LocDatOut)
+
+  if(length(DatFile$Survey_names)==1 && DatFile$Survey_names == ""){
+    DatOut$survey_q <- as.data.frame(DatOut$survey_q, row.names = paste0("CPUE_", 1:length(DatOut$survey_q)))
+  } else {
+    DatOut$survey_q <- as.data.frame(DatOut$survey_q, row.names = DatFile$Survey_names)
+  }
   # sdnr_MAR_cpue
   DatOut <-
     do.df(dat, DatOut, Loc, LocDatOut, nrow = DatFile$N_SurveyDF)
+  if(length(DatFile$Survey_names)==1 && DatFile$Survey_names == ""){
+    rownames(DatOut$sdnr_MAR_cpue) <- rownames(DatOut$survey_q)
+  } else {
+    rownames(DatOut$sdnr_MAR_cpue) <- DatFile$Survey_names
+  }
+  colnames(DatOut$sdnr_MAR_cpue) <- c("sdnr", "MAR")
 
   if (verbose)
     cat("\t-> Read survey data and derivates \n")
@@ -1062,6 +1153,8 @@ readGMACSallOUT <- function(FileName = NULL,
   # Size composition data ----
   if (verbose)
     cat("-- Reading size composition \n")
+
+  namSizeC <- c('Year','Season','Fleet','Sex','Type','Shell','Maturity','Stage1_EffN')
 
   # First table combines size_comp_sample_size / d3_obs_size_comps / d3_pre_size_comps
   # Size_data_summary
@@ -1082,6 +1175,19 @@ readGMACSallOUT <- function(FileName = NULL,
           ")"
         )
       ))
+
+      eval(parse(
+        text = paste0(
+          "colnames(DatOut$",
+          tmp,
+          "$",
+          names(DatFile$SizeFreq)[n],
+          ") <- c(namSizeC, rep('', dim(DatOut$",
+          tmp, "$", names(DatFile$SizeFreq)[n],")[2]-length(namSizeC)))"
+        )
+      ))
+
+
     }
     oldk <- k
   }
@@ -1090,34 +1196,43 @@ readGMACSallOUT <- function(FileName = NULL,
   tmp <- get.namVar(dat, Loc, LocDatOut)
   eval(parse(text = paste0("DatOut$", tmp, " <- list()")))
   for (s in 1:DatFile$N_SizeFreq_df) {
+    namSize <- paste0("SizeC_", 1:DatFile$Nbins_SiseFreq[s])
+    namSizeC2 <- c(namSizeC, namSize)
     eval(parse(
       text = paste0(
         "DatOut$",
-        tmp,
-        "$",
-        names(DatFile$SizeFreq)[s],
+        tmp, "$", names(DatFile$SizeFreq)[s],
         " <- get.df(dat, Loc, nrow = ",
         DatFile$Nrows_SiseFreqDF[s],
         ")"
-      )
-    ))
+      )))
+    eval(parse(
+      text = paste0(
+        "colnames(DatOut$",
+        tmp, "$", names(DatFile$SizeFreq)[s],
+        ") <- namSizeC2"
+      )))
   }
 
   # d3_obs_size_comps_out
   tmp <- get.namVar(dat, Loc, LocDatOut)
   eval(parse(text = paste0("DatOut$", tmp, " <- list()")))
   for (s in 1:DatFile$N_SizeFreq_df) {
+    namSize <- paste0("SizeC_", 1:DatFile$Nbins_SiseFreq[s])
     eval(parse(
       text = paste0(
-        "DatOut$",
-        tmp,
-        "$",
+        "DatOut$", tmp, "$",
         names(DatFile$SizeFreq)[s],
         " <- get.df(dat, Loc, nrow = ",
         DatFile$Nrows_SiseFreqDF[s],
         ")"
-      )
-    ))
+      )))
+    eval(parse(
+      text = paste0(
+        "colnames(DatOut$", tmp, "$",
+        names(DatFile$SizeFreq)[s],
+        ") <- namSize"
+      )))
   }
 
 
@@ -1125,91 +1240,176 @@ readGMACSallOUT <- function(FileName = NULL,
   tmp <- get.namVar(dat, Loc, LocDatOut)
   eval(parse(text = paste0("DatOut$", tmp, " <- list()")))
   for (s in 1:DatFile$N_SizeFreq_df) {
+    namSize <- paste0("SizeC_", 1:DatFile$Nbins_SiseFreq[s])
     eval(parse(
       text = paste0(
-        "DatOut$",
-        tmp,
-        "$",
+        "DatOut$", tmp, "$",
         names(DatFile$SizeFreq)[s],
         " <- get.df(dat, Loc, nrow = ",
         DatFile$Nrows_SiseFreqDF[s],
         ")"
-      )
-    ))
+      )))
+    eval(parse(
+      text = paste0(
+        "colnames(DatOut$", tmp, "$",
+        names(DatFile$SizeFreq)[s],
+        ") <- namSize"
+      )))
   }
 
   # d3_res_size_comps_out
   tmp <- get.namVar(dat, Loc, LocDatOut)
   eval(parse(text = paste0("DatOut$", tmp, " <- list()")))
   for (s in 1:DatFile$N_SizeFreq_df) {
+    namSize <- paste0("SizeC_", 1:DatFile$Nbins_SiseFreq[s])
     eval(parse(
       text = paste0(
-        "DatOut$",
-        tmp,
-        "$",
+        "DatOut$", tmp, "$",
         names(DatFile$SizeFreq)[s],
         " <- get.df(dat, Loc, nrow = ",
         DatFile$Nrows_SiseFreqDF[s],
         ")"
-      )
-    ))
+      )))
+    eval(parse(
+      text = paste0(
+        "colnames(DatOut$",
+        tmp, "$", names(DatFile$SizeFreq)[s],
+        ") <- namSize"
+      )))
   }
-  # d3_obs_size_comps_X
+
+  # Specific for length comp
+  iCompAggregator <- CtlFile$iCompAggregator
+  Nbins_SiseFreq <- DatFile$Nbins_SiseFreq
+  Nrows_SiseFreqDF <- DatFile$Nrows_SiseFreqDF
+  N_SizeFreq_df <- DatFile$N_SizeFreq_df
+
+  Nlen <- data.frame(cbind(iCompAggregator,
+                           Nbins_SiseFreq,
+                           Nrows_SiseFreqDF))
+  Nlen$Nlen <- -1
   oldk <- 0
-  for (n in 1:DatFile$N_SizeFreq_df) {
-    k <- CtlFile$iCompAggregator[n]
+  for (n in 1:N_SizeFreq_df) {
+    k <- iCompAggregator[n]
+
     if (oldk != k) {
-      tmp <- get.namVar(dat, Loc, LocDatOut)
-      eval(parse(
-        text = paste0(
-          "DatOut$",
-          tmp,
-          " <- get.df(dat, Loc, nrow = ",
-          DatFile$Nrows_SiseFreqDF[n],
-          ")"
-        )
-      ))
+      Nlen$Nlen[n] <- Nlen$Nbins_SiseFreq[n]
+    } else {
+      Nlen$Nlen[n-1] <- Nlen$Nbins_SiseFreq[n-1] + Nlen$Nbins_SiseFreq[n]
+      Nlen$Nlen[n] <- Nlen$Nlen[n-1]
     }
     oldk <- k
   }
+  NlenGen <- unique(Nlen[,!colnames(Nlen)%in%"Nbins_SiseFreq"])
+
+  # d3_obs_size_comps_X
+  oldk <- 0
+  Tottmp <- NULL
+  for (n in 1:DatFile$N_SizeFreq_df) {
+    k <- CtlFile$iCompAggregator[n]
+    Nbins <- NlenGen[k,"Nlen"]
+    if(Nbins>nclass){
+      namSize <- c(paste0("SizeC_obs_", 1:nclass),paste0("SizeC_obs_Aggr", 1:(Nbins - nclass)))
+    } else {
+      namSize <- paste0("SizeC_obs_", 1:Nbins)
+    }
+    if (oldk != k) {
+      tmp <- get.namVar(dat, Loc, LocDatOut)
+      tmp <- names(DatOut$d3_SizeComps_in)[k]
+      eval(parse(
+        text = paste0(
+          "Tottmp$", tmp, " <- get.df(dat, Loc, nrow = ",
+          DatFile$Nrows_SiseFreqDF[n],
+          ")"
+        )))
+      eval(parse(
+        text = paste0(
+          "colnames(Tottmp$", tmp, ") <- namSize"
+        )))
+      eval(parse(
+        text = paste0(
+          "Tottmp$",tmp,"<- Tottmp$",tmp," %>%
+        dplyr::mutate(sex = DatOut$d3_SizeComps_in[[",n,"]]$Sex,
+                      year = DatOut$d3_SizeComps_in[[",n,"]]$Year) %>%
+        dplyr::select(year, sex, dplyr::everything())"
+        )))
+    }
+    oldk <- k
+  }
+  DatOut[["d3_obs_size_comps"]] <- Tottmp
 
   # d3_pre_size_comps_X
   oldk <- 0
+  Tottmp <- NULL
+
   for (n in 1:DatFile$N_SizeFreq_df) {
     k <- CtlFile$iCompAggregator[n]
+    Nbins <- NlenGen[k,"Nlen"]
+    if(Nbins>nclass){
+      namSize <- c(paste0("SizeC_obs_", 1:nclass),paste0("SizeC_obs_Aggr", 1:(Nbins - nclass)))
+    } else {
+      namSize <- paste0("SizeC_obs_", 1:Nbins)
+    }
     if (oldk != k) {
       tmp <- get.namVar(dat, Loc, LocDatOut)
+      tmp <- names(DatOut$d3_SizeComps_in)[k]
       eval(parse(
         text = paste0(
-          "DatOut$",
-          tmp,
-          " <- get.df(dat, Loc, nrow = ",
+          "Tottmp$", tmp, " <- get.df(dat, Loc, nrow = ",
           DatFile$Nrows_SiseFreqDF[n],
           ")"
-        )
-      ))
+        )))
+      eval(parse(
+        text = paste0(
+          "colnames(Tottmp$", tmp, ") <- namSize"
+        )))
+      eval(parse(
+        text = paste0(
+          "Tottmp$",tmp,"<- Tottmp$",tmp," %>%
+        dplyr::mutate(sex = DatOut$d3_SizeComps_in[[",n,"]]$Sex,
+                      year = DatOut$d3_SizeComps_in[[",n,"]]$Year) %>%
+        dplyr::select(year, sex, dplyr::everything())"
+        )))
     }
     oldk <- k
   }
+  DatOut[["d3_pre_size_comps"]] <- Tottmp
 
   # d3_res_size_comps_X
   oldk <- 0
+  Tottmp <- NULL
   for (n in 1:DatFile$N_SizeFreq_df) {
     k <- CtlFile$iCompAggregator[n]
+    Nbins <- NlenGen[k,"Nlen"]
+    if(Nbins>nclass){
+      namSize <- c(paste0("SizeC_obs_", 1:nclass),paste0("SizeC_obs_Aggr", 1:(Nbins - nclass)))
+    } else {
+      namSize <- paste0("SizeC_obs_", 1:Nbins)
+    }
     if (oldk != k) {
       tmp <- get.namVar(dat, Loc, LocDatOut)
+      tmp <- names(DatOut$d3_SizeComps_in)[k]
       eval(parse(
         text = paste0(
-          "DatOut$",
-          tmp,
-          " <- get.df(dat, Loc, nrow = ",
+          "Tottmp$", tmp, " <- get.df(dat, Loc, nrow = ",
           DatFile$Nrows_SiseFreqDF[n],
           ")"
-        )
-      ))
+        )))
+      eval(parse(
+        text = paste0(
+          "colnames(Tottmp$", tmp, ") <- namSize"
+        )))
+      eval(parse(
+        text = paste0(
+          "Tottmp$",tmp,"<- Tottmp$",tmp," %>%
+        dplyr::mutate(sex = DatOut$d3_SizeComps_in[[",n,"]]$Sex,
+                      year = DatOut$d3_SizeComps_in[[",n,"]]$Year) %>%
+        dplyr::select(year, sex, dplyr::everything())"
+        )))
     }
     oldk <- k
   }
+  DatOut[["d3_res_size_comps"]] <- Tottmp
 
   # size_comp_sample_size
   tmp <- get.namVar(dat, Loc, LocDatOut)
@@ -1219,8 +1419,13 @@ readGMACSallOUT <- function(FileName = NULL,
   for (n in 1:DatFile$N_SizeFreq_df) {
     k <- CtlFile$iCompAggregator[n]
     if (oldk != k) {
+      namtmp <- names(DatOut$d3_SizeComps_in)[k]
+      # eval(parse(
+      #   text = paste0("DatOut$", tmp, "$Size_Comp_", k,
+      #                 " <- get.vec(dat, Loc)")
+      # ))
       eval(parse(
-        text = paste0("DatOut$", tmp, "$Size_Comp_", k,
+        text = paste0("DatOut$", tmp, "$", namtmp,
                       " <- get.vec(dat, Loc)")
       ))
     }
@@ -1231,6 +1436,8 @@ readGMACSallOUT <- function(FileName = NULL,
   # Size data: standard deviation and median
   DatOut <-
     do.df(dat, DatOut, Loc, LocDatOut, nrow = length(unique(CtlFile$iCompAggregator)))
+  rownames(DatOut$sdnr_MAR_lf) <- names(DatOut$d3_SizeComps_in)[unique(CtlFile$iCompAggregator)]
+  colnames(DatOut$sdnr_MAR_lf) <- c("sdnr", "MAR")
 
   if (verbose)
     cat("\t-> Read size composition \n")
@@ -1258,12 +1465,25 @@ readGMACSallOUT <- function(FileName = NULL,
   eval(parse(text = paste0(
     "DatOut$", tmp, "$slx_discard <- get.df(dat, Loc, nrow = nRowSlx)"
   )))
+  # Colnames
+  colnames(DatOut$Selectivity$slx_capture) <-
+    colnames(DatOut$Selectivity$slx_retaind) <-
+    colnames(DatOut$Selectivity$slx_discard) <- c("year", 'sex','fleet', .new)
+
   # slx_control_in
   DatOut <-
     do.df(dat, DatOut, Loc, LocDatOut, nrow = CtlFile$nslx_pars)
   # slx_control
   DatOut <-
     do.df(dat, DatOut, Loc, LocDatOut, nrow = length(CtlFile$slx_npar))
+  # Colnames
+  colnames(DatOut$slx_control_in) <-
+    colnames(DatOut$slx_control) <- c("Fleet","Index","Parameter_no","Sex",
+                                      "Initial",'Lower_bound','Upper_bound',
+                                      'Prior_type','Prior_1','Prior_2','Phase',
+                                      'Start_block','End_block','Env_Link',
+                                      'Env_Link_Var','Rand_Walk','Start_year_RW',
+                                      'End_year_RW','Sigma_RW')
 
   if (verbose)
     cat("\t-> Read selectivity \n")
@@ -1293,37 +1513,66 @@ readGMACSallOUT <- function(FileName = NULL,
   # m_prop
   DatOut <-
     do.df(dat, DatOut, Loc, LocDatOut, nrow = length(Start_Y:nyrRetro))
+  rownames(DatOut$m_prop) <- Start_Y:nyrRetro
+  colnames(DatOut$m_prop) <- paste0("Season_", 1:DatFile$N_seasons)
 
   # M
-  # DatOut <-
-  #   do.df(dat, DatOut, Loc, LocDatOut, nrow = length(Start_Y:nyrRetro) * nsex * DatFile$N_maturity)
-  # nRowM <- length(Start_Y:nyrRetro) * nsex * DatFile$N_maturity
   nRowM <- length(Start_Y:nyrRetro)
-  nam_mat <- base::switch(.ac(DatFile$N_maturity),
-                          "1" = "Both",
-                          "2" = c("Mature","Immature"))
-
   tmp <- get.namVar(dat, Loc, LocDatOut)
   eval(parse(text = paste0("DatOut$", tmp, " <- list()")))
 
   for(s in 1:nsex){
-    for(m in 1:DatFile$N_maturity){
+    for(m in 1:nmature){
       eval(parse(text = paste0(
-        "DatOut$", tmp, "$",nam_sexes[s],"$",nam_mat[m]," <- get.df(dat, Loc, nrow = nRowM)"
+        "DatOut$", tmp, "$",nam_sex[s],"$",nam_mat[m]," <- get.df(dat, Loc, nrow = nRowM)"
+      )))
+      eval(parse(text = paste0(
+        "colnames(DatOut$", tmp, "$",nam_sex[s],"$",nam_mat[m],") <- .new"
+      )))
+      eval(parse(text = paste0(
+        "rownames(DatOut$", tmp, "$",nam_sex[s],"$",nam_mat[m],") <- .ac(Start_Y:nyrRetro)"
       )))
     }
   }
 
   # xi
   DatOut <- do.vec(dat, DatOut, Loc, LocDatOut)
+  DatOut$xi <- as.data.frame(DatOut$xi, row.names = .ac(Start_Y:nyrRetro))
   # log_fbar
   DatOut <- do.vec(dat, DatOut, Loc, LocDatOut)
+  if(length(DatFile$Survey_names)==1 && DatFile$Survey_names=="") {
+    DatOut$log_fbar <- as.data.frame(DatOut$log_fbar,
+                                     row.names = DatFile$F_Fleet_names)
+  } else {
+    DatOut$log_fbar <- as.data.frame(DatOut$log_fbar,
+                                     row.names = c(DatFile$F_Fleet_names, DatFile$Survey_names))
+  }
   # ft
   nRowft <- N_fleet * nsex * length(Start_Y:nyrRetro)
   DatOut <- do.df(dat, DatOut, Loc, LocDatOut, nrow = nRowft)
+  colnames(DatOut$ft) <- paste0("Season_", 1:DatFile$N_seasons)
+  if(length(DatFile$Survey_names)==1 && DatFile$Survey_names=="") {
+    DatOut$ft <- DatOut$ft %>%
+      dplyr::mutate(fleet = rep(DatFile$F_Fleet_names, each = length(Start_Y:nyrRetro)*nsex),
+                    sex = rep(rep(nam_sex,each = length(Start_Y:nyrRetro)),N_fleet),
+                    year = rep(Start_Y:nyrRetro, N_fleet*nsex)) %>%
+      dplyr::select(year, sex, fleet, dplyr::everything())
+  } else {
+    DatOut$ft <- DatOut$ft %>%
+      dplyr::mutate(fleet = rep(c(DatFile$F_Fleet_names, DatFile$Survey_names), each = length(Start_Y:nyrRetro)*nsex),
+                    sex = rep(rep(nam_sex,each = length(Start_Y:nyrRetro)),N_fleet),
+                    year = rep(Start_Y:nyrRetro, N_fleet*nsex)) %>%
+      dplyr::select(year, sex, fleet, dplyr::everything())
+  }
   # F
   nRowF <- nsex * length(Start_Y:nyrRetro) * DatFile$N_seasons
   DatOut <- do.df(dat, DatOut, Loc, LocDatOut, nrow = nRowF)
+  colnames(DatOut$F) <- .new
+  DatOut$F <- DatOut$F %>%
+    dplyr::mutate(sex = rep(nam_sex, each=DatFile$N_seasons*length(Start_Y:nyrRetro)),
+                  year = rep(rep(Start_Y:nyrRetro, each = DatFile$N_seasons),nsex),
+                  season = rep(1:DatFile$N_seasons, length(Start_Y:nyrRetro)* nsex)) %>%
+    dplyr::select(year, sex, season,dplyr::everything())
 
   # Fully_selected_fishing_F_Fl
   vname <- "Fully_selected_fishing_F_Fl"
@@ -1377,6 +1626,8 @@ readGMACSallOUT <- function(FileName = NULL,
   eval(parse(
     text = paste0("DatOut$", tmp, "[['", tmpnam, "']] <- get.df(dat, Loc, nrow = nsex)")
   ))
+  colnames(DatOut$Recruitment$rec_sdd) <- .new; rownames(DatOut$Recruitment$rec_sdd)<-nam_sex
+
   # rec_ini
   tmpnam <- get.namVar(dat, Loc, LocDatOut)
   eval(parse(
@@ -1397,6 +1648,10 @@ readGMACSallOUT <- function(FileName = NULL,
   eval(parse(
     text = paste0("DatOut$", tmp, "[['", tmpnam, "']] <- get.df(dat, Loc, nrow = nsex)")
   ))
+  DatOut$Recruitment$recruits <- data.frame(t(DatOut$Recruitment$recruits))
+  colnames(DatOut$Recruitment$recruits) <- nam_sex
+  DatOut$Recruitment$recruits <- DatOut$Recruitment$recruits %>%
+    dplyr::mutate(year = Start_Y:nyrRetro)
   # res_recruit
   tmpnam <- get.namVar(dat, Loc, LocDatOut)
   eval(parse(
@@ -1419,6 +1674,13 @@ readGMACSallOUT <- function(FileName = NULL,
   DatOut <- do.vec(dat, DatOut, Loc, LocDatOut)
   # N_initial
   DatOut <- do.df(dat, DatOut, Loc, LocDatOut, nrow = DatOut$n_grp)
+  .old <- colnames(DatOut$N_initial)
+  DatOut$N_initial <- DatOut$N_initial %>%
+    dplyr::mutate(sex = rep(nam_sex, each=nmature*nshell),
+                  maturity = rep(rep(nam_mat, each = nshell), nsex),
+                  shell_cond = rep(nam_shell, nmature* nsex)) %>%
+    dplyr::select(sex, maturity, shell_cond, dplyr::everything()) %>%
+    dplyr::rename_with(~ .new, dplyr::all_of(.old))
   # N_total
   DatOut <-
     do.df(dat, DatOut, Loc, LocDatOut, nrow = length(Start_Y:nyrRetro) + 1)
@@ -1450,6 +1712,14 @@ readGMACSallOUT <- function(FileName = NULL,
   if(nsex>1)
     DatOut <-
     do.df(dat, DatOut, Loc, LocDatOut, nrow = length(Start_Y:nyrRetro) + 1)
+  # Rename column and add years
+  namN <- which(stringr::str_detect(string = names(DatOut[!names(DatOut)%in%"N_initial"]), pattern = "N_"))+1
+  for(n in 1:length(namN)){
+    colnames(DatOut[[namN[n]]]) <- .new
+    DatOut[[namN[n]]] <- DatOut[[namN[n]]] %>%
+      dplyr::mutate(year = Start_Y:(nyrRetro+1)) %>%
+      dplyr::select(year, dplyr::everything())
+  }
 
   if (verbose)
     cat("\t-> Read SSB and N \n")
@@ -1462,6 +1732,12 @@ readGMACSallOUT <- function(FileName = NULL,
   # molt_increment
   nRowMoltInc <- max(CtlFile$nSizeIncVaries) * nsex
   DatOut <- do.df(dat, DatOut, Loc, LocDatOut, nrow = nRowMoltInc)
+  .old <- colnames(DatOut$molt_increment)
+  DatOut$molt_increment <- DatOut$molt_increment %>%
+    dplyr::mutate(sex = rep(nam_sex, each=max(CtlFile$nSizeIncVaries)),
+                  SizeIncPeriod = rep(CtlFile$nSizeIncVaries, each=max(CtlFile$nSizeIncVaries))) %>%
+    dplyr::select(sex, SizeIncPeriod, dplyr::everything()) %>%
+    dplyr::rename_with(~ .new, dplyr::all_of(.old))
 
   # dPreMoltSize
   if(DatFile$NGrowthObs>0){
@@ -1489,17 +1765,22 @@ readGMACSallOUT <- function(FileName = NULL,
   # DatOut <- do.df(dat, DatOut, Loc, LocDatOut, nrow = length(Start_Y:nyrRetro)*nsex)
   tmp <- get.namVar(dat, Loc, LocDatOut)
   eval(parse(text = paste0("DatOut$", tmp, " <- list()")))
-  nam_sex <- c("Males", "Females")
   for (s in 1:nsex) {
     eval(parse(
       text = paste0(
-        "DatOut$",
-        tmp,
-        "$",
-        nam_sex[s],
+        "DatOut$", tmp, "$", nam_sex[s],
         " <- get.df(dat, Loc, nrow = length(Start_Y:nyrRetro))"
-      )
-    ))
+      )))
+    eval(parse(
+      text = paste0(
+        "colnames(DatOut$", tmp, "$", nam_sex[s], ") <- .new"
+      )))
+    eval(parse(
+      text = paste0(
+        "DatOut$", tmp, "$", nam_sex[s], "<- DatOut$", tmp, "$",
+        nam_sex[s]," %>% dplyr::mutate(year = Start_Y:End_Y) %>%
+        dplyr::select(year, dplyr::everything())"
+      )))
   }
 
   # Growth matrix
@@ -1518,15 +1799,16 @@ readGMACSallOUT <- function(FileName = NULL,
     for (I in 1:Inc) {
       eval(parse(
         text = paste0(
-          "DatOut$",
-          tmp,
-          "$",
-          nam_sex[s],
-          "$IncNo_",
-          I,
+          "DatOut$", tmp, "$", nam_sex[s], "$IncNo_", I,
           " <- get.df(dat, Loc, nrow = DatFile$N_sizeC)"
-        )
-      ))
+        )))
+
+      eval(parse(
+        text = paste0(
+          "colnames(DatOut$", tmp, "$", nam_sex[s], "$IncNo_", I,
+          ") <- rownames(DatOut$", tmp, "$", nam_sex[s], "$IncNo_", I,
+          ") <- .new"
+        )))
     }
   }
 
@@ -1536,7 +1818,6 @@ readGMACSallOUT <- function(FileName = NULL,
   tmp <- paste0(tmp[1], "_", tmp[2])
 
   eval(parse(text = paste0("DatOut$", tmp, " <- list()")))
-  nam_sex <- c("Males", "Females")
 
   for (s in 1:nsex) {
     Inc <- CtlFile$nSizeIncVaries[s]
@@ -1547,15 +1828,16 @@ readGMACSallOUT <- function(FileName = NULL,
     for (I in 1:Inc) {
       eval(parse(
         text = paste0(
-          "DatOut$",
-          tmp,
-          "$",
-          nam_sex[s],
-          "$IncNo_",
-          I,
+          "DatOut$", tmp, "$", nam_sex[s], "$IncNo_", I,
           " <- get.df(dat, Loc, nrow = DatFile$N_sizeC)"
-        )
-      ))
+        )))
+
+      eval(parse(
+        text = paste0(
+          "colnames(DatOut$", tmp, "$", nam_sex[s], "$IncNo_", I,
+          ") <- rownames(DatOut$", tmp, "$", nam_sex[s], "$IncNo_", I,
+          ") <- .new"
+        )))
     }
   }
 
