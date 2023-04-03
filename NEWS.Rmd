@@ -32,7 +32,7 @@ Here are some of the items for the next release:
 
 This new release includes implementations related to the incorporation of 
 i) environmental impacts and possibility of random walk in the vulnerability 
-parameters (selectivity and retention parameters) (#21).
+parameters (selectivity and retention parameters) (#24).
 
 ## Updated functions
 
