@@ -155,11 +155,17 @@ writeGmacsdatfile <- function(Dir = NULL,
   cat("#_Year_| Season_| Fleet_| Sex_| Obs_| CV_| Type_| Units_| Mult_| Effort_| Discard_mortality ##\n")
   cat("#_************************************** #\n")
   cat("\n")
-  for (n in 1:obj$N_CatchDF) {
-    # cat("\n")
-    # cat("# **", names(obj$Catch)[n], " **\n")
-    # cat("# Year | Season | Fleet | Sex | Obs | CV | Type | Units | Mult | Effort | Discard_mortality\n")
-    utils::write.table(obj$Catch[[n]], row.names = FALSE, col.names = FALSE)
+  if(obj$N_CatchDF > 0){
+    for (n in 1:obj$N_CatchDF) {
+      cat("\n")
+      cat("# **", names(obj$Catch)[n], " **\n")
+      cat("# Year | Season | Fleet | Sex | Obs | CV | Type | Units | Mult | Effort | Discard_mortality\n")
+      utils::write.table(obj$Catch[[n]], row.names = FALSE, col.names = FALSE)
+    }
+  } else {
+    cat("\n")
+    cat("# Year | Season | Fleet | Sex | Obs | CV | Type | Units | Mult | Effort | Discard_mortality\n")
+    cat("\n")
   }
   cat("#_-------------------------------------- #\n")
   cat("\n")
@@ -184,11 +190,17 @@ writeGmacsdatfile <- function(Dir = NULL,
   cat("#_Units of survey: 1 = biomass; 2 = numbers\n")
   cat("#_Index_| Year_| Season_| Fleet_| Sex_| Maturity_| Obs_| CV_| Units_| CPUE_time ##\n")
   cat("#_************************************** #\n")
-  for (n in 1:obj$N_SurveyDF) {
-    # cat("\n")
-    # cat("# **", names(obj$Surveys)[n], " ** #\n")
-    # cat("# Index | Year | Season | Fleet | Sex | Maturity | Obs | CV | Units | CPUE_time\n")
-    utils::write.table(obj$Surveys[[n]], row.names = FALSE, col.names = FALSE)
+  if(obj$N_SurveyDF > 0 ){
+    for (n in 1:obj$N_SurveyDF) {
+      cat("\n")
+      cat("# **", names(obj$Surveys)[n], " ** #\n")
+      cat("# Index | Year | Season | Fleet | Sex | Maturity | Obs | CV | Units | CPUE_time\n")
+      utils::write.table(obj$Surveys[[n]], row.names = FALSE, col.names = FALSE)
+    }
+  } else {
+    cat("\n")
+    cat("# Index | Year | Season | Fleet | Sex | Maturity | Obs | CV | Units | CPUE_time\n")
+    cat("\n")
   }
   cat("#_-------------------------------------- #\n")
   cat("\n")
@@ -213,13 +225,19 @@ writeGmacsdatfile <- function(Dir = NULL,
   cat("#_Nsamp: the stage-1 effective sample size (this can be modified in the .CTL file)\n")
   cat("#_Year_| Season_| Fleet_| Sex_| Type_| Shell_| Maturity_| Nsamp_| Data Vector ##\n")
   cat("#_************************************** #\n")
-  for (n in 1:obj$N_SizeFreq_df) {
-    # cat("\n")
-    # cat("# **", names(obj$SizeFreq)[n], " ** #\n")
-    # cat("# Year | Season | Fleet | Sex | Type | Shell | Maturity | Nsamp | Data Vector\n")
-    utils::write.table(obj$SizeFreq[[n]],
-                       row.names = FALSE,
-                       col.names = FALSE)
+  if(obj$N_SizeFreq_df > 0){
+    for (n in 1:obj$N_SizeFreq_df) {
+      cat("\n")
+      cat("# **", names(obj$SizeFreq)[n], " ** #\n")
+      cat("# Year | Season | Fleet | Sex | Type | Shell | Maturity | Nsamp | Data Vector\n")
+      utils::write.table(obj$SizeFreq[[n]],
+        row.names = FALSE,
+        col.names = FALSE)
+    }
+  } else {
+    cat("\n")
+    cat("# Year | Season | Fleet | Sex | Type | Shell | Maturity | Nsamp | Data Vector\n")
+    cat("\n")
   }
   cat("#_-------------------------------------- #\n")
   cat("\n")
