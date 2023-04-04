@@ -144,7 +144,11 @@ writeGmacsdatfile <- function(Dir = NULL,
   cat("#_Number of catch data frames\n")
   cat(obj$N_CatchDF, "\n")
   cat("#_Number of rows in each data frame\n")
-  cat(obj$Nrows_CatchDF, "\n")
+  if(obj$N_CatchDF > 0){
+    cat(obj$Nrows_CatchDF, "\n")
+  } else {
+      cat("\n")
+    }
   cat("\n")
   cat("#_************************************** #\n")
   cat("#         ** CATCH DATA **\n")
@@ -176,9 +180,17 @@ writeGmacsdatfile <- function(Dir = NULL,
   cat("#_Number of relative abundance indices\n")
   cat(obj$N_SurveyDF, "\n")
   cat("#_Index Type (1 = Selectivity; 2 = Selectivity + retention)\n")
-  cat(obj$Sv_type, "\n")
+  if(obj$N_SurveyDF > 0){
+    cat(obj$Sv_type, "\n")
+  } else {
+    cat("\n")
+  }
   cat("#_Number of rows in each data frame of index data\n")
-  cat(obj$Nrows_SvDF, "\n")
+  if(obj$N_SurveyDF > 0){
+    cat(obj$Nrows_SvDF, "\n")
+  } else {
+    cat("\n")
+  }
   cat("\n")
   cat("#_************************************** #\n")
   cat("#    ** RELATIVE ABUNDANCE	DATA **       #\n")
@@ -211,11 +223,19 @@ writeGmacsdatfile <- function(Dir = NULL,
   cat("#_Number of size frequency matrices\n")
   cat(obj$N_SizeFreq_df, "\n")
   cat("#_Number of rows in each size frequency matrix\n")
-  cat(obj$Nrows_SiseFreqDF, "\n")
+  if(obj$N_SizeFreq_df > 0){
+    cat(obj$Nrows_SiseFreqDF, "\n")
+  } else {
+    cat("\n")
+  }
   cat(
     "#_Number of bins in each length frequency matrix\n# (i.e., number of columns in each data frame\n"
   )
-  cat(obj$Nbins_SiseFreq, "\n")
+  if(obj$N_SizeFreq_df > 0){
+    cat(obj$Nbins_SiseFreq, "\n")
+  } else {
+    cat("\n")
+  }
   cat("#_************************************** #\n")
   cat("#      ** SIZE COMPOSITION DATA **       #\n")
   cat("#_Sex: 0 = both; 1 = male; 2 = female\n")

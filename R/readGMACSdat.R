@@ -91,18 +91,14 @@ readGMACSdat <- function(FileName = NULL,
   # @return the name of the catch data frame as "Sex_Type_Fleet_Seas".
   #
   namCatch <- function(df) {
-    sex <- base::switch(
-      .ac(unique(df[, "sex"])),
-      "0" = "Both",
-      "1" = "Males",
-      "2" = "Females"
-    )
-    type <- base::switch(
-      .ac(unique(df[, "Type"])),
-      "0" = "Total",
-      "1" = "Retained",
-      "2" = "Discard"
-    )
+    sex <- base::switch(.ac(unique(df[, "sex"])),
+                        "0" = "Both",
+                        "1" = "Males",
+                        "2" = "Females")
+    type <- base::switch(.ac(unique(df[, "Type"])),
+                         "0" = "Total",
+                         "1" = "Retained",
+                         "2" = "Discard")
     fleet <- DatOut$F_Fleet_names[unique(df[, "fleet"])]
     Seas <- paste0("Seas", unique(df[, "seas"]))
     nam <- paste(sex, type, fleet, Seas, sep = "_")
@@ -120,25 +116,19 @@ readGMACSdat <- function(FileName = NULL,
     if (length(unique(df[, "sex"])) > 1) {
       sex <- "Males_Females_"
     } else {
-      sex <- base::switch(
-        .ac(unique(df[, "sex"])),
-        "0" = "Both",
-        "1" = "Males",
-        "2" = "Females"
-      )
+      sex <- base::switch(.ac(unique(df[, "sex"])),
+                          "0" = "Both",
+                          "1" = "Males",
+                          "2" = "Females")
     }
-    type <- base::switch(
-      .ac(unique(df[, "Type"])),
-      "0" = "Total",
-      "1" = "Retained",
-      "2" = "Discard"
-    )
-    mat <- base::switch(
-      .ac(unique(df[, "Maturity"])),
-      "0" = "BothMat",
-      "1" = "Mature",
-      "2" = "Immat"
-    )
+    type <- base::switch(.ac(unique(df[, "Type"])),
+                         "0" = "Total",
+                         "1" = "Retained",
+                         "2" = "Discard")
+    mat <- base::switch(.ac(unique(df[, "Maturity"])),
+                        "0" = "BothMat",
+                        "1" = "Mature",
+                        "2" = "Immat")
     fleet <-
       c(DatOut$F_Fleet_names, DatOut$Survey_names)[unique(df[, "fleet"])]
     Seas <- paste0("Seas", unique(df[, "seas"]))
@@ -284,37 +274,42 @@ readGMACSdat <- function(FileName = NULL,
   # -------------------------------------------------------------------------
   DatOut[["N_CatchDF"]] <-
     get.num(dat, Loc) # Number of catch data frame
-  if (DatOut$N_CatchDF == 1) {
+
+  if (DatOut$N_CatchDF == 0) {
+    DatOut[["Nrows_CatchDF"]] <- ""
+  } else if (DatOut$N_CatchDF == 1) {
     DatOut[["Nrows_CatchDF"]] <- get.num(dat, Loc)
   } else {
     DatOut[["Nrows_CatchDF"]] <- get.vec(dat, Loc)
   }
 
-  DatOut[["Catch"]] <- list()
-  namcatch <- NULL
+  if (DatOut$N_CatchDF == 0) {
+    DatOut[["Catch"]] <- ""
+  } else {
+    DatOut[["Catch"]] <- list()
+    namcatch <- NULL
 
-  for (n in 1:DatOut$N_CatchDF) {
-    # n <- 1
-
-    DatOut[["Catch"]][[n]] <-
-      get.df(dat, Loc, nrow = DatOut$Nrows_CatchDF[n])
-    colnames(DatOut[["Catch"]][[n]]) <- c(
-      "year",
-      "seas",
-      "fleet",
-      "sex",
-      "obs",
-      "CV",
-      "Type",
-      "units",
-      "mult",
-      "effort",
-      "discard_mortality"
-    )
-    tmp <- namCatch(DatOut[["Catch"]][[n]])
-    namcatch <- c(namcatch, tmp)
+    for (n in 1:DatOut$N_CatchDF) {
+      DatOut[["Catch"]][[n]] <-
+        get.df(dat, Loc, nrow = DatOut$Nrows_CatchDF[n])
+      colnames(DatOut[["Catch"]][[n]]) <- c(
+        "year",
+        "seas",
+        "fleet",
+        "sex",
+        "obs",
+        "CV",
+        "Type",
+        "units",
+        "mult",
+        "effort",
+        "discard_mortality"
+      )
+      tmp <- namCatch(DatOut[["Catch"]][[n]])
+      namcatch <- c(namcatch, tmp)
+    }
+    names(DatOut[["Catch"]]) <- namcatch
   }
-  names(DatOut[["Catch"]]) <- namcatch
 
   if (verbose)
     cat("-> Read catch data. \n")
@@ -325,7 +320,7 @@ readGMACSdat <- function(FileName = NULL,
   DatOut[["N_SurveyDF"]] <-
     get.num(dat, Loc) # Number of relative abundance indices
 
-  if(verbose){
+  if (verbose) {
     if (DatOut$N_SurveyDF != length(DatOut$Survey_names)) {
       cat(
         "The number of relative abundance indices does not correspond to the\nnumber of survey names. GMACS will consider CPUE index"
@@ -333,38 +328,45 @@ readGMACSdat <- function(FileName = NULL,
     }
   }
 
-  if (DatOut$N_SurveyDF == 1) {
+  if (DatOut$N_SurveyDF == 0) {
+    DatOut[["Sv_type"]] <- ""
+  } else if (DatOut$N_SurveyDF == 1) {
     # Data type for each abundance index (1: total selectivity; 2:retention*selectivity)
     DatOut[["Sv_type"]] <- get.num(dat, Loc)
   } else {
     DatOut[["Sv_type"]] <- get.vec(dat, Loc)
   }
-  DatOut[["Nrows_SvDF"]] <-
-    get.num(dat, Loc) # Number of rows of index data
-
-
-
-  DatOut[["Surveys"]] <- list()
-  tmp <- get.df(dat, Loc, nrow = DatOut$Nrows_SvDF)
-  colnames(tmp) <- c(
-    "Index",
-    "year",
-    "seas",
-    "fleet",
-    "sex",
-    "Mature",
-    "Abundance",
-    "CV",
-    "units",
-    "Timing"
-  )
-  for (n in 1:DatOut$N_SurveyDF) {
-    # n <- 1
-    DatOut[["Surveys"]][[n]] <-
-      tmp[which(tmp[, 'fleet'] == unique(tmp[, 'fleet'])[n]),]
-    names(DatOut[["Surveys"]])[n] <- DatOut$Survey_names[n]
+  if (DatOut$N_SurveyDF == 0) {
+    DatOut[["Nrows_SvDF"]] <- ""
+  } else {
+    DatOut[["Nrows_SvDF"]] <-
+      get.num(dat, Loc) # Number of rows of index data
   }
 
+  if (DatOut$N_SurveyDF == 0) {
+    DatOut[["Surveys"]] <-  ""
+  } else {
+    DatOut[["Surveys"]] <- list()
+    tmp <- get.df(dat, Loc, nrow = DatOut$Nrows_SvDF)
+    colnames(tmp) <- c(
+      "Index",
+      "year",
+      "seas",
+      "fleet",
+      "sex",
+      "Mature",
+      "Abundance",
+      "CV",
+      "units",
+      "Timing"
+    )
+    for (n in 1:DatOut$N_SurveyDF) {
+      # n <- 1
+      DatOut[["Surveys"]][[n]] <-
+        tmp[which(tmp[, 'fleet'] == unique(tmp[, 'fleet'])[n]), ]
+      names(DatOut[["Surveys"]])[n] <- DatOut$Survey_names[n]
+    }
+  }
   if (verbose)
     cat("-> Read survey data. \n")
   # -------------------------------------------------------------------------
@@ -374,41 +376,50 @@ readGMACSdat <- function(FileName = NULL,
   # -------------------------------------------------------------------------
   DatOut[["N_SizeFreq_df"]] <-
     get.num(dat, Loc) #Number of length frequency matrix
-  if (DatOut$N_SizeFreq_df == 1) {
+
+  if (DatOut$N_SizeFreq_df == 0) {
+    DatOut[["Nrows_SiseFreqDF"]] <-  ""
+  } else if (DatOut$N_SizeFreq_df == 1) {
     # Number of rows in each length frequency matrix
     DatOut[["Nrows_SiseFreqDF"]] <-  get.num(dat, Loc)
   } else {
     DatOut[["Nrows_SiseFreqDF"]] <-  get.vec(dat, Loc)
   }
-  if (DatOut$N_SizeFreq_df == 1) {
+
+  if (DatOut$N_SizeFreq_df == 0) {
+    DatOut[["Nbins_SiseFreq"]] <-  ""
+  } else if (DatOut$N_SizeFreq_df == 1) {
     # Number of bins in each length frequency matrix
     DatOut[["Nbins_SiseFreq"]] <-  get.num(dat, Loc)
   } else {
     DatOut[["Nbins_SiseFreq"]] <-  get.vec(dat, Loc)
   }
 
-  DatOut[["SizeFreq"]] <- list() # Length frequency matrices
-  namSF <- NULL
+  if (DatOut$N_SizeFreq_df == 0) {
+    DatOut[["SizeFreq"]] <- ""
+  } else {
+    DatOut[["SizeFreq"]] <- list() # Length frequency matrices
+    namSF <- NULL
 
-  for (n in 1:DatOut$N_SizeFreq_df) {
-    DatOut[["SizeFreq"]][[n]] <-
-      get.df(dat, Loc, nrow = DatOut$Nrows_SiseFreqDF[n])
-    colnames(DatOut[["SizeFreq"]][[n]]) <- c(
-      "year",
-      "seas",
-      "fleet",
-      "sex",
-      "Type",
-      "Shell",
-      "Maturity",
-      "Nsamp",
-      rep("", DatOut[["Nbins_SiseFreq"]][n])
-    )
-    tmp <- namSizeFq(DatOut[["SizeFreq"]][[n]])
-    namSF <- c(namSF, tmp)
+    for (n in 1:DatOut$N_SizeFreq_df) {
+      DatOut[["SizeFreq"]][[n]] <-
+        get.df(dat, Loc, nrow = DatOut$Nrows_SiseFreqDF[n])
+      colnames(DatOut[["SizeFreq"]][[n]]) <- c(
+        "year",
+        "seas",
+        "fleet",
+        "sex",
+        "Type",
+        "Shell",
+        "Maturity",
+        "Nsamp",
+        rep("", DatOut[["Nbins_SiseFreq"]][n])
+      )
+      tmp <- namSizeFq(DatOut[["SizeFreq"]][[n]])
+      namSF <- c(namSF, tmp)
+    }
+    names(DatOut[["SizeFreq"]]) <- namSF
   }
-  names(DatOut[["SizeFreq"]]) <- namSF
-
   if (verbose)
     cat("-> Read size composition data. \n")
   # -------------------------------------------------------------------------
@@ -440,6 +451,8 @@ readGMACSdat <- function(FileName = NULL,
     DatOut[["GrowthData"]] <-
       get.df(dat, Loc, nrow = DatOut[["NGrowthObs"]])
     colnames(DatOut[["GrowthData"]]) <- namGrowthObs
+  } else {
+    DatOut[["GrowthData"]] <- ""
   }
   if (verbose)
     cat("-> Read growth data. \n")
@@ -456,11 +469,14 @@ readGMACSdat <- function(FileName = NULL,
     # Environmental data
     NenvData = 0
     for (e in 1:DatOut$NenvIndics)
-      NenvData = NenvData + DatOut$EnvYrs[e,2] - DatOut$EnvYrs[e,1] + 1
+      NenvData = NenvData + DatOut$EnvYrs[e, 2] - DatOut$EnvYrs[e, 1] + 1
     DatOut[["NenvData"]] <- NenvData
     DatOut[["EnvData"]] <-
       get.df(dat, Loc, nrow = NenvData)
     names(DatOut[["EnvData"]]) <- c("Index", "Year", "Value")
+  } else {
+    DatOut[["EnvYrs"]] <- ""
+    DatOut[["EnvData"]] <- ""
   }
   if (verbose)
     cat("-> Read environmental data. \n")
@@ -470,7 +486,7 @@ readGMACSdat <- function(FileName = NULL,
   # -------------------------------------------------------------------------
   eof <- get.num(dat, Loc)
 
-  if(eof != 9999){
+  if (eof != 9999) {
     cat("\n\nSomething went wrong while reading the data file !!\n")
     stop()
   }
