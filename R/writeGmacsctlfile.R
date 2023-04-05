@@ -661,10 +661,14 @@ writeGmacsctlfile <- function(Dir = NULL,
   cat(obj$m_type, "\n")
   cat("# Is female M relative to M male?\n")
   cat("# 0: No (absolute); 1: Yes (relative) \n")
-  if(is.numeric(obj$MrelFem)){
-    cat(obj$MrelFem, "\n")
+  if(nsex>1){
+    if(is.numeric(obj$MrelFem)){
+      cat(obj$MrelFem, "\n")
+    } else {
+      cat(0, "\n")
+    }
   } else {
-    cat(0, "\n")
+    cat("\n")
   }
   cat("# Phase of estimation\n")
   cat(obj$Mdev_phz_def, "\n")

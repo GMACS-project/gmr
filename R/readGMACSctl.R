@@ -669,22 +669,37 @@ readGMACSctl <- function(FileName = NULL,
   DatOut[["nGrwth"]] <- nGrwth
   DatOut[["nSizeIncPar"]] <- nSizeIncPar
 
+  # DatOut[["Grwth_control"]] <-
+  #  get.df(dat, Loc, nrow = nGrwth) # Growth parameters control
+  # DatOut[["MoltProb_control"]] <-
+  #   get.df(dat, Loc, nrow = nSizeIncPar) # Growth parameters control
+  # colnames(DatOut[["Grwth_control"]]) <-
+  #   colnames(DatOut[["MoltProb_control"]]) <-
+  #   c("Init_val",
+  #     "Lower_Bd",
+  #     "Upper_Bd",
+  #     "Phase",
+  #     "Prior",
+  #     "p1",
+  #     "p2")
+  tmpColname <- c("Init_val",
+                  "Lower_Bd",
+                  "Upper_Bd",
+                  "Phase",
+                  "Prior",
+                  "p1",
+                  "p2")
+  
+  if(nGrwth > 0){
   DatOut[["Grwth_control"]] <-
     get.df(dat, Loc, nrow = nGrwth) # Growth parameters control
-
-  DatOut[["MoltProb_control"]] <-
+  colnames(DatOut[["Grwth_control"]]) <- tmpColname
+  }
+  if(nSizeIncPar>0){
+    DatOut[["MoltProb_control"]] <-
     get.df(dat, Loc, nrow = nSizeIncPar) # Growth parameters control
-
-
-  colnames(DatOut[["Grwth_control"]]) <-
-    colnames(DatOut[["MoltProb_control"]]) <-
-    c("Init_val",
-      "Lower_Bd",
-      "Upper_Bd",
-      "Phase",
-      "Prior",
-      "p1",
-      "p2")
+    colnames(DatOut[["MoltProb_control"]]) <- tmpColname
+  }
   # +++++++++++++++++++++++++++++
 
   # Custom growth-increment matrix or size-transition matrix
