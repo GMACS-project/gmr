@@ -161,9 +161,17 @@ writeGmacsctlfile <- function(Dir = NULL,
   cat("##_Fecundity for MMB/MMA calculation\n")
   cat("# -------------------------------------- #\n")
   cat("#_Maturity definition: Proportion of mature at size by sex\n")
-  utils::write.table(obj$maturity, col.names = FALSE, row.names = FALSE)
+  if(nsex == 1){
+    cat(.an(obj$maturity), "\n")
+  } else {
+    utils::write.table(obj$maturity, col.names = FALSE, row.names = FALSE)
+  }
   cat("#_Legal definition of the proportion of mature at size by sex\n")
-  utils::write.table(obj$legal_maturity, col.names = FALSE, row.names = FALSE)
+  if(nsex == 1){
+    cat(.an(obj$legal_maturity), "\n")
+  } else {
+    utils::write.table(obj$legal_maturity, col.names = FALSE, row.names = FALSE)
+  }
   cat("# -------------------------------------- #\n")
   cat("\n")
 
@@ -341,7 +349,7 @@ writeGmacsctlfile <- function(Dir = NULL,
   cat(obj$slx_nsel_period_in, "#_Number of selectivity time period per fleet\n")
   cat(obj$slx_bsex_in, "#_Sex specific selectivity\n")
   if(nsex==1){
-    cat(obj$slx_type_in, "#_Selectivity type\n")
+    cat(.an(obj$slx_type_in), "#_Selectivity type\n")
   } else {
     tmp1 <- obj$slx_type_in[1,]
     cat(unlist(tmp1), "#_Male selectivity type\n")
@@ -350,7 +358,7 @@ writeGmacsctlfile <- function(Dir = NULL,
   }
   cat(obj$slx_include_in, "#_Insertion of fleet in another\n")
   if(nsex==1){
-    cat(obj$slx_extra_in, "#_Extra parameter for each pattern\n")
+    cat(.an(obj$slx_extra_in), "#_Extra parameter for each pattern\n")
   } else {
     tmp1 <- obj$slx_extra_in[1,]
     cat(unlist(tmp1), "#_Extra parameters for each pattern by fleet (males)\n")
@@ -363,10 +371,10 @@ writeGmacsctlfile <- function(Dir = NULL,
   if(!is.null(Fleet_names)){
     cat("#_",paste0(Fleet_names, collapse = "_| "), "\n", sep="")
   }
-  cat(obj$ret_nret_period_in, "#_Number of Retention time period per fleet\n")
-  cat(obj$ret_bsex_in, "#_Sex specific Retention\n")
+  cat(.an(obj$ret_nret_period_in), "#_Number of Retention time period per fleet\n")
+  cat(.an(obj$ret_bsex_in), "#_Sex specific Retention\n")
   if(nsex==1){
-    cat(obj$ret_type_in, "#_Selectivity type\n")
+    cat(.an(obj$ret_type_in), "#_Selectivity type\n")
   } else {
     tmp1 <- obj$ret_type_in[1,]
     cat(unlist(tmp1), "#_Male Retention type\n")
@@ -374,7 +382,7 @@ writeGmacsctlfile <- function(Dir = NULL,
     cat(unlist(tmp2), "#_Female Retention type\n")
   }
   if(nsex==1){
-    cat(obj$slx_nret, "#_retention flag (0 = No, 1 = Yes)\n")
+    cat(.an(obj$slx_nret), "#_retention flag (0 = No, 1 = Yes)\n")
   } else {
     tmp1 <- obj$slx_nret[1,]
     cat(unlist(tmp1), "#_Male retention flag (0 = No, 1 = Yes)\n")
@@ -382,14 +390,14 @@ writeGmacsctlfile <- function(Dir = NULL,
     cat(unlist(tmp2), "#_Female retention flag (0 = No, 1 = Yes)\n")
   }
   if(nsex==1){
-    cat(obj$ret_extra_in, "#_Extra parameter for each pattern\n")
+    cat(.an(obj$ret_extra_in), "#_Extra parameter for each pattern\n")
   } else {
     tmp1 <- obj$ret_extra_in[1,]
     cat(unlist(tmp1), "#_Extra parameters for each pattern by fleet (males)\n")
     tmp2 <- obj$ret_extra_in[2,]
     cat(unlist(tmp2), "#_Extra parameters for each pattern by fleet (females)\n")
   }
-  cat(obj$slx_max_at_1_in, "#_Selectivity for the maximum size class if forced to be 1?\n")
+  cat(.an(obj$slx_max_at_1_in), "#_Selectivity for the maximum size class if forced to be 1?\n")
   cat(" \n")
   cat("# ====================================== #\n")
   cat("# ====================================== #\n")
@@ -679,9 +687,20 @@ writeGmacsctlfile <- function(Dir = NULL,
   utils::write.table(obj$m_nNodes_sex, col.names = FALSE, row.names = FALSE)
   cat("# Year position of the knots for each sex (vector must be equal to the number of nodes)\n")
   cat("# -> One line per sex\n")
-  if(obj$m_nNodes_sex != "" && is.vector(obj$m_nNodes_sex)){
-    cat(obj$m_nodeyear_sex, "\n")
-  } else if(is.data.frame(obj$m_nNodes_sex)){
+  # if(obj$m_nNodes_sex != "" && is.vector(obj$m_nNodes_sex)){
+  #   cat(obj$m_nodeyear_sex, "\n")
+  # } else if(is.data.frame(obj$m_nNodes_sex)){
+  #   for(s in 1:nsex){
+  #     cat(unlist(obj$m_nodeyear_sex[s,]), "\n")
+  #   }
+  # }
+  if(nsex == 1){
+    if(.an(obj$m_nNodes_sex) == 0){
+      cat("\n")
+    } else {
+      cat(obj$m_nodeyear_sex, "\n")
+    }
+  } else {
     for(s in 1:nsex){
       cat(unlist(obj$m_nodeyear_sex[s,]), "\n")
     }

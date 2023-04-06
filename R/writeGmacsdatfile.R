@@ -271,7 +271,11 @@ writeGmacsdatfile <- function(Dir = NULL,
   )
   cat(obj$GrowthObsType, "\n")
   cat("#_Number of observation\n")
-  cat(obj$NGrowthObs, "\n")
+  if(obj$GrowthObsType == 0){
+    cat(0, "\n")
+  } else {
+    cat(obj$NGrowthObs, "\n")
+  }
   cat("#_************************************** #\n")
   cat("#          ** GROWTH DATA **\n")
   cat("#_Sex: 0 = both; 1 = male; 2 = female\n")

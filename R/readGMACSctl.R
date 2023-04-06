@@ -689,7 +689,7 @@ readGMACSctl <- function(FileName = NULL,
                   "Prior",
                   "p1",
                   "p2")
-  
+
   if(nGrwth > 0){
   DatOut[["Grwth_control"]] <-
     get.df(dat, Loc, nrow = nGrwth) # Growth parameters control
@@ -1027,61 +1027,84 @@ readGMACSctl <- function(FileName = NULL,
     get.num(dat, Loc) # standard deviation in M deviations
 
   # Number of nodes for cubic spline or number of step-changes for option 3
-  # if(nsex == 1){
-  #   DatOut[["m_nNodes_sex"]] <- get.num(dat, Loc)
-  # } else {
-  #   tmp <- get.num(dat, Loc)
-  #   if(tmp == 0){
-  #     DatOut[["m_nNodes_sex"]] <- tmp
+  # DatOut[["m_nNodes_sex"]] <- get.df(dat, Loc, nsex)
+  # if (dim(DatOut[["m_nNodes_sex"]])[1] == 1 &&
+  #     DatOut[["m_nNodes_sex"]] == 0) {
+  #   DatOut[["m_nodeyear_sex"]] <- ""
+  # } else if (dim(DatOut[["m_nNodes_sex"]])[1] == 1 &&
+  #            DatOut[["m_nNodes_sex"]] != 0) {
+  #   #Need to be checked
+  #   if(DatOut[["m_nNodes_sex"]] == 1){
+  #     DatOut[["m_nodeyear_sex"]] <- get.num(dat, Loc)
   #   } else {
-  #     Loc <- Loc -1
-  #     DatOut[["m_nNodes_sex"]] <- get.df(dat, Loc, nsex)
+  #     DatOut[["m_nodeyear_sex"]] <- get.vec(dat, Loc)
+  #   }
+  # } else {
+  #   if (nsex == 1) {
+  #     if (DatOut[["m_nNodes_sex"]] == 1) {
+  #       DatOut[["m_nodeyear_sex"]] <- get.num(dat, Loc)
+  #     } else {
+  #       DatOut[["m_nodeyear_sex"]] <- get.vec(dat, Loc)
+  #     }
+  #   } else {
+  #     tmp <- matrix(NA, nrow = nsex, ncol = max(DatOut[["m_nNodes_sex"]]))
+  #
+  #     for (s in 1:nsex) {
+  #       if (DatOut[["m_nNodes_sex"]][s, 1] == 1) {
+  #         if (DatOut[["m_nNodes_sex"]][s, 1] == max(DatOut[["m_nNodes_sex"]])) {
+  #           tmp[s, ] <- get.num(dat, Loc)
+  #         } else {
+  #           tmp[s, ] <-
+  #             c(get.num(dat, Loc), rep(NA, max(DatOut[["m_nNodes_sex"]]) - 1))
+  #         }
+  #       } else {
+  #         if (DatOut[["m_nNodes_sex"]][s, 1] == max(DatOut[["m_nNodes_sex"]])) {
+  #           tmp[s, ] <- get.vec(dat, Loc)
+  #         } else {
+  #           tmp[s, ] <-
+  #             c(get.vec(dat, Loc), rep(NA, DatOut[["m_nNodes_sex"]][s, 1] - 1))
+  #         }
+  #
+  #       }
+  #     }
+  #     DatOut[["m_nodeyear_sex"]] <- tmp
   #   }
   # }
   DatOut[["m_nNodes_sex"]] <- get.df(dat, Loc, nsex)
 
 
-  if (dim(DatOut[["m_nNodes_sex"]])[1] == 1 &&
-      DatOut[["m_nNodes_sex"]] == 0) {
-    DatOut[["m_nodeyear_sex"]] <- ""
-  } else if (dim(DatOut[["m_nNodes_sex"]])[1] == 1 &&
-             DatOut[["m_nNodes_sex"]] != 0) {
-    #Need to be checked
-    if(DatOut[["m_nNodes_sex"]] == 1){
-      DatOut[["m_nodeyear_sex"]] <- get.num(dat, Loc)
+  if (nsex == 1) {
+    if (.an(DatOut[["m_nNodes_sex"]]) == 0) {
+      DatOut[["m_nodeyear_sex"]] <- ""
     } else {
-      DatOut[["m_nodeyear_sex"]] <- get.vec(dat, Loc)
-    }
-  } else {
-    if (nsex == 1) {
       if (DatOut[["m_nNodes_sex"]] == 1) {
         DatOut[["m_nodeyear_sex"]] <- get.num(dat, Loc)
       } else {
         DatOut[["m_nodeyear_sex"]] <- get.vec(dat, Loc)
       }
-    } else {
-      tmp <- matrix(NA, nrow = nsex, ncol = max(DatOut[["m_nNodes_sex"]]))
-
-      for (s in 1:nsex) {
-        if (DatOut[["m_nNodes_sex"]][s, 1] == 1) {
-          if (DatOut[["m_nNodes_sex"]][s, 1] == max(DatOut[["m_nNodes_sex"]])) {
-            tmp[s, ] <- get.num(dat, Loc)
-          } else {
-            tmp[s, ] <-
-              c(get.num(dat, Loc), rep(NA, max(DatOut[["m_nNodes_sex"]]) - 1))
-          }
-        } else {
-          if (DatOut[["m_nNodes_sex"]][s, 1] == max(DatOut[["m_nNodes_sex"]])) {
-            tmp[s, ] <- get.vec(dat, Loc)
-          } else {
-            tmp[s, ] <-
-              c(get.vec(dat, Loc), rep(NA, DatOut[["m_nNodes_sex"]][s, 1] - 1))
-          }
-
-        }
-      }
-      DatOut[["m_nodeyear_sex"]] <- tmp
     }
+  } else {
+    tmp <- matrix(NA, nrow = nsex, ncol = max(DatOut[["m_nNodes_sex"]]))
+
+    for (s in 1:nsex) {
+      if (DatOut[["m_nNodes_sex"]][s, 1] == 1) {
+        if (DatOut[["m_nNodes_sex"]][s, 1] == max(DatOut[["m_nNodes_sex"]])) {
+          tmp[s, ] <- get.num(dat, Loc)
+        } else {
+          tmp[s, ] <-
+            c(get.num(dat, Loc), rep(NA, max(DatOut[["m_nNodes_sex"]]) - 1))
+        }
+      } else {
+        if (DatOut[["m_nNodes_sex"]][s, 1] == max(DatOut[["m_nNodes_sex"]])) {
+          tmp[s, ] <- get.vec(dat, Loc)
+        } else {
+          tmp[s, ] <-
+            c(get.vec(dat, Loc), rep(NA, DatOut[["m_nNodes_sex"]][s, 1] - 1))
+        }
+
+      }
+    }
+    DatOut[["m_nodeyear_sex"]] <- tmp
   }
 
   DatOut[["nSizeDevs"]] <-
