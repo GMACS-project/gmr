@@ -56,12 +56,12 @@ writeGmacs.dat <- function(Dir = NULL,
 
   cat("## Key GMACS files\n")
   cat("# -------------------------------------- #\n")
-  cat("# Data file name\n")
-  cat(obj$DatFileName, "\n")
-  cat("# Control file name\n")
-  cat(obj$CtlFileName, "\n")
-  cat("# Projection file name\n")
-  cat(obj$PrjFileName, "\n")
+  cat("# Data file name\n", sep="")
+  cat(obj$DatFileName, "\n", sep="")
+  cat("# Control file name\n", sep="")
+  cat(obj$CtlFileName, "\n", sep="")
+  cat("# Projection file name\n", sep="")
+  cat(obj$PrjFileName, "\n", sep="")
   cat("\n")
 
   cat("## jitter specifications\n")

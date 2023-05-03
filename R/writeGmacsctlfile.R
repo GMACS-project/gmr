@@ -719,7 +719,12 @@ writeGmacsctlfile <- function(Dir = NULL,
   cat("# Size_spec: Are the deviations size-specific ? (integer that specifies which size-class (negative to be considered))\n")
   cat("# ************************************** #\n")
   cat("# Init_val | Lower_Bd | Upper_Bd | Phase | Size_spec\n")
-  utils::write.table(obj$Mdev_controls, col.names = FALSE, row.names = FALSE)
+
+  if(obj$Init_Mdev > 0){
+    utils::write.table(obj$Mdev_controls, col.names = FALSE, row.names = FALSE)
+  } else {
+    cat("\n")
+  }
   cat("# -------------------------------------- #\n")
   cat("\n")
 
