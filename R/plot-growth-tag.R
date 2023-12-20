@@ -1,11 +1,11 @@
-#' Get growth increment data
+#' Get growth increments from tagging data
 #'
 #' @param M list object(s) created by read_admb function
 #' @return dataframe of growth increments
 #' @author D'Arcy N. Webber, SJD Martell
 #' @export
 #'
-.get_gi_df <- function(M)
+.get_gi_tag_df <- function(M)
 {
     n  <- length(M)
     mdf <- NULL
@@ -54,8 +54,10 @@
 #' @author SJD Martell, D'Arcy N. Webber
 #' @export
 #'
-plot_growth_inc <- function(M, xlab = "Pre-molt size (mm)", ylab = "Molt increment (mm)",
-                            slab = "Sex")
+plot_growth_tags <- function(M,
+                             xlab = "Pre-molt size (mm)",
+                             ylab = "Molt increment (mm)",
+                             slab = "Sex")
 {
     xlab <- paste0("\n", xlab)
     ylab <- paste0(ylab, "\n")

@@ -60,18 +60,27 @@ plot_growth_inc <- function(M, xlab = "Pre-molt size (mm)", ylab = "Molt increme
     ylab <- paste0(ylab, "\n")
 
     mdf <- .get_gi_df(M)
-    obs_in<-dplyr::filter(mdf,type=="obs")
-    pred_in<-dplyr::filter(mdf,type=="pred")
 
-    p <- ggplot(obs_in) +
-        labs(x = xlab, y=ylab, col = slab) +
-        expand_limits(y=0) +
-        facet_wrap(~Sex) +
-        geom_line(data=pred_in,aes(x=Premolt,y=molt_inc,col=Model)) +
-        .THEME
+    if ("obs" %in% names(mdf)){  #--has observed growth
+      obs_in<-dplyr::filter(mdf,type=="obs")
+      pred_in<-dplyr::filter(mdf,type=="pred")
 
-     if(obs_in$molt_inc[1]!=0)
-       p <- p+ geom_point(aes(x=Premolt,y=molt_inc,col=Sex))
+      p <- ggplot(obs_in) +
+          labs(x = xlab, y=ylab, col = slab) +
+          expand_limits(y=0) +
+          facet_wrap(~Sex) +
+          geom_line(data=pred_in,aes(x=Premolt,y=molt_inc,col=Model)) +
+          .THEME
+
+       if(obs_in$molt_inc[1]!=0)
+         p <- p+ geom_point(aes(x=Premolt,y=molt_inc,col=Sex))
+    } else { #--only predicted growth
+      p = ggplot(mdf,aes(x=mids,y=molt_inc,colour=Model)) +
+            geom_line() +
+            facet_wrap(~Sex) +
+            labs(x=xlab,y=ylab) +
+            .THEME
+    }
 
     #p <- p + geom_point(aes(x = size, y = obs, colour = sex))
     #p <- p + geom_line(aes(x = size, y = pred, colour = sex))

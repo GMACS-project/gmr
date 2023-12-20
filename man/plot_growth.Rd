@@ -10,7 +10,7 @@ plot_growth(M)
 \item{M}{List object created by read_admb function}
 }
 \value{
-Plot natural mortality over time and size
+Plot growth over time and size
 }
 \description{
 Plot growth from arbitrary start age

@@ -13,7 +13,7 @@ plot_fishing_mortality(M)
 plot of fishing mortality (F)
 }
 \description{
-Plot fishing mortality (F)
+TODO: complete this function!
 }
 \author{
 JN Ianelli, SJD Martell, DN Webber
