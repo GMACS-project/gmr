@@ -16,7 +16,7 @@ plot_numbers(M, subsetby = "", nrow = 2, ncol = NULL)
 \item{ncol}{Number of columns}
 }
 \value{
-plot of numbers of individuals in each size-class each year in the model
+ggplot of numbers of individuals in each size-class each year in the model
 }
 \description{
 Plot numbers at length

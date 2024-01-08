@@ -18,11 +18,11 @@ plot_recruitment_size(
 \item{ylab}{the y-axis label for the plot}
 }
 \value{
-plot of recruitment size distribution
+recruitment size distribution plot as ggplot2 object
 }
 \description{
 Plot recruitment size distribution
 }
 \author{
-DN Webber
+DN Webber, WT Stockhausen [ctb]
 }

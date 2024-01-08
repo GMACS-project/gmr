@@ -83,30 +83,24 @@
 #' Get recruitment size distribution data
 #'
 #' @param M list object(s) created by read_admb function
-#' @return dataframe of recruitment size distribution
-#' @author DN Webber
+#' @return dataframe with recruitment size distribution(s)
+#' @author DN Webber, WT Stockhausen [ctb]
+#' @importFrom dplyr bind_rows
 #' @export
 #'
 .get_recruitment_size_df <- function(M)
 {
-    n <- length(M)
-    mdf <- NULL
+    n   <- length(M);
+    lst <- list();
     for(i in 1:n)
     {
         A  <- M[[i]]
-        if(is.null(A$fit$logDetHess))
-        {
-            stop("Appears that the Hessian was not positive definite\n
-                  thus estimates of recruitment do not exist.\n
-                  See this in replist$fit.")
-        }
-        df <- data.frame(Model = names(M)[i],
+        lst[[i]] <- data.frame(Model = names(M)[i],
                          mid_points = A$mid_points,
                          rec_sdd = as.vector(t(A$rec_sdd)),
-                         sex =  rep(1:A$nsex, each = length(A$mid_points)))
-
-        mdf <- rbind(mdf, df)
+                         sex =  rep(1:A$nsex, each = length(A$mid_points)));
     }
+    mdf = dplyr::bind_rows(lst);
     return(mdf)
 }
 
@@ -116,8 +110,8 @@
 #' @param M list object created by read_admb function
 #' @param xlab the x-axis label for the plot
 #' @param ylab the y-axis label for the plot
-#' @return Plot of predicted recruitment
-#' @author SJD Martell, DN Webber
+#' @return predicted recruitment time series as ggplot2 object
+#' @author SJD Martell, DN Webber, WT Stockhausen [ctb]
 #' @export
 #'
 plot_recruitment <- function(M, xlab = "Year", ylab = "Recruitment (millions of individuals)")
@@ -163,8 +157,7 @@ plot_recruitment <- function(M, xlab = "Year", ylab = "Recruitment (millions of 
     # }
     #
 
-
-    print(p + .THEME)
+    return(p + .THEME)
 }
 
 
@@ -173,8 +166,8 @@ plot_recruitment <- function(M, xlab = "Year", ylab = "Recruitment (millions of 
 #' @param M list object created by read_admb function
 #' @param xlab the x-axis label for the plot
 #' @param ylab the y-axis label for the plot
-#' @return plot of recruitment size distribution
-#' @author DN Webber
+#' @return recruitment size distribution plot as ggplot2 object
+#' @author DN Webber, WT Stockhausen [ctb]
 #' @export
 #'
 plot_recruitment_size <- function(M, xlab = "Mid-point of size class (mm)", ylab = "Proportion recruiting")
@@ -196,9 +189,7 @@ plot_recruitment_size <- function(M, xlab = "Mid-point of size class (mm)", ylab
 
     if (!.OVERLAY) p <- p + facet_wrap(~Model)
     if (length(unique(mdf$sex)) > 1) p <- p + facet_wrap(~sex, ncol = 1)
-    print(p + .THEME)
-
-
+    return(p + .THEME)
 }
 
 
