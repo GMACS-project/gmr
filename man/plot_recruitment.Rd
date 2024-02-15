@@ -18,11 +18,11 @@ plot_recruitment(
 \item{ylab}{the y-axis label for the plot}
 }
 \value{
-Plot of predicted recruitment
+predicted recruitment time series as ggplot2 object
 }
 \description{
 Plot predicted recruitment and approximate asymptotic error-bars
 }
 \author{
-SJD Martell, DN Webber
+SJD Martell, DN Webber, WT Stockhausen [ctb]
 }

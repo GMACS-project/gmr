@@ -10,11 +10,11 @@
 \item{M}{list object(s) created by read_admb function}
 }
 \value{
-dataframe of recruitment size distribution
+dataframe with recruitment size distribution(s)
 }
 \description{
 Get recruitment size distribution data
 }
 \author{
-DN Webber
+DN Webber, WT Stockhausen [ctb]
 }

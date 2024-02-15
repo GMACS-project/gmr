@@ -16,5 +16,5 @@ dataframe of recruitment
 Extracts predicted recruitment and approximate asymptotic error-bars
 }
 \author{
-SJD Martell, DN Webber
+SJD Martell, DN Webber, WT Stockhausen [ctb]
 }

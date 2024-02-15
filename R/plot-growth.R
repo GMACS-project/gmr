@@ -1,10 +1,13 @@
 #' Plot growth from arbitrary start age
 #'
 #' @param M List object created by read_admb function
-#' @return Plot natural mortality over time and size
+#' @return Plot growth over time and size
+#' @import ggplot2
+#' @importFrom reshape2 melt
 #' @export
 #'
 plot_growth <- function(M){
+  warning("This function may need to be revised!")
   A    <- M
   df   <- data.frame(A$mean_size)
   nclass<-length(df[1,])

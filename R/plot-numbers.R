@@ -42,7 +42,7 @@
 #' @param subsetby a selection of the years to restrict plotting of
 #' @param nrow Number of rows
 #' @param ncol Number of columns
-#' @return plot of numbers of individuals in each size-class each year in the model
+#' @return ggplot of numbers of individuals in each size-class each year in the model
 #' @author D'Arcy N. Webber
 #' @export
 #'
@@ -59,5 +59,5 @@ plot_numbers <- function(M, subsetby = "", nrow = 2, ncol = NULL)
         p <- p + geom_line(aes(col = Model, linetype = Shell))
     }
     p <- p + facet_wrap(Model + Sex ~ Year, nrow = nrow, ncol = ncol)
-    print(p + .THEME)
+    return(p + .THEME)
 }

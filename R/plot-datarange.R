@@ -51,7 +51,7 @@ plot_datarange <- function(M, verbose = FALSE)
         {
             dat <- get(typenames[itype])
             typename <- typenames[itype]
-            if(!is.null(dat) && !is.na(dat) && nrow(dat)>0)
+            if(!any(is.null(dat) | is.na(dat)) && nrow(dat)>0)
             {
                 ntypes <- ntypes+1
                 for(ifleet in 1:nfleets)

@@ -4,42 +4,78 @@
 #'
 #' @param M list object(s) created by read_admb function
 #' @return dataframe of recruitment
-#' @author SJD Martell, DN Webber
+#' @author SJD Martell, DN Webber, WT Stockhausen [ctb]
+#'
+#' @importFrom dplyr bind_cols
+#' @importFrom dplyr mutate
+#' @importFrom dplyr select
+#' @importFrom tidyr expand_grid
+#'
 #' @export
 #'
-.get_recruitment_df <- function(M)
-{
+.get_recruitment_df <- function(M){
     n <- length(M)
-    mdf <- NULL
-    for (i in 1:n)
-    {
+    lst = list();
+    for (i in 1:n) {
         A  <- M[[i]]
-        if (is.null(A$fit$logDetHess))
-        {
-            stop("Appears that the Hessian was not positive definite\n
-                  thus estimates of recruitment do not exist.\n
-                  See this in replist$fit.")
-        }
-        df <- data.frame(Model   = names(M)[i],
-                         par     = A$fit$names,
-                         log_rec = A$fit$est,
-                         log_sd  = A$fit$std)
-        df <- subset(df, par == "sd_log_recruits")
-        df$year <- rep(A$mod_yrs, by = A$nsex)
-        df$sex <- rep(1:A$nsex, each = length(A$mod_yrs))
-        df$sex <- .SEX[df$sex + 1]
-        df$lb <- exp(df$log_rec - 1.96*df$log_sd)
-        df$ub <- exp(df$log_rec + 1.96*df$log_sd)
-        j <- which(M[[i]]$fit$names %in% c("theta[4]"))
-        #rstd <- M[[i]]$fit$std[j]
-        if (length(j) > 0)
-        {
-            df$rbar = exp(M[[i]]$fit$est[j])
+        if (is.null(A$fit)) {
+          warning("It appears that the Hessian was not calculated, ",
+                  "thus estimates of recruitment uncertainty do not exist.")
+          #--matrix recruits(1,nsex,syr,nyrRetro)
+          xs = 1:A$nsex; ys = 1:(A$nyr-A$syr+1);
+          dms = tidyr::expand_grid(ix=xs,iy=ys);
+          df <- data.frame(Model   = names(M)[i],
+                           par     = NA,
+                           log_rec = log(as.vector(A$recruits)),
+                           log_sd  = NA,
+                           lb = NA,
+                           ub = NA);#--is this consistent w/ below?
+          df = dplyr::bind_cols(df,dms) |>
+                 dplyr::mutate(rbar=A$spr_rbar[ix],
+                               sex=.SEX[ix+1],
+                               year=A$mod_yrs[iy]) |>
+                 dplyr::select(Model,par,log_rec,log_sd,year,sex,lb,ub,rbar);
         } else {
-            df$rbar = NA
-        }
-        mdf <- rbind(mdf, df)
-    }
+          if (is.null(A$fit$logDetHess)) {
+          warning("It appears that the Hessian was not positive definite, ",
+                  "thus estimates of recruitment uncertainty do not exist.")
+          #--matrix recruits(1,nsex,syr,nyrRetro)
+          xs = 1:A$nsex; ys = 1:(A$nyr-A$syr+1);
+          dms = tidyr::expand_grid(ix=xs,iy=ys);
+          df <- data.frame(Model   = names(M)[i],
+                           par     = NA,
+                           log_rec = log(as.vector(A$recruits)),
+                           log_sd  = NA,
+                           lb = NA,
+                           ub = NA);#--is this consistent w/ below?
+          df = dplyr::bind_cols(df,dms) |>
+                 dplyr::mutate(rbar=A$spr_rbar[ix],
+                               sex=.SEX[ix+1],
+                               year=A$mod_yrs[iy]) |>
+                 dplyr::select(Model,par,log_rec,log_sd,year,sex,lb,ub,rbar);
+          } else {
+            df <- data.frame(Model   = names(M)[i],
+                             par     = A$fit$names,
+                             log_rec = A$fit$est,
+                             log_sd  = A$fit$std)
+            df <- subset(df, par == "sd_log_recruits")
+            df$year <- rep(A$mod_yrs, by = A$nsex)
+            df$sex <- rep(1:A$nsex, each = length(A$mod_yrs))
+            df$sex <- .SEX[df$sex + 1]
+            df$lb <- exp(df$log_rec - 1.96*df$log_sd)
+            df$ub <- exp(df$log_rec + 1.96*df$log_sd)
+            j <- which(M[[i]]$fit$names %in% c("theta[4]"))
+            #rstd <- M[[i]]$fit$std[j]
+            if (length(j) > 0) {
+                df$rbar = exp(M[[i]]$fit$est[j])
+            } else {
+                df$rbar = NA
+            }
+          }#--else for (is.null(A$fit$logDetHess))
+        }#--else for (is.null(A$fit))
+        lst[[i]] = df;
+    }#--i loop
+    mdf = dplyr::bind_rows(lst); rm(lst);
     return(mdf)
 }
 
@@ -47,30 +83,24 @@
 #' Get recruitment size distribution data
 #'
 #' @param M list object(s) created by read_admb function
-#' @return dataframe of recruitment size distribution
-#' @author DN Webber
+#' @return dataframe with recruitment size distribution(s)
+#' @author DN Webber, WT Stockhausen [ctb]
+#' @importFrom dplyr bind_rows
 #' @export
 #'
 .get_recruitment_size_df <- function(M)
 {
-    n <- length(M)
-    mdf <- NULL
+    n   <- length(M);
+    lst <- list();
     for(i in 1:n)
     {
         A  <- M[[i]]
-        if(is.null(A$fit$logDetHess))
-        {
-            stop("Appears that the Hessian was not positive definite\n
-                  thus estimates of recruitment do not exist.\n
-                  See this in replist$fit.")
-        }
-        df <- data.frame(Model = names(M)[i],
+        lst[[i]] <- data.frame(Model = names(M)[i],
                          mid_points = A$mid_points,
                          rec_sdd = as.vector(t(A$rec_sdd)),
-                         sex =  rep(1:A$nsex, each = length(A$mid_points)))
-
-        mdf <- rbind(mdf, df)
+                         sex =  rep(1:A$nsex, each = length(A$mid_points)));
     }
+    mdf = dplyr::bind_rows(lst);
     return(mdf)
 }
 
@@ -80,8 +110,8 @@
 #' @param M list object created by read_admb function
 #' @param xlab the x-axis label for the plot
 #' @param ylab the y-axis label for the plot
-#' @return Plot of predicted recruitment
-#' @author SJD Martell, DN Webber
+#' @return predicted recruitment time series as ggplot2 object
+#' @author SJD Martell, DN Webber, WT Stockhausen [ctb]
 #' @export
 #'
 plot_recruitment <- function(M, xlab = "Year", ylab = "Recruitment (millions of individuals)")
@@ -127,8 +157,7 @@ plot_recruitment <- function(M, xlab = "Year", ylab = "Recruitment (millions of 
     # }
     #
 
-
-    print(p + .THEME)
+    return(p + .THEME)
 }
 
 
@@ -137,8 +166,8 @@ plot_recruitment <- function(M, xlab = "Year", ylab = "Recruitment (millions of 
 #' @param M list object created by read_admb function
 #' @param xlab the x-axis label for the plot
 #' @param ylab the y-axis label for the plot
-#' @return plot of recruitment size distribution
-#' @author DN Webber
+#' @return recruitment size distribution plot as ggplot2 object
+#' @author DN Webber, WT Stockhausen [ctb]
 #' @export
 #'
 plot_recruitment_size <- function(M, xlab = "Mid-point of size class (mm)", ylab = "Proportion recruiting")
@@ -160,9 +189,7 @@ plot_recruitment_size <- function(M, xlab = "Mid-point of size class (mm)", ylab
 
     if (!.OVERLAY) p <- p + facet_wrap(~Model)
     if (length(unique(mdf$sex)) > 1) p <- p + facet_wrap(~sex, ncol = 1)
-    print(p + .THEME)
-
-
+    return(p + .THEME)
 }
 
 

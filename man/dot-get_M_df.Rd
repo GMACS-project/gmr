@@ -13,5 +13,5 @@
 Get natural mortality data
 }
 \author{
-J Ianelli, SJD Martell, DN Webber
+J Ianelli, SJD Martell, DN Webber, WT Stockhausen [ctb]
 }

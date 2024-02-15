@@ -40,7 +40,7 @@
     while (is.na(check)) {
       text = paste("========================================\nYou have specified a folder name other than 'Dvpt_Version' to work on GMACS and/or develop a new version.\n========================================\n
 \nPlease confirm that the following directory is the one you want to work in (0:No, 1: Yes):\n",
-                   print(paste0(getwd(), "/", .nameFold, "/")),sep="")
+                   file.path(getwd(), .nameFold),sep="")
       # check <- svDialogs::dlgInput(message = text, Sys.info())$res
       check <- svDialogs::dlgInput(message = text, default = "(0:No, 1: Yes)")$res
       Sys.sleep(0.1)
