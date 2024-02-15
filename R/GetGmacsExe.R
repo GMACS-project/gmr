@@ -32,29 +32,32 @@
                          ADMBpaths = NULL,
                          verbose = FALSE,
                          logFiles = FALSE) {
+  fsep <- .Platform$file.sep
+
   # Define directory
-
-  if(.nameFold != "Dvpt_Version"){
-
+  if (.nameFold != "Dvpt_Version") {
     check <- NA
     while (is.na(check)) {
-      text = paste("========================================\nYou have specified a folder name other than 'Dvpt_Version' to work on GMACS and/or develop a new version.\n========================================\n
+      text = paste(
+        "========================================\nYou have specified a folder name other than 'Dvpt_Version' to work on GMACS and/or develop a new version.\n========================================\n
 \nPlease confirm that the following directory is the one you want to work in (0:No, 1: Yes):\n",
-                   print(paste0(getwd(), "/", .nameFold, "/")),sep="")
-      # check <- svDialogs::dlgInput(message = text, Sys.info())$res
-      check <- svDialogs::dlgInput(message = text, default = "(0:No, 1: Yes)")$res
+        print(paste0(getwd(), "/", .nameFold, "/")),
+        sep = ""
+      )
+      check <-
+        svDialogs::dlgInput(message = text, default = "(0:No, 1: Yes)")$res
       Sys.sleep(0.1)
     }
-    if(.an(check)==0){
+    if (.an(check) == 0) {
       stop("Please redefine the directory you want to work in.")
-    } else if(.an(check) !=1 || !is.numeric(.an(check))){
-        stop("The only possibilities are 0 or 1.")
-      }
+    } else if (.an(check) != 1 || !is.numeric(.an(check))) {
+      stop("The only possibilities are 0 or 1.")
+    }
     GMACS_version <- .nameVer
-  } else {GMACS_version <- "Dvpt_Version"}
-
-
-  Dir <-  file.path(getwd(), .nameFold);
+  } else {
+    GMACS_version <- "Dvpt_Version"
+  }
+  Dir <-  file.path(getwd(), .nameFold, fsep = fsep)
 
   # Need to compile the model?
   # vector of length(.GMACS_version)
@@ -68,7 +71,8 @@
   # Check directories for ADMB
   # Define the name of the file containing the different pathways needed to build
   # the GMACS executable
-   suppressWarnings(PBSadmb::readADpaths(ADMBpaths));
+  suppressWarnings(PBSadmb::readADpaths(ADMBpaths))
+
   cat("\n Verifying the paths for ADMB, the C/C++ compiler and the editor ....\n")
   if (!PBSadmb::checkADopts())
     stop(
@@ -80,33 +84,66 @@
   cat("# ------------------------------------------------------------------- #\n")
 
   # 1.Get an executable for GMACS ----
-  oldWD = getwd();
-  on.exit(setwd(oldWD));
-  cat("--Setting working directory to '", Dir[vv], "' \n",sep="")
-  setwd(Dir[vv]);
+  oldWD = getwd()
+  # on.exit(setwd(oldWD));
 
-  # Clean directory from previous version
-  clean_root(path=Dir[vv]);
+  # Clean the base directory from previous version
+  clean_root(path = Dir[vv])
+
+  # Temporary folder to test the compilation
+  DirTmp <- file.path(Dir[vv], "tmpComp", fsep = fsep)
+  if (!dir.exists(DirTmp)) {
+    dir.create(DirTmp, recursive = TRUE)
+    dir.create(file.path(DirTmp, "include", fsep = fsep), recursive = TRUE)
+  }
+  cat(
+    "--Setting working directory to: \n\t'",
+    DirTmp,
+    "' \nto test the compilaiton of GMACS",
+    sep = ""
+  )
+  setwd(DirTmp)
+
+  # Copy necessary files to the DirTmp
+  file.copy(
+    from = file.path(Dir[vv], c("gmacsbase.tpl", "personal.tpl"), fsep = fsep),
+    to = file.path(DirTmp, c("gmacsbase.tpl", "personal.tpl"), fsep = fsep),
+    overwrite = TRUE,
+    # recursive = TRUE,
+    copy.date = TRUE
+  )
+  # Copy the files from include
+  dir_include <- file.path(Dir[vv], "include", fsep = fsep)
+  file.copy(
+    from = list.files(dir_include, full.names = TRUE),
+    to = file.path(DirTmp, "include", list.files(dir_include), fsep = fsep),
+    overwrite = TRUE,
+    # recursive = TRUE,
+    copy.date = TRUE
+  )
 
   #  Create gmacs.tpl from gmacsbase.tpl and personal.tpl
   cat("Now writing gmacs.tpl\n")
   write_TPL(vv = vv,
-            Dir = Dir[vv],
+            Dir = DirTmp,
             .update = TRUE)
-  # cat("\n")
 
   # Copy files from ./lib IF on windows
   libFiles <-
-    dir(path=file.path(Dir[vv], "lib"),
-        pattern="*.cpp",
-        ignore.case = TRUE,
-        all.files = TRUE,
-        full.names=TRUE)
-  if (isWindowsOS()){
-    file.copy(libFiles, Dir[vv], overwrite = TRUE)
-    args <- get_nam(basename(libFiles));#--drop extensions
+    dir(
+      path = file.path(Dir[vv], "lib", fsep = fsep),
+      pattern = "*.cpp",
+      ignore.case = TRUE,
+      all.files = TRUE,
+      full.names = TRUE
+    )
+  if (isWindowsOS()) {
+    file.copy(libFiles, DirTmp, overwrite = TRUE)
+    args <- get_nam(basename(libFiles))
+    #--drop extensions
   } else {
-    args <-get_nam(libFiles);#--drop extensions
+    args <- get_nam(libFiles)
+    #--drop extensions
   }
 
   # .tpl to .cpp
@@ -123,18 +160,64 @@
   cat("\n")
 
   # Compile files
-#  compFiles <- c("gmacs", libFiles)
+  # Function to test compilation
+  testComp <- function(fileToComp) {
+    test <- tryCatch(
+      PBSadmb::compAD(
+        prefix = fileToComp,
+        pathfile = ADMBpaths,
+        safe = TRUE,
+        debug = TRUE,
+        logfile = logFiles,
+        verbose = FALSE
+      ),
+      error = function(e)
+        e,
+      warning = function(w)
+        w
+    )
+    if (!is.na(class(test)[2]) & class(test)[2] == "warning") {
+      cat(
+        "\n --> Something was wrong with the compilation of ",
+        fileToComp,
+        ".\n Please check the following error message:\n\n",
+        "# ######################################################## #\n",
+        "# ######################################################## #\n\n"
+      )
+      out <- PBSadmb::compAD(
+        prefix = fileToComp,
+        pathfile = ADMBpaths,
+        safe = TRUE,
+        debug = TRUE,
+        logfile = logFiles,
+        verbose = TRUE
+      )
+      cat(
+        out,
+        "\n\n # ######################################################## #\n",
+        "# ######################################################## #\n",
+        "\n\n\n"
+      )
+      setwd(oldWD)
+      base::unlink(x = DirTmp,
+                   recursive = TRUE,
+                   force = TRUE)
+
+      stop()
+    }
+  }
   compFiles <- c("gmacs", args)
   for (nm in 1:length(compFiles)) {
-    cat("Now compiling file ",nm,": '",compFiles[nm],"'\n",sep="")
-    PBSadmb::compAD(
-      prefix = compFiles[nm],
-      pathfile = ADMBpaths,
-      safe = TRUE,
-      debug = TRUE,
-      logfile = logFiles,
-      verbose = verbose
-    )
+    cat("Now compiling file ", nm, ": '", compFiles[nm], "'\n", sep = "")
+    # PBSadmb::compAD(
+    #   prefix = compFiles[nm],
+    #   pathfile = ADMBpaths,
+    #   safe = TRUE,
+    #   debug = TRUE,
+    #   logfile = logFiles,
+    #   verbose = TRUE
+    # )
+    testComp(fileToComp = compFiles[nm])
   }
   cat("OK after compilation ...\n")
 
@@ -154,6 +237,22 @@
   )
   cat("OK after building gmacs executable ...\n")
 
-  cat("--Re-setting working directory to '", oldWD, "' \n",sep="")
+  # Copy the .tpl and exe in the root dir
+  nfile <-
+    list.files(DirTmp, full.names = TRUE)[!list.files(DirTmp) %in% "include"]
+  file.copy(
+    from = nfile,
+    to = file.path(Dir[vv], basename(nfile), fsep = fsep),
+    overwrite = TRUE,
+    copy.date = TRUE
+  )
+  # Remove the temporary folder
+  setwd(oldWD)
+  cat("\n--Deleting the temporary folder for compilation test ...\n")
+  base::unlink(x = DirTmp,
+               recursive = TRUE,
+               force = TRUE)
+
+  cat("--Re-setting working directory to '", oldWD, "' \n", sep = "")
   #--setwd(oldWD) <-does this on exit
 }
