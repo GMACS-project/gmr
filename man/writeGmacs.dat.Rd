@@ -10,22 +10,26 @@ writeGmacs.dat(
   gmacsDat = NULL,
   stock = "",
   model_name = "",
-  Ass_Year = ""
+  Ass_Year = "",
+  DirTPL = NULL
 )
 }
 \arguments{
-\item{Dir}{(character string)- path where to save the new gmacs.dat file}
+\item{Dir}{(character string)- directory where to save the new gmacs.dat file.}
 
-\item{FileName}{(character string)- name of the new gmacs.dat file}
+\item{FileName}{(character string)- name of the new gmacs.dat file.}
 
-\item{gmacsDat}{(character string)- Object (list) containing the ex gmacs.dat file - The list is
-created using the [readGMACS_dat()] function.}
+\item{gmacsDat}{(character string)- Object (list) containing the ex gmacs.dat
+file - The list is created using the [readGMACS_dat()] function.}
 
-\item{stock}{(character string)- name of the stock of interest}
+\item{stock}{(character string)- name of the stock of interest.}
 
-\item{model_name}{(character string)- name of the model currently considered (e.g., "model 22.A")}
+\item{model_name}{(character string)- name of the model currently considered (e.g., "model 22.A").}
 
-\item{Ass_Year}{(character string)- Year of this assessment}
+\item{Ass_Year}{(character string)- Year of this assessment.}
+
+\item{DirTPL}{(character string)- the directory where the gmacsbase.TPL file
+you are using for the stock assessment is hold.}
 }
 \value{
 create a new gmacs.dat file.

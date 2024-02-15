@@ -14,7 +14,8 @@ writeGmacsctlfile(
   Ass_Year = "",
   nsex = NULL,
   Start_Y = NULL,
-  End_Y = NULL
+  End_Y = NULL,
+  DirTPL = NULL
 )
 }
 \arguments{
@@ -37,6 +38,9 @@ the following: \code{nsex; Start_Y; End_Y}}
 
 \item{nsex}{(integer; optional)- Number of sexes considered in the model. This is required if you
 don't provide the \code{DatFile}.}
+
+\item{DirTPL}{(character string)- the directory where the gmacsbase.TPL file
+you are using for the stock assessment is hold.}
 
 \item{Start_Y;End_Y}{(integer; optional)- First and last year of the assessment period.
 This is required if you don't provide the \code{DatFile}.}

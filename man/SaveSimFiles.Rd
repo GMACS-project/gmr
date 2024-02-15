@@ -9,19 +9,23 @@ SaveSimFiles(
   UsePar = NULL,
   NoEst = NULL,
   Isim = NULL,
-  Nsim = NULL
+  Nsim = NULL,
+  Dir_TPL = NULL
 )
 }
 \arguments{
-\item{simDat}{(list)- the output of the \code{\link[=SimData]{SimData()}} function for each simulation}
+\item{simDat}{(list)- the output of the \code{\link[=SimData]{SimData()}} function for each simulation.}
 
 \item{UsePar}{(logical)- Do the simulations use a .PIN file to import parameters?}
 
 \item{NoEst}{(logical)- Set the maximum function call to 1? i.e., run estimation?}
 
-\item{Isim}{(integer)- the current simulation}
+\item{Isim}{(integer)- the current simulation.}
 
-\item{Nsim}{(integer)- the number of simulation to run}
+\item{Nsim}{(integer)- the number of simulation to run.}
+
+\item{Dir_TPL}{(character string)- the directory where the gmacsbase.TPL file
+you are using for the stock assessment is hold.}
 }
 \value{
 Nothing

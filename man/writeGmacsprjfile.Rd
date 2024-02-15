@@ -10,7 +10,8 @@ writeGmacsprjfile(
   PrjFile = NULL,
   stock = "",
   model_name = "",
-  Ass_Year = ""
+  Ass_Year = "",
+  DirTPL = NULL
 )
 }
 \arguments{
@@ -25,7 +26,10 @@ created using the \code{\link[=readGMACSprj]{readGMACSprj()}} function.}
 
 \item{model_name}{(character string)- name of the model currently considered (e.g., "model 22.A")}
 
-\item{Ass_Year}{(character string)- Year of this assessment}
+\item{Ass_Year}{(character string)- Year of this assessment.}
+
+\item{DirTPL}{(character string)- the directory where the gmacsbase.TPL file
+you are using for the stock assessment is hold.}
 }
 \value{
 create a new .prj file.

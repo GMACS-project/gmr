@@ -169,24 +169,25 @@ isWindowsOS<-function(){return(.Platform$OS.type=="windows")}
 #'
 #' @description Extract the version number and the compilation date from the gmacs.tpl
 #'
-#' @param Dir Character string: the directory where the gmacs.exe is hold for the stock
-#' your are currently working on.
+#' @param DirTPL (character string)- the directory where the gmacsbase.TPL file
+#' you are using for the stock assessment is hold.
 #'
 #' @return a named list with the variable \code{ver} that contains the version number
 #' and \code{Comp} that holds the compilation date and time.
 #'
 #' @export
 #'
-GMACSversion <- function(Dir = NULL) {
+GMACSversion <- function(DirTPL = NULL) {
   out <- list()
 
   oldWD = getwd()
   on.exit(setwd(oldWD))
-  tmpDir <- unlist(strsplit(Dir, "build"))[1]
-
+  # tmpDir <- unlist(strsplit(DirTPL, "build"))[1]
+  tmpDir <- DirTPL
   setwd(tmpDir)
 
-  TPL <- readLines("gmacs.tpl")
+  # TPL <- readLines("gmacs.tpl")
+  TPL <- readLines("gmacsbase.tpl")
   header <- which(stringr::str_detect(TPL, pattern = "!! TheHeader"))
   header <- TPL[header]
 

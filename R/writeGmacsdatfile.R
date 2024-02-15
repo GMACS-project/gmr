@@ -9,9 +9,11 @@
 #' The default value is \code{overwrite = FALSE}.
 #' @param DatFile (character string)- Object (list) containing the ex Spc.dat file - The list is
 #' created using the [readGMACSdat()] function.
-#' @param stock (character string)- name of the stock of interest
-#' @param model_name (character string)- name of the model currently considered (e.g., "model 22.A")
-#' @param Ass_Year (character string)- Year of this assessment
+#' @param stock (character string)- name of the stock of interest.
+#' @param model_name (character string)- name of the model currently considered (e.g., "model 22.A").
+#' @param Ass_Year (character string)- Year of this assessment.
+#' @param DirTPL (character string)- the directory where the gmacsbase.TPL file
+#' you are using for the stock assessment is hold.
 #'
 #' @return create a new .dat file.
 #'
@@ -26,7 +28,8 @@ writeGmacsdatfile <- function(Dir = NULL,
                               DatFile = NULL,
                               stock = "",
                               model_name = "",
-                              Ass_Year = "") {
+                              Ass_Year = "",
+                              DirTPL = NULL) {
 
   File <- file.path(Dir, FileName)
   # Check the existence of the file
@@ -43,7 +46,7 @@ writeGmacsdatfile <- function(Dir = NULL,
   fs::file_create(FileName)
 
   # Get GMACS version number and compilation date
-  tmp <- GMACSversion(Dir = Dir)
+  tmp <- GMACSversion(Dir = DirTPL)
   Ver <- stringr::str_squish(tmp$ver)
 
   Comp <- tmp$Comp

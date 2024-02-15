@@ -17,6 +17,8 @@
 #' don't provide the \code{DatFile}.
 #' @param Start_Y;End_Y (integer; optional)- First and last year of the assessment period.
 #' This is required if you don't provide the \code{DatFile}.
+#' @param DirTPL (character string)- the directory where the gmacsbase.TPL file
+#' you are using for the stock assessment is hold.
 #'
 #' @return create a new .ctl file.
 #'
@@ -34,7 +36,8 @@ writeGmacsctlfile <- function(Dir = NULL,
                               Ass_Year = "",
                               nsex = NULL,
                               Start_Y = NULL,
-                              End_Y = NULL) {
+                              End_Y = NULL,
+                              DirTPL = NULL) {
 
 
   # Check for arguments
@@ -57,7 +60,7 @@ writeGmacsctlfile <- function(Dir = NULL,
   fs::file_create(FileName)
 
   # Get GMACS version number and compilation date
-  tmp <- GMACSversion(Dir = Dir)
+  tmp <- GMACSversion(Dir = DirTPL)
   Ver <- tmp$ver
   Comp <- tmp$Comp
 

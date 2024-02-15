@@ -11,7 +11,8 @@ GenSimFiles(
   SigmaR = NULL,
   DoRecDev = NULL,
   verbose = NULL,
-  FunCall = TRUE
+  FunCall = TRUE,
+  Dir_TPL = NULL
 )
 }
 \arguments{
@@ -26,10 +27,12 @@ GenSimFiles(
 \item{DoRecDev}{(logical)- if \code{FALSE} : add deviation to the original ones,
 if \code{TRUE} generate new deviations.}
 
-\item{verbose}{(logical)- flag to print processing information.
-to generate random deviations that will be added to the recruitment deviation.}
+\item{verbose}{(logical)- flag to print processing information.}
 
 \item{FunCall}{(logical)- Run the executable (with no estimation) ?}
+
+\item{Dir_TPL}{(character string)- the directory where the gmacsbase.TPL file
+you are using for the stock assessment is hold.}
 }
 \value{
 the SimData.out file as a named list for each simulation.

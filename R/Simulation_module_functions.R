@@ -165,7 +165,8 @@ prepSim <- function(Dir = NULL,
 #' if \code{TRUE} generate new deviations.
 #' @param FunCall (logical)- Run the executable (with no estimation) ?
 #' @param verbose (logical)- flag to print processing information.
-#' to generate random deviations that will be added to the recruitment deviation.
+#' @param Dir_TPL (character string)- the directory where the gmacsbase.TPL file
+#' you are using for the stock assessment is hold.
 #'
 #' @return the SimData.out file as a named list for each simulation.
 #'
@@ -185,7 +186,8 @@ GenSimFiles <- function(Isim = NULL,
                         SigmaR = NULL,
                         DoRecDev = NULL,
                         verbose = NULL,
-                        FunCall = TRUE){
+                        FunCall = TRUE,
+                        Dir_TPL = NULL){
 
   gmacs_exe <- ifelse(isWindowsOS(),"gmacs.exe","gmacs")
 
@@ -221,14 +223,16 @@ GenSimFiles <- function(Isim = NULL,
   # ===================================== # ----
   writeGmacs.dat(Dir = DirTrue,
                  FileName = "gmacs.dat",
-                 gmacsDat = OrigFiles$GmacsFile)
+                 gmacsDat = OrigFiles$GmacsFile,
+                 DirTPL = Dir_TPL)
   # --------------------------------------
 
   # 4- Write and save the Spc.dat in the TRUE folder
   # ===================================== # ----
   writeGmacsdatfile(Dir = DirTrue,
                     FileName = OrigFiles$GmacsFile$DatFileName,
-                    DatFile = OrigFiles$DatFile)
+                    DatFile = OrigFiles$DatFile,
+                    DirTPL = Dir_TPL)
   # --------------------------------------
 
   # 5- Change the Maximum number of function calls to 1 and
@@ -238,14 +242,16 @@ GenSimFiles <- function(Isim = NULL,
   writeGmacsctlfile(Dir = DirTrue,
                     FileName = OrigFiles$GmacsFile$CtlFileName,
                     CtlFile = OrigFiles$CtlFile,
-                    DatFile = OrigFiles$DatFile)
+                    DatFile = OrigFiles$DatFile,
+                    DirTPL = Dir_TPL)
   # --------------------------------------
 
   # 6- Write and save the Spc.prj file in the TRUE folder
   # ===================================== # ----
   writeGmacsprjfile(Dir = DirTrue,
                     FileName = OrigFiles$GmacsFile$PrjFileName,
-                    PrjFile = OrigFiles$PrjFile
+                    PrjFile = OrigFiles$PrjFile,
+                    DirTPL = Dir_TPL
   )
   # --------------------------------------
 
@@ -541,11 +547,13 @@ SimData <- function(Outres = NULL,
 #' The function also writes a batch command that will be called to when running
 #' Gmacs (name of the file \code{RunSim.bat}).
 #'
-#' @param simDat (list)- the output of the [SimData()] function for each simulation
+#' @param simDat (list)- the output of the [SimData()] function for each simulation.
 #' @param UsePar (logical)- Do the simulations use a .PIN file to import parameters?
 #' @param NoEst (logical)- Set the maximum function call to 1? i.e., run estimation?
-#' @param Isim (integer)- the current simulation
-#' @param Nsim (integer)- the number of simulation to run
+#' @param Isim (integer)- the current simulation.
+#' @param Nsim (integer)- the number of simulation to run.
+#' @param Dir_TPL (character string)- the directory where the gmacsbase.TPL file
+#' you are using for the stock assessment is hold.
 #'
 #'
 #' @return Nothing
@@ -557,7 +565,8 @@ SaveSimFiles <- function(simDat = NULL,
                          UsePar = NULL,
                          NoEst = NULL,
                          Isim = NULL,
-                         Nsim = NULL){
+                         Nsim = NULL,
+                         Dir_TPL = NULL){
 
   gmacs_exe <- ifelse(isWindowsOS(),"gmacs.exe","gmacs")
 
@@ -580,12 +589,14 @@ SaveSimFiles <- function(simDat = NULL,
   # Write gmacs.dat
   writeGmacs.dat(Dir = DirRuns,
                  FileName = GmacsFileNames,
-                 gmacsDat = simDat$GmacsFile)
+                 gmacsDat = simDat$GmacsFile,
+                 DirTPL = Dir_TPL)
 
   # Write the Spc.dat
   writeGmacsdatfile(Dir = DirRuns,
                     FileName = simDat$GmacsFile$DatFileName,
-                    DatFile = simDat$DatFile)
+                    DatFile = simDat$DatFile,
+                    DirTPL = Dir_TPL)
 
   # Change the Maximum number of function calls to 1 and ?
   # write the Spc.ctl
@@ -594,13 +605,15 @@ SaveSimFiles <- function(simDat = NULL,
   writeGmacsctlfile(Dir = DirRuns,
                     FileName = simDat$GmacsFile$CtlFileName,
                     CtlFile = simDat$CtlFile,
-                    DatFile = simDat$DatFile)
+                    DatFile = simDat$DatFile,
+                    DirTPL = Dir_TPL)
 
 
   # Write the Spc.prj
   writeGmacsprjfile(Dir = DirRuns,
                     FileName = simDat$GmacsFile$PrjFileName,
-                    PrjFile = simDat$PrjFile)
+                    PrjFile = simDat$PrjFile,
+                    DirTPL = Dir_TPL)
 
   # Write the Spc.pin ?
   if(UsePar)
@@ -703,7 +716,8 @@ Gen_GmacsSim <- function(path = NULL,
         Ndev_Rec = Ndev_Rec,
         SigmaR = SigmaR,
         DoRecDev = RandomRec,
-        verbose = verbose
+        verbose = verbose,
+        Dir_TPL = path
       )
 
     # 3.2 Store the data that have been simulated for simulation Isim
@@ -721,7 +735,8 @@ Gen_GmacsSim <- function(path = NULL,
       UsePar = UseParam,
       NoEst = No_Est,
       Isim = Isim,
-      Nsim = Nsim
+      Nsim = Nsim,
+      Dir_TPL = path
     )
     if (verbose)
       cat("\t -> All files saved for simulation: ", Isim, "\n\n")

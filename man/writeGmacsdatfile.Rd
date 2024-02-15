@@ -11,7 +11,8 @@ writeGmacsdatfile(
   DatFile = NULL,
   stock = "",
   model_name = "",
-  Ass_Year = ""
+  Ass_Year = "",
+  DirTPL = NULL
 )
 }
 \arguments{
@@ -25,11 +26,14 @@ The default value is \code{overwrite = FALSE}.}
 \item{DatFile}{(character string)- Object (list) containing the ex Spc.dat file - The list is
 created using the \code{\link[=readGMACSdat]{readGMACSdat()}} function.}
 
-\item{stock}{(character string)- name of the stock of interest}
+\item{stock}{(character string)- name of the stock of interest.}
 
-\item{model_name}{(character string)- name of the model currently considered (e.g., "model 22.A")}
+\item{model_name}{(character string)- name of the model currently considered (e.g., "model 22.A").}
 
-\item{Ass_Year}{(character string)- Year of this assessment}
+\item{Ass_Year}{(character string)- Year of this assessment.}
+
+\item{DirTPL}{(character string)- the directory where the gmacsbase.TPL file
+you are using for the stock assessment is hold.}
 }
 \value{
 create a new .dat file.

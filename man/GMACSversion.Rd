@@ -4,11 +4,11 @@
 \alias{GMACSversion}
 \title{Function to extract the Version number of GMACS}
 \usage{
-GMACSversion(Dir = NULL)
+GMACSversion(DirTPL = NULL)
 }
 \arguments{
-\item{Dir}{Character string: the directory where the gmacs.exe is hold for the stock
-your are currently working on.}
+\item{DirTPL}{(character string)- the directory where the gmacsbase.TPL file
+you are using for the stock assessment is hold.}
 }
 \value{
 a named list with the variable \code{ver} that contains the version number

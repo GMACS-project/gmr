@@ -3,13 +3,15 @@
 #' @description Write a new gmacs.dat file. This function is used to modify within
 #' R a pre-existent gmacs.dat file.
 #'
-#' @param Dir (character string)- path where to save the new gmacs.dat file
-#' @param FileName (character string)- name of the new gmacs.dat file
-#' @param gmacsDat (character string)- Object (list) containing the ex gmacs.dat file - The list is
-#' created using the [readGMACS_dat()] function.
-#' @param stock (character string)- name of the stock of interest
-#' @param model_name (character string)- name of the model currently considered (e.g., "model 22.A")
-#' @param Ass_Year (character string)- Year of this assessment
+#' @param Dir (character string)- directory where to save the new gmacs.dat file.
+#' @param FileName (character string)- name of the new gmacs.dat file.
+#' @param gmacsDat (character string)- Object (list) containing the ex gmacs.dat
+#' file - The list is created using the [readGMACS_dat()] function.
+#' @param stock (character string)- name of the stock of interest.
+#' @param model_name (character string)- name of the model currently considered (e.g., "model 22.A").
+#' @param Ass_Year (character string)- Year of this assessment.
+#' @param DirTPL (character string)- the directory where the gmacsbase.TPL file
+#' you are using for the stock assessment is hold.
 #'
 #' @return create a new gmacs.dat file.
 #'
@@ -23,14 +25,15 @@ writeGmacs.dat <- function(Dir = NULL,
                           gmacsDat = NULL,
                           stock = "",
                           model_name = "",
-                          Ass_Year = "") {
+                          Ass_Year = "",
+                          DirTPL = NULL) {
 
   FileName <- file.path(Dir, FileName)
   fs::file_create(FileName)
 
   # Get GMACS version number and compilation date
 
-  tmp <- GMACSversion(Dir = Dir)
+  tmp <- GMACSversion(Dir = DirTPL)
   # DirTPL <- unlist(strsplit(DirTrue, "build/"))[1]
   # tmp <- GMACSversion(Dir = DirTPL)
   Ver <- tmp$ver

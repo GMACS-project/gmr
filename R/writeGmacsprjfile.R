@@ -9,7 +9,9 @@
 #' created using the [readGMACSprj()] function.
 #' @param stock (character string)- name of the stock of interest
 #' @param model_name (character string)- name of the model currently considered (e.g., "model 22.A")
-#' @param Ass_Year (character string)- Year of this assessment
+#' @param Ass_Year (character string)- Year of this assessment.
+#' @param DirTPL (character string)- the directory where the gmacsbase.TPL file
+#' you are using for the stock assessment is hold.
 #'
 #' @return create a new .prj file.
 #'
@@ -23,13 +25,14 @@ writeGmacsprjfile <- function(Dir = NULL,
                               PrjFile = NULL,
                               stock = "",
                               model_name = "",
-                              Ass_Year = "") {
+                              Ass_Year = "",
+                              DirTPL = NULL) {
 
   FileName <- file.path(Dir, FileName)
   fs::file_create(FileName)
 
   # Get GMACS version number and compilation date
-  tmp <- GMACSversion(Dir = Dir)
+  tmp <- GMACSversion(Dir = DirTPL)
   Ver <- tmp$ver
   Comp <- tmp$Comp
 
