@@ -132,7 +132,8 @@ writeGmacsctlfile <- function(Dir = NULL,
       base::switch(.ac(nsex),
                    "0" = cat("#_Vector of combined (males & females) mean weight-at-size\n"),
                    "1" = cat("#_vector of male mean weight-at-size\n"))
-      utils::write.table(obj$mean_wt_in, col.names = FALSE, row.names = FALSE)
+      # utils::write.table(obj$mean_wt_in, col.names = FALSE, row.names = FALSE)
+      cat(obj$mean_wt_in, "\n")
 
     } else {
       cat("#_vector of male mean weight-at-size\n")
