@@ -21,13 +21,12 @@
 #'
 #
 writeGmacs.dat <- function(Dir = NULL,
-                          FileName = NULL,
-                          gmacsDat = NULL,
-                          stock = "",
-                          model_name = "",
-                          Ass_Year = "",
-                          DirTPL = NULL) {
-
+                           FileName = NULL,
+                           gmacsDat = NULL,
+                           stock = "",
+                           model_name = "",
+                           Ass_Year = "",
+                           DirTPL = NULL) {
   FileName <- file.path(Dir, FileName)
   fs::file_create(FileName)
 
@@ -59,12 +58,20 @@ writeGmacs.dat <- function(Dir = NULL,
 
   cat("## Key GMACS files\n")
   cat("# -------------------------------------- #\n")
-  cat("# Data file name\n", sep="")
-  cat(obj$DatFileName, "\n", sep="")
-  cat("# Control file name\n", sep="")
-  cat(obj$CtlFileName, "\n", sep="")
-  cat("# Projection file name\n", sep="")
-  cat(obj$PrjFileName, "\n", sep="")
+  cat("# Data file name\n", sep = "")
+  cat(obj$DatFileName, "\n", sep = "")
+  cat("# Control file name\n", sep = "")
+  cat(obj$CtlFileName, "\n", sep = "")
+  cat("# Projection file name\n", sep = "")
+  cat(obj$PrjFileName, "\n", sep = "")
+  cat("\n")
+
+  cat("## Stock specifications\n")
+  cat("# -------------------------------------- #\n")
+  cat("# Weight unit\n", sep = "")
+  cat(obj$Weight_Unit, "\n", sep = "")
+  cat("# Stock name\n", sep = "")
+  cat(obj$Stock_name, "\n", sep = "")
   cat("\n")
 
   cat("## jitter specifications\n")
@@ -85,12 +92,27 @@ writeGmacs.dat <- function(Dir = NULL,
   cat(obj$OutVar_DynB0, "# Dynamic B0 approach\n")
   cat("\n")
 
-
   cat("## Retrospective analysis specifications\n")
   cat("# -------------------------------------- #\n")
-  cat(obj$N_Year_Retro, "# Number of year for the retrospective analysis\n")
+  cat(obj$N_Year_Retro,
+      "# Number of year for the retrospective analysis\n")
   cat("\n")
 
+  cat("## Other controls\n")
+  cat("# -------------------------------------- #\n")
+  cat("# Maximum phase (stop the estimation after this phase)\n")
+  cat(obj$TurnOffPhase, "\n")
+  cat(
+    "# Maximum number of function calls, if 1, stop at fn1 call;\n# if -1 run as long as it takes\n"
+  )
+  cat(obj$StopAfterFnCall, "\n")
+  cat("# Calculate reference points (0 = No, 1 = Yes)\n")
+  cat(obj$CalcRefPoints, "\n")
+  cat("# Use pin file (0 = normal run; 1 = yes-set parameter values)\n")
+  cat(obj$UsePinFile, "\n")
+  cat("# VERBOSE flag (0 = off, 1 = on, 2 = objective function; 3 = diagnostics)\n")
+  cat(obj$Verbose, "\n")
+  cat("\n")
 
   cat("# -------------------------------------- #\n")
   cat("## End of gmacs.dat file\n")

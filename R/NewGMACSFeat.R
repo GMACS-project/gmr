@@ -123,6 +123,10 @@ You'll be then asked to provide details for each item. For example:
                          replacement = '')
 
   TxtImpl[1] <- paste(Vers1, TxtImpl[1], sep = " ")
+  if(length(TxtImpl)>1)
+    for(i in 2:length(TxtImpl))
+      TxtImpl[i] <- paste0("// ", TxtImpl[i])
+
   TxtImpl <-
     c("// ================================================ //",
       TxtImpl)

@@ -45,6 +45,7 @@ GetVerSpec <- function(Dir = NULL){
   gmacsbase <- file.path(Dir, "gmacsbase.tpl")
   out <- file.path(Dir, "GMACS_Version_details.txt")
   text <- readLines(gmacsbase)
+  unlink(out)
   fs::file_create(path = out)
 
   # 1. Get the number version
@@ -53,6 +54,7 @@ GetVerSpec <- function(Dir = NULL){
 
   # 2. Get the last comment
   LastComm <- which(stringr::str_detect(text, pattern = "// ================================================ //"))
+  LastComm <- LastComm[length(LastComm)]
   LastComm2 <- which(stringr::str_detect(text, pattern = "//"))
   LastComm2 <- LastComm2[length(LastComm2)]
   LastComm <- text[(LastComm+1):LastComm2]
@@ -78,11 +80,10 @@ GetVerSpec <- function(Dir = NULL){
   Auth_ID <- unlist(strsplit(Auth_ID,split = ' **',fixed = TRUE))
 
   Auth_nam <- which(stringr::str_detect(text, pattern = paste("// ",Auth_ID,":", sep="")))
-  Auth_nam <- text[Auth_nam]
+  Auth_nam <- text[Auth_nam[1]]
   Auth_nam <- sub(pattern = paste("// ",Auth_ID, sep=""),
                   replacement = "- Last update(s) have been made by",
                   x = Auth_nam)
-
 
   fileConn <- file(out)
   writeLines(text = paste0(Vers[1],"\n",
@@ -96,3 +97,4 @@ GetVerSpec <- function(Dir = NULL){
   close(fileConn)
 
 }
+

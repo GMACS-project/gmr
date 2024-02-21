@@ -13,6 +13,7 @@ writeGmacsctlfile(
   model_name = "",
   Ass_Year = "",
   nsex = NULL,
+  nmature = NULL,
   Start_Y = NULL,
   End_Y = NULL,
   DirTPL = NULL
@@ -38,6 +39,9 @@ the following: \code{nsex; Start_Y; End_Y}}
 
 \item{nsex}{(integer; optional)- Number of sexes considered in the model. This is required if you
 don't provide the \code{DatFile}.}
+
+\item{nmature}{(integer; optional)- Number of maturity type(s) considered in the model.
+This is required if you don't provide the \code{DatFile}.}
 
 \item{DirTPL}{(character string)- the directory where the gmacsbase.TPL file
 you are using for the stock assessment is hold.}
