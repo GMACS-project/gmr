@@ -1,6 +1,7 @@
 #' @title Copy specific GMACS input files
 #'
-#' Reads the gmacs.dat file to figure out the names of the control, data,
+#' @description
+#'  Reads the gmacs.dat file to figure out the names of the control, data,
 #' and projection files, then copies those files along with gmacs.dat and
 #' gmacs.pin (if applicable).
 #'
