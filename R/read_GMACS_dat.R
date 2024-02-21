@@ -75,7 +75,6 @@ readGMACS.dat <- function(path = NULL, verbose = TRUE) {
   Loc <- 1
 
   # Key GMACS files
-  # -------------------------------------------------------------------------
   DatOut[["DatFileName"]] <-
     get.num(dat, Loc, num = FALSE) # .dat file
   DatOut[["CtlFileName"]] <-
@@ -84,6 +83,12 @@ readGMACS.dat <- function(path = NULL, verbose = TRUE) {
     get.num(dat, Loc, num = FALSE) # .prj file
   if (verbose)
     cat("-> Read names of GMACS files\n")
+
+  # Stock specifications
+  DatOut[["Weight_Unit"]] <-
+    get.num(dat, Loc, num = FALSE) # Weight unit
+  DatOut[["Stock_name"]] <-
+    get.num(dat, Loc, num = FALSE) # Stock name
 
   # Jitter specifications (1:yes / SD)
   # DatOut[["Jitter"]] <-
@@ -113,11 +118,24 @@ readGMACS.dat <- function(path = NULL, verbose = TRUE) {
   if (verbose)
     cat("-> Read Number of year for the retrospective analysis\n")
 
+  # Other controls
+  DatOut[["TurnOffPhase"]] <-
+    get.num(dat, Loc) # Maximum phase (stop the estimation after this phase)
+  DatOut[["StopAfterFnCall"]] <-
+    get.num(dat, Loc) # Maximum number of function calls, if 1, stop at fn1 call;
+  # if -1 run as long as it takes
+  DatOut[["CalcRefPoints"]] <-
+    get.num(dat, Loc) # Calculate reference points (0:no, 1: yes)
+  DatOut[["UsePinFile"]] <-
+    get.num(dat, Loc) # Use pin file (0:normal run; 1:yes-set parameter values)
+  DatOut[["Verbose"]] <-
+    get.num(dat, Loc) # VERBOSE flag (0: off, 1: on, 2: objective func; 3: diagnostics)
+
   # End of data file
   # -------------------------------------------------------------------------
   eof <- get.num(dat, Loc)
 
-  if(eof != 9999){
+  if (eof != 9999) {
     cat("\n\nSomething went wrong while reading the gmacs.dat file !!\n")
     stop()
   }

@@ -15,6 +15,8 @@
 #' @param Ass_Year (character string)- Year of this assessment
 #' @param nsex (integer; optional)- Number of sexes considered in the model. This is required if you
 #' don't provide the \code{DatFile}.
+#' @param nmature (integer; optional)- Number of maturity type(s) considered in the model.
+#' This is required if you don't provide the \code{DatFile}.
 #' @param Start_Y;End_Y (integer; optional)- First and last year of the assessment period.
 #' This is required if you don't provide the \code{DatFile}.
 #' @param DirTPL (character string)- the directory where the gmacsbase.TPL file
@@ -35,6 +37,7 @@ writeGmacsctlfile <- function(Dir = NULL,
                               model_name = "",
                               Ass_Year = "",
                               nsex = NULL,
+                              nmature = NULL,
                               Start_Y = NULL,
                               End_Y = NULL,
                               DirTPL = NULL) {
@@ -50,6 +53,7 @@ writeGmacsctlfile <- function(Dir = NULL,
       stop("You must specify the last year of the assessment or fill the 'DatFile' argument of the function.")
   } else {
     nsex <- DatFile$N_sexes
+    nmature <- DatFile$N_maturity
     Start_Y <- DatFile$Start_Y
     End_Y <- DatFile$End_Y
     Fleet_names <- c(DatFile$F_Fleet_names,DatFile$Survey_names)
@@ -115,31 +119,46 @@ writeGmacsctlfile <- function(Dir = NULL,
   cat("##_Allometry\n")
   cat("# -------------------------------------- #\n")
   cat("#_Length-weight type/method\n")
-  cat("#_1 = Length-weight relationship (vector of sex specific parameters: w_l = a[s]*l^b[s])\n")
-  cat("#_2 = Input vector of mean weight-at-size by sex (dim=[1:nclass])\n")
-  cat("#_3 = Input matrix of mean weight-at-size by sex and year (dim=[nsex*Nyear; nclass])\n")
+  cat("#_1 = Length-weight relationship parameters (w_l = a[s]*l^b[s]): vector of sex specific parameters for each maturity type:\n")
+  cat("#_(i.e., immature males, mature males, immature females, mature females).\n")
+  cat("#_2 = Input vector of mean weight-at-size by sex (dim=[1:nclass]) and maturity type (i.e., matrix of dim=[nsex*nmature,nclass]) \n")
+  cat("#_3 = Input matrix of mean weight-at-size by sex and year for each maturity type (dim=[nsex*nmature*Nyear; nclass])\n")
   cat(obj$lw_type, "\n")
 
   if(obj$lw_type == 1){
-    cat("#_lw_alfa\n")
-    cat(obj$lw_alfa, "\n")
-    cat("#_lw_beta\n")
-    cat(obj$lw_beta, "\n")
-
+    nam_sex <- base::switch(.ac(nsex),
+                            "1" = "Male(s)",
+                            "2" = c("Males","Females"))
+    cat("#_lw_alfa_| lw_beta \n")
+    inc <- 0
+    for(s in 1:nsex){
+      cat("# ", nam_sex[s], "\n")
+      tmp <- as.data.frame(cbind(obj$lw_alfa[s:(s+nmature-1)+inc],obj$lw_beta[s:(s+nmature-1)+inc]))
+      utils::write.table(tmp, col.names = FALSE, row.names = FALSE)
+      inc <- inc + nmature-1
+    }
   } else if(obj$lw_type == 2){
 
     if(nsex == 0 || nsex == 1){
       base::switch(.ac(nsex),
-                   "0" = cat("#_Vector of combined (males & females) mean weight-at-size\n"),
-                   "1" = cat("#_vector of male mean weight-at-size\n"))
-      # utils::write.table(obj$mean_wt_in, col.names = FALSE, row.names = FALSE)
-      cat(obj$mean_wt_in, "\n")
-
+                   "0" = cat("#_Vector of combined (males & females) mean weight-at-size for each maturity type.\n"),
+                   "1" = cat("#_vector of male mean weight-at-size for each maturity type.\n"))
+      if(nmature == 1){
+        cat(obj$mean_wt_in, "\n")
+      } else {
+        utils::write.table(obj$mean_wt_in, col.names = FALSE, row.names = FALSE)
+      }
     } else {
-      cat("#_vector of male mean weight-at-size\n")
-      utils::write.table(obj$mean_wt_in[1,], col.names = FALSE, row.names = FALSE)
-      cat("#_vector of female mean weight-at-size\n")
-      utils::write.table(obj$mean_wt_in[2,], col.names = FALSE, row.names = FALSE)
+      nam_sex <- base::switch(.ac(nsex),
+                              "1" = "male(s)",
+                              "2" = c("males","females"))
+      inc <- 0
+      for(s in 1:nsex){
+        cat(paste0("#_vectors of ",nam_sex[s]," mean weight-at-size for immature and mature individuals\n"))
+        tmp <- obj$mean_wt_in[s:(s+nmature-1)+inc,]
+        utils::write.table(tmp, col.names = FALSE, row.names = FALSE)
+        inc <- inc + nmature-1
+      }
     }
 
   } else if (obj$lw_type == 3){
@@ -150,7 +169,7 @@ writeGmacsctlfile <- function(Dir = NULL,
                    "1" = cat("#_Matrix of male mean weight-at-size\n"))
       utils::write.table(obj$mean_wt_in, col.names = FALSE, row.names = FALSE)
     } else {
-      tmp <- End_Y + 1 - Start_Y + 1
+      tmp <- (End_Y + 1 - Start_Y + 1)*nmature
       cat("#_Matrix of male mean weight-at-size\n")
       utils::write.table(obj$mean_wt_in[1:tmp,], col.names = FALSE, row.names = FALSE)
       cat("\n")
@@ -176,6 +195,8 @@ writeGmacsctlfile <- function(Dir = NULL,
   } else {
     utils::write.table(obj$legal_maturity, col.names = FALSE, row.names = FALSE)
   }
+  cat("#_Use functional maturity for terminally molting animals? (0 = No; 1 = Yes)\n")
+  cat(.an(obj$Func_maturity_TermMolting), "\n")
   cat("# -------------------------------------- #\n")
   cat("\n")
 
@@ -780,20 +801,20 @@ writeGmacsctlfile <- function(Dir = NULL,
   cat(obj$init_sex_ratio, "\n")
   cat("# Phase for initial recruitment estimation\n")
   cat(obj$rec_ini_phz, "\n")
-  cat("# Verbose flag (0 = off; 1 = on; 2 = objective function; 3 = diagnostics)\n")
-  cat(obj$verbose, "\n")
+  # cat("# Verbose flag (0 = off; 1 = on; 2 = objective function; 3 = diagnostics)\n")
+  # cat(obj$verbose, "\n")
   cat("# Initial conditions (1 = unfished, 2 = steady-state, 3 = free params, 4 = free params revised)\n")
   cat(obj$bInitializeUnfished, "\n")
   cat("# Proportion of mature male biomass for SPR reference points\n")
   cat(obj$spr_lambda, "\n")
   cat("# Stock-Recruit-Relationship (0 = none, 1 = Beverton-Holt) \n")
   cat(obj$nSRR_flag, "\n")
-  cat("# Maximum phase (stop the estimation after this phase)\n")
-  cat(obj$TurnOffPhase, "\n")
-  cat("# Maximum number of function calls\n")
-  cat(obj$StopAfterFnCall, "\n")
-  cat("# Calculate reference points (0 = No, 1 = Yes)\n")
-  cat(obj$CalcRefPoints, "\n")
+  # cat("# Maximum phase (stop the estimation after this phase)\n")
+  # cat(obj$TurnOffPhase, "\n")
+  # cat("# Maximum number of function calls\n")
+  # cat(obj$StopAfterFnCall, "\n")
+  # cat("# Calculate reference points (0 = No, 1 = Yes)\n")
+  # cat(obj$CalcRefPoints, "\n")
   cat("# Use years specified to computed average sex ratio in the calculation of average recruitment for reference points\n")
   cat("# -> 0 = No, i.e. Rec based on End year; 1 = Yes \n")
   cat(obj$BRP_rec_sexR, "\n")

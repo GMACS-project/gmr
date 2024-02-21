@@ -41,7 +41,8 @@
       text = paste(
         "========================================\nYou have specified a folder name other than 'Dvpt_Version' to work on GMACS and/or develop a new version.\n========================================\n
 \nPlease confirm that the following directory is the one you want to work in (0:No, 1: Yes):\n",
-        print(paste0(getwd(), "/", .nameFold, "/")),
+        # print(paste0(getwd(), "/", .nameFold, "/")),
+        file.path(getwd(), .nameFold, fsep = fsep),
         sep = ""
       )
       check <-
@@ -148,19 +149,75 @@
 
   # .tpl to .cpp
   cat("\nNow converting gmacs.tpl to gmacs.cpp ...\n")
-  PBSadmb::convAD(
-    prefix = "gmacs",
-    pathfile = ADMBpaths,
-    debug = TRUE,
-    safe = TRUE,
-    logfile = logFiles,
-    verbose = verbose
-  )
+  # PBSadmb::convAD(
+  #   prefix = "gmacs",
+  #   pathfile = ADMBpaths,
+  #   debug = TRUE,
+  #   safe = TRUE,
+  #   logfile = logFiles,
+  #   verbose = TRUE
+  # )
+  testConvCpp <- function() {
+    test <- tryCatch(
+      PBSadmb::convAD(
+        prefix = "gmacs",
+        pathfile = ADMBpaths,
+        debug = TRUE,
+        safe = TRUE,
+        logfile = logFiles,
+        verbose = verbose
+      ),
+      error = function(e)
+        e,
+      warning = function(w)
+        w
+    )
+    if (!is.na(class(test)[2]) & class(test)[2] == "warning") {
+      cat(
+        "\n --> Something was wrong with the coversion of gmacs.tpl to gmacs.cpp",
+        ".\n Please check the file named 'Error_convertion.txt' in the root folder containing the .tpl file.\n\n",
+        "# ######################################################## #\n",
+        "# ######################################################## #\n\n"
+      )
+      out <- PBSadmb::convAD(
+        prefix = "gmacs",
+        pathfile = ADMBpaths,
+        debug = TRUE,
+        safe = TRUE,
+        logfile = logFiles,
+        verbose = TRUE
+      )
+      FileName <- file.path(dirname(DirTmp), 'Error_convertion.txt', fsep = fsep)
+      fs::file_create(FileName)
+      base::sink(FileName)
+      cat(
+
+        "\n\n # ######################################################## #\n",
+        "#             ERROR CONVERTION MESSAGE                     #\n",
+        "# ######################################################## #\n",
+        "\n\n\n",
+        paste(out, collapse = "\n"),
+        "\n\n # ######################################################## #\n",
+        "# ######################################################## #\n",
+        "\n\n\n"
+      )
+      base::sink()
+      setwd(oldWD)
+      base::unlink(x = DirTmp,
+                   recursive = TRUE,
+                   force = TRUE)
+      stop()
+    }
+  }
+  testConvCpp()
   cat("OK after conversion from .tpl to .cpp ...\n")
   cat("\n")
 
   # Compile files
   # Function to test compilation
+
+  # fileToComp <- compFiles[1]
+
   testComp <- function(fileToComp) {
     test <- tryCatch(
       PBSadmb::compAD(
@@ -180,7 +237,7 @@
       cat(
         "\n --> Something was wrong with the compilation of ",
         fileToComp,
-        ".\n Please check the following error message:\n\n",
+        ".\n Please check the file named 'Error_compilation.txt' in the root folder containing the .tpl file.\n\n",
         "# ######################################################## #\n",
         "# ######################################################## #\n\n"
       )
@@ -192,17 +249,25 @@
         logfile = logFiles,
         verbose = TRUE
       )
+
+      FileName <- file.path(dirname(DirTmp), 'Error_compilation.txt', fsep = fsep)
+      fs::file_create(FileName)
+      base::sink(FileName)
       cat(
-        out,
+        "\n\n # ######################################################## #\n",
+        "#             ERROR COMPILATION MESSAGE                    #\n",
+        "# ######################################################## #\n",
+        "\n\n\n",
+        paste(out, collapse = "\n"),
         "\n\n # ######################################################## #\n",
         "# ######################################################## #\n",
         "\n\n\n"
       )
+      base::sink()
       setwd(oldWD)
-      base::unlink(x = DirTmp,
-                   recursive = TRUE,
-                   force = TRUE)
-
+      # base::unlink(x = DirTmp,
+      #              recursive = TRUE,
+      #              force = TRUE)
       stop()
     }
   }
@@ -256,3 +321,4 @@
   cat("--Re-setting working directory to '", oldWD, "' \n", sep = "")
   #--setwd(oldWD) <-does this on exit
 }
+
