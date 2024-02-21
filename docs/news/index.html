@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">gmr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.3.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.3.6</span>
       </span>
     </div>
 
@@ -64,6 +64,9 @@
   </a>
   <ul class="dropdown-menu" role="menu"><li>
       <a href="../news/index.html">Changelog</a>
+    </li>
+    <li>
+      <a href="https://github.com/GMACS-project/gmr/releases/tag/V1.3.6" class="external-link">gmr V 1.3.6</a>
     </li>
     <li>
       <a href="https://github.com/GMACS-project/gmr/releases/tag/V1.3.5" class="external-link">gmr V 1.3.5</a>
@@ -127,19 +130,59 @@
     </div>
 
     <div class="section level2">
-<h2 class="page-header" data-toc-text="1.3.5.9001" id="gmr-1359001">gmr 1.3.5.9001<a class="anchor" aria-label="anchor" href="#gmr-1359001"></a></h2>
+<h2 class="page-header" data-toc-text="1.3.6.9001" id="gmr-1369001">gmr 1.3.6.9001<a class="anchor" aria-label="anchor" href="#gmr-1369001"></a></h2>
 <hr><p>Here are some of the items for the next release:</p>
 <ul class="task-list"><li>
-<input type="checkbox" disabled>Check all plotting functions</li>
+<input type="checkbox">Update the functions to read GMACS output files (related to the GMACS version 2.01.M.09)</li>
 <li>
-<input type="checkbox" disabled>Improve code</li>
+<input type="checkbox">Check all plotting functions</li>
 <li>
-<input type="checkbox" disabled>Create vignettes to build and run gmacs, make comparison</li>
+<input type="checkbox">Create vignettes to build and run gmacs, make comparison</li>
 <li>
-<input type="checkbox" disabled>Create SAFE document templates</li>
+<input type="checkbox">Create SAFE document templates</li>
 <li>
-<input type="checkbox" disabled>Add data and implement examples in the package</li>
+<input type="checkbox">Add data and implement examples in the package</li>
 </ul></div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="1.3.6" id="gmr-136">gmr 1.3.6<a class="anchor" aria-label="anchor" href="#gmr-136"></a></h2>
+<hr><p>(GitHub issue/PR numbers in parentheses)</p>
+<p>This new version includes implementations linked to GMACS version 2.01.M.09, which involved changes to the read/write functions of GMACS input files. Changes have also been made to the GMACS compilation functions to create a temporary folder when compiling GMACS, making it easier to resolve errors in the code (<a href="https://github.com/GMACS-project/gmr/issues/26" class="external-link">#26</a>).</p>
+<div class="section level3">
+<h3 id="new-functions-1-3-6">New functions<a class="anchor" aria-label="anchor" href="#new-functions-1-3-6"></a></h3>
+<ol style="list-style-type: decimal"><li>Functions to copy all GMACS input files</li>
+</ol><ul><li>
+<code>Copy_GMACS_Input_files()</code>: copy one or multiple GMACS input file(s).</li>
+</ul></div>
+<div class="section level3">
+<h3 id="updated-functions-1-3-6">Updated functions<a class="anchor" aria-label="anchor" href="#updated-functions-1-3-6"></a></h3>
+<ol style="list-style-type: decimal"><li>Functions to read GMACS input/output files</li>
+</ol><ul><li>
+<code>read_GMACS_dat()</code>: incorporating 1) stock specification (weight unit and stock name),</li>
+</ul><ol style="list-style-type: decimal"><li>other controls settings (maximum phase, number of function calls, calculation of reference points, use of pin file, and verbose).</li>
+</ol><ul><li>
+<code><a href="../reference/readGMACSctl.html">readGMACSctl()</a></code>: 1) incorporating the maturity specific length-weight relationship,</li>
+</ul><ol style="list-style-type: decimal"><li>the functional maturity terminally molting, 3) removing the other controls settings (maximum phase, number of function calls, calculation of reference points, use of pin file, and verbose).</li>
+</ol><ul><li>
+<code><a href="../reference/readGMACSdat.html">readGMACSdat()</a></code>: incorporating the option for the new format of input catch, relative abundance indices and size composition.</li>
+<li>
+<code><a href="../reference/readGMACSprj.html">readGMACSprj()</a></code>: incorporating 1) new options for the projection specifications controls (number of state strategies and F range), and 2) new options for the Harvest Control rules settings (Apply strategies [OFL, ABC], Apply the state strategy, Number of state parameters).</li>
+<li>
+<code>writeGmacs_dat()</code>: account for stock specification and other controls settings.</li>
+<li>
+<code><a href="../reference/writeGmacsctlfile.html">writeGmacsctlfile()</a></code>: account for the maturity specific length-weight relationship,</li>
+</ul><ol style="list-style-type: decimal"><li>the functional maturity terminally molting, and 3) removing the other controls settings.</li>
+</ol><ul><li>
+<code><a href="../reference/writeGmacsdatfile.html">writeGmacsdatfile()</a></code>: account for the new format of input catch, relative abundance indices and size composition.</li>
+<li>
+<code><a href="../reference/writeGmacsprjfile.html">writeGmacsprjfile()</a></code>: account for the new options for 1) the projection specifications controls, and 2) the Harvest Control rules settings.</li>
+</ul><ol style="list-style-type: decimal"><li>Functions to update and release a new version of GMACS</li>
+</ol><p>The updates improve the workflow for updating GMACS.</p>
+<ul><li>
+<code>GetGmacsExe()</code>: A temporary folder is now created when compiling GMACS. If errors when converting gmacs.tpl to gmacs.cpp or compiling gmacs, either a “Error_convertion.txt” or a “Error_compilation.txt” file is created and indicates the source of the errors.</li>
+<li>
+<code>clean_root</code>: delete (if applicable) the “Error_convertion.txt” and/or “Error_compilation.txt” files when updating GMACS.</li>
+</ul></div>
+</div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="1.3.5" id="gmr-135">gmr 1.3.5<a class="anchor" aria-label="anchor" href="#gmr-135"></a></h2>
 <hr><p>(GitHub issue/PR numbers in parentheses)</p>

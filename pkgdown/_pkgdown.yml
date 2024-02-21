@@ -61,6 +61,8 @@ navbar:
       menu:
         - text: Changelog
           href: news/index.html
+        - text: "gmr V 1.3.6"
+          href: https://github.com/GMACS-project/gmr/releases/tag/V1.3.6
         - text: "gmr V 1.3.5"
           href: https://github.com/GMACS-project/gmr/releases/tag/V1.3.5
         - text: "gmr V 1.3.4"
@@ -140,6 +142,7 @@ reference:
   - createGmacsExe
   - .buildGMACS
   - write_TPL
+  - copy_GMACSinputs
 - title: Updating a version of GMACS for a new release
   desc: >
     Set of functions for implementing and releasing a new version (including making comparison)

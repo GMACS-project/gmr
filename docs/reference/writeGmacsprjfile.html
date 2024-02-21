@@ -18,7 +18,7 @@ R a pre-existent Spc.prj file."><!-- mathjax --><script src="https://cdnjs.cloud
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">gmr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.3.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.3.6</span>
       </span>
     </div>
 
@@ -65,6 +65,9 @@ R a pre-existent Spc.prj file."><!-- mathjax --><script src="https://cdnjs.cloud
   </a>
   <ul class="dropdown-menu" role="menu"><li>
       <a href="../news/index.html">Changelog</a>
+    </li>
+    <li>
+      <a href="https://github.com/GMACS-project/gmr/releases/tag/V1.3.6" class="external-link">gmr V 1.3.6</a>
     </li>
     <li>
       <a href="https://github.com/GMACS-project/gmr/releases/tag/V1.3.5" class="external-link">gmr V 1.3.5</a>
@@ -140,7 +143,8 @@ R a pre-existent Spc.prj file.</p>
 <span>  PrjFile <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  stock <span class="op">=</span> <span class="st">""</span>,</span>
 <span>  model_name <span class="op">=</span> <span class="st">""</span>,</span>
-<span>  Ass_Year <span class="op">=</span> <span class="st">""</span></span>
+<span>  Ass_Year <span class="op">=</span> <span class="st">""</span>,</span>
+<span>  DirTPL <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -168,7 +172,12 @@ created using the <code><a href="readGMACSprj.html">readGMACSprj()</a></code> fu
 
 
 <dt>Ass_Year</dt>
-<dd><p>(character string)- Year of this assessment</p></dd>
+<dd><p>(character string)- Year of this assessment.</p></dd>
+
+
+<dt>DirTPL</dt>
+<dd><p>(character string)- the directory where the gmacsbase.TPL file
+you are using for the stock assessment is hold.</p></dd>
 
 </dl></div>
     <div id="value">

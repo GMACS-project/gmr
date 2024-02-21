@@ -21,7 +21,7 @@ Gmacs (name of the file RunSim.bat)."><!-- mathjax --><script src="https://cdnjs
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">gmr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.3.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.3.6</span>
       </span>
     </div>
 
@@ -68,6 +68,9 @@ Gmacs (name of the file RunSim.bat)."><!-- mathjax --><script src="https://cdnjs
   </a>
   <ul class="dropdown-menu" role="menu"><li>
       <a href="../news/index.html">Changelog</a>
+    </li>
+    <li>
+      <a href="https://github.com/GMACS-project/gmr/releases/tag/V1.3.6" class="external-link">gmr V 1.3.6</a>
     </li>
     <li>
       <a href="https://github.com/GMACS-project/gmr/releases/tag/V1.3.5" class="external-link">gmr V 1.3.5</a>
@@ -145,14 +148,15 @@ Gmacs (name of the file <code>RunSim.bat</code>).</p>
 <span>  UsePar <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  NoEst <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  Isim <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  Nsim <span class="op">=</span> <span class="cn">NULL</span></span>
+<span>  Nsim <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  Dir_TPL <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>simDat</dt>
-<dd><p>(list)- the output of the <code><a href="SimData.html">SimData()</a></code> function for each simulation</p></dd>
+<dd><p>(list)- the output of the <code><a href="SimData.html">SimData()</a></code> function for each simulation.</p></dd>
 
 
 <dt>UsePar</dt>
@@ -164,11 +168,16 @@ Gmacs (name of the file <code>RunSim.bat</code>).</p>
 
 
 <dt>Isim</dt>
-<dd><p>(integer)- the current simulation</p></dd>
+<dd><p>(integer)- the current simulation.</p></dd>
 
 
 <dt>Nsim</dt>
-<dd><p>(integer)- the number of simulation to run</p></dd>
+<dd><p>(integer)- the number of simulation to run.</p></dd>
+
+
+<dt>Dir_TPL</dt>
+<dd><p>(character string)- the directory where the gmacsbase.TPL file
+you are using for the stock assessment is hold.</p></dd>
 
 </dl></div>
     <div id="value">
