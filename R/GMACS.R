@@ -49,6 +49,8 @@ GMACS <- function(Spc = NULL,
                   make.comp = NULL,
                   verbose = NULL,
                   cleanOut = NULL) {
+  fsep <- .Platform$file.sep
+
   # 1. Set specific directories----
   if (is.null(Spc)) {
     cat("\nPlease provide the name of the stock considered in the analysis.\n")
@@ -57,9 +59,10 @@ GMACS <- function(Spc = NULL,
   if (length(Spc) == 1 && Spc == "all") {
     Spc <-
       grep(
-        list.files(paste(
-          dirname(getwd()), "/Assessment_data/", sep = ""
-        )),
+        list.files(file.path(
+          dirname(getwd()), "Assessment_data", fsep = fsep
+          )
+        ),
         pattern = '.bat',
         invert = TRUE,
         value = TRUE

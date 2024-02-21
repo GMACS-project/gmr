@@ -45,7 +45,8 @@ clean_files<-function(path=".",
 #'
 clean_root <- function(path=".",
                      verbose=TRUE){
-  names=c("*.obj","*.cpp","*.htp","gmacs.exe","gmacs.tpl");
+  names=c("*.obj","*.cpp","*.htp","gmacs.exe","gmacs.tpl", "Error_compilation.txt",
+          "Error_convertion.txt");
   clean_files(path=path,names=names,verbose=verbose);
 }
 

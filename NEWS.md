@@ -1,44 +1,109 @@
--   <a href="#gmr-1.3.5.9001" id="toc-gmr-1.3.5.9001">gmr 1.3.5.9001</a>
--   <a href="#gmr-1.3.5" id="toc-gmr-1.3.5">gmr 1.3.5</a>
-    -   <a href="#updated-functions" id="toc-updated-functions">Updated
-        functions</a>
--   <a href="#gmr-1.3.4" id="toc-gmr-1.3.4">gmr 1.3.4</a>
-    -   <a href="#new-functions" id="toc-new-functions">New functions</a>
-    -   <a href="#updated-functions-1" id="toc-updated-functions-1">Updated
-        functions</a>
--   <a href="#gmr-1.3.3" id="toc-gmr-1.3.3">gmr 1.3.3</a>
-    -   <a href="#updated-functions-2" id="toc-updated-functions-2">Updated
-        functions</a>
--   <a href="#gmr-1.3.2" id="toc-gmr-1.3.2">gmr 1.3.2</a>
-    -   <a href="#updated-functions-3" id="toc-updated-functions-3">Updated
-        functions</a>
--   <a href="#gmr-1.3.1" id="toc-gmr-1.3.1">gmr 1.3.1</a>
-    -   <a href="#new-functions-1" id="toc-new-functions-1">New functions</a>
-    -   <a href="#updated-functions-4" id="toc-updated-functions-4">Updated
-        functions</a>
--   <a href="#gmr-1.3.0" id="toc-gmr-1.3.0">gmr 1.3.0</a>
-    -   <a href="#new-functions-2" id="toc-new-functions-2">New functions</a>
-    -   <a href="#updated-functions-5" id="toc-updated-functions-5">Updated
-        functions</a>
--   <a href="#gmr-1.2.0" id="toc-gmr-1.2.0">gmr 1.2.0</a>
-    -   <a href="#new-functions-3" id="toc-new-functions-3">New functions</a>
-    -   <a href="#updated-functions-6" id="toc-updated-functions-6">Updated
-        functions</a>
--   <a href="#gmr-0.1.1" id="toc-gmr-0.1.1">gmr 0.1.1</a>
-    -   <a href="#new-functions-4" id="toc-new-functions-4">New functions</a>
--   <a href="#gmr-0.1.0" id="toc-gmr-0.1.0">gmr 0.1.0</a>
+-   [gmr 1.3.6.9001](#gmr-1.3.6.9001)
+-   [gmr 1.3.6](#gmr-1.3.6)
+    -   [New functions](#new-functions)
+    -   [Updated functions](#updated-functions)
+-   [gmr 1.3.5](#gmr-1.3.5)
+    -   [Updated functions](#updated-functions-1)
+-   [gmr 1.3.4](#gmr-1.3.4)
+    -   [New functions](#new-functions-1)
+    -   [Updated functions](#updated-functions-2)
+-   [gmr 1.3.3](#gmr-1.3.3)
+    -   [Updated functions](#updated-functions-3)
+-   [gmr 1.3.2](#gmr-1.3.2)
+    -   [Updated functions](#updated-functions-4)
+-   [gmr 1.3.1](#gmr-1.3.1)
+    -   [New functions](#new-functions-2)
+    -   [Updated functions](#updated-functions-5)
+-   [gmr 1.3.0](#gmr-1.3.0)
+    -   [New functions](#new-functions-3)
+    -   [Updated functions](#updated-functions-6)
+-   [gmr 1.2.0](#gmr-1.2.0)
+    -   [New functions](#new-functions-4)
+    -   [Updated functions](#updated-functions-7)
+-   [gmr 0.1.1](#gmr-0.1.1)
+    -   [New functions](#new-functions-5)
+-   [gmr 0.1.0](#gmr-0.1.0)
 
-# gmr 1.3.5.9001
+# gmr 1.3.6.9001
 
 ------------------------------------------------------------------------
 
 Here are some of the items for the next release:
 
+-   [ ] Update the functions to read GMACS output files (related to the
+    GMACS version 2.01.M.09)
 -   [ ] Check all plotting functions
--   [ ] Improve code
 -   [ ] Create vignettes to build and run gmacs, make comparison
 -   [ ] Create SAFE document templates
 -   [ ] Add data and implement examples in the package
+
+# gmr 1.3.6
+
+------------------------------------------------------------------------
+
+(GitHub issue/PR numbers in parentheses)
+
+This new version includes implementations linked to GMACS version
+2.01.M.09, which involved changes to the read/write functions of GMACS
+input files. Changes have also been made to the GMACS compilation
+functions to create a temporary folder when compiling GMACS, making it
+easier to resolve errors in the code (#26).
+
+## New functions
+
+1.  Functions to copy all GMACS input files
+
+-   `Copy_GMACS_Input_files()`: copy one or multiple GMACS input
+    file(s).
+
+## Updated functions
+
+1.  Functions to read GMACS input/output files
+
+-   `read_GMACS_dat()`: incorporating 1) stock specification (weight
+    unit and stock name),
+
+1.  other controls settings (maximum phase, number of function calls,
+    calculation of reference points, use of pin file, and verbose).
+
+-   `readGMACSctl()`: 1) incorporating the maturity specific
+    length-weight relationship,
+
+1.  the functional maturity terminally molting, 3) removing the other
+    controls settings (maximum phase, number of function calls,
+    calculation of reference points, use of pin file, and verbose).
+
+-   `readGMACSdat()`: incorporating the option for the new format of
+    input catch, relative abundance indices and size composition.
+-   `readGMACSprj()`: incorporating 1) new options for the projection
+    specifications controls (number of state strategies and F range),
+    and 2) new options for the Harvest Control rules settings (Apply
+    strategies \[OFL, ABC\], Apply the state strategy, Number of state
+    parameters).
+-   `writeGmacs_dat()`: account for stock specification and other
+    controls settings.
+-   `writeGmacsctlfile()`: account for the maturity specific
+    length-weight relationship,
+
+1.  the functional maturity terminally molting, and 3) removing the
+    other controls settings.
+
+-   `writeGmacsdatfile()`: account for the new format of input catch,
+    relative abundance indices and size composition.
+-   `writeGmacsprjfile()`: account for the new options for 1) the
+    projection specifications controls, and 2) the Harvest Control rules
+    settings.
+
+1.  Functions to update and release a new version of GMACS
+
+The updates improve the workflow for updating GMACS.
+
+-   `GetGmacsExe()`: A temporary folder is now created when compiling
+    GMACS. If errors when converting gmacs.tpl to gmacs.cpp or compiling
+    gmacs, either a “Error_convertion.txt” or a “Error_compilation.txt”
+    file is created and indicates the source of the errors.
+-   `clean_root`: delete (if applicable) the “Error_convertion.txt”
+    and/or “Error_compilation.txt” files when updating GMACS.
 
 # gmr 1.3.5
 

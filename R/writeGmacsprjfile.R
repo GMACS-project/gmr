@@ -54,8 +54,6 @@ writeGmacsprjfile <- function(Dir = NULL,
   cat("# ============================================================ #\n")
   cat("\n")
 
-
-
   cat("# -------------------------------------- #\n")
   cat("## References controls (Spawning per recruit specifications)\n")
   cat("# -------------------------------------- #\n")
@@ -88,8 +86,13 @@ writeGmacsprjfile <- function(Dir = NULL,
   cat("## Projection specifications\n")
   cat("# -------------------------------------- #\n")
   cat(obj$pyr, "# Last year of the projection period\n")
+  cat(obj$prj_type, "# Projection type (1 = Constant F; 2 = proportion of current F)\n")
   cat(obj$prj_Nstrat, "# Number of strategies considered in the projections\n")
-  cat(c(obj$prj_lowF,obj$prj_hiF),"# Range of F values\n")
+  if(obj$prj_Nstrat == 0){
+    cat("\n")
+  } else {
+    cat(obj$prj_Frange,"# Range of F values for the strategies (empty if 0 strategies is considered (see previous line))\n")
+  }
   cat(obj$prj_bycatch_on, "# Allow for bycatch fleets to have non-zero mortality\n")
   cat(obj$prj_replicates, "# How many times each MCMC draw is run\n")
   cat(obj$Fixed_prj_Bmsy, "# Should Bmsy be fixed?\n")
@@ -120,7 +123,9 @@ writeGmacsprjfile <- function(Dir = NULL,
   cat("# -------------------------------------- #\n")
   cat("## Specifying State strategies\n")
   cat("# -------------------------------------- #\n")
-  cat(obj$Apply_HCR_prj, "# Apply strategies [OFL, ABC] (1=yes;0=no)\n")
+  cat(obj$Apply_HCR_prj, "# Apply strategies [OFL, ABC] (1 = apply HCR; 0 = constant F)\n")
+  cat(obj$Apply_StateStrat_prj, "# Apply the state strategy (1 = yes;0 = no)\n")
+  cat(obj$Nb_state_param, "# Number of state parameters\n")
   cat(obj$MeanWStateMature, "# Mean weight to use - mature individuals\n")
   cat(obj$MeanWStateLegal, "# Mean weight to use (legal)\n")
   cat("# -------------------------------------- #\n")

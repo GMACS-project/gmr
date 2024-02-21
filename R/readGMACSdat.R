@@ -82,6 +82,168 @@ readGMACSdat <- function(FileName = NULL,
     return(df)
   }
 
+  # @title get_CatchSurvSizeFreq_newForm
+  #
+  # @description Extract specification for catch, relative abundance indices
+  # and size frequency data as well as the associated data frames at a specific
+  # location when the new format is used.
+  #
+  # @param data_type character specifying the type of data ('catch'/'surveys'/'size_comp')
+  # @param dat the object in which the value is searched
+  # @param Loc the position of the value
+  #
+  # @return a list with the specification for each data frame and the data frame
+  # from Loc to (Loc+nrow-1). It also increments Loc (in the parent environment)
+  # to the end of the data frame + 1.
+  #
+  get_CatchSurvSizeFreq_newForm <- function(data_type = NULL,
+                                            dat = NULL,
+                                            Loc = NULL) {
+    out <- list()
+
+    if (data_type == "catch") {
+      out[["unit"]] <-
+        get.num(dat, Loc, num = FALSE) # unit ('biomass'/'number')
+      out[["type"]] <-
+        get.num(dat, Loc, num = FALSE) # type ('total'/'retained'/'discard')
+      out[["fleet"]] <-
+        get.num(dat, Loc, num = FALSE) # fleet name
+      out[["sex"]] <-
+        get.num(dat, Loc, num = FALSE) # sex ('male'/'female'/'undetermined')
+      out[["maturity"]] <-
+        get.num(dat, Loc, num = FALSE) # maturity ('immature'/'mature'/'undetermined')
+      out[["shell_cond"]] <-
+        get.num(dat, Loc, num = FALSE) # shell condition ('new shell'/'old shell'/'undetermined')
+
+      out[["Nrows"]] <-
+        get.num(dat, Loc)# Number of rows in that data.frame
+
+      dataColnames <- c("year",
+                        "seas",
+                        "obs",
+                        "CV",
+                        "mult",
+                        "effort",
+                        "discard_mortality")
+
+    } else if (data_type == "surveys") {
+      out[["type"]] <-
+        get.num(dat, Loc, num = FALSE) # type ('sel'/'sel+ret')
+      out[["unit"]] <-
+        get.num(dat, Loc, num = FALSE) # unit ('abundance'/'biomass')
+      out[["fleet"]] <-
+        get.num(dat, Loc, num = FALSE) # fleet name
+      out[["sex"]] <-
+        get.num(dat, Loc, num = FALSE) # sex ('male'/'female'/'undetermined')
+      out[["maturity"]] <-
+        get.num(dat, Loc, num = FALSE) # maturity ('immature'/'mature'/'undetermined')
+      out[["shell_cond"]] <-
+        get.num(dat, Loc, num = FALSE) # shell condition ('new shell'/'old shell'/'undetermined')
+
+      out[["Nrows"]] <-
+        get.num(dat, Loc)# Number of rows in that data.frame
+
+      dataColnames <- c("Index",
+                        "year",
+                        "seas",
+                        "Abundance",
+                        "CV",
+                        "mult",
+                        "Timing")
+
+    } else if (data_type == "size_comp") {
+      out[["type"]] <-
+        get.num(dat, Loc, num = FALSE) # type ('total'/'retained'/'discard')
+      out[["fleet"]] <-
+        get.num(dat, Loc, num = FALSE) # fleet name
+      out[["sex"]] <-
+        get.num(dat, Loc, num = FALSE) # sex (male(s), female(s), undetermined)
+      out[["maturity"]] <-
+        get.num(dat, Loc, num = FALSE) # maturity (immature, mature, undetermined)
+      out[["shell_cond"]] <-
+        get.num(dat, Loc, num = FALSE) # shell condition (new shell, old shell, undetermined)
+
+      out[["Nrows"]] <-
+        get.num(dat, Loc) # Number of rows in that length frequency matrix
+      out[["Nbins_SiseFreq"]] <-
+        get.num(dat, Loc) # Number of bins in that length frequency matrix
+
+      dataColnames <- c("year",
+                        "seas",
+                        "Nsamp",
+                        rep("", out[["Nbins_SiseFreq"]]))
+    }
+
+    # Loc <- 157
+
+
+    out[["data"]] <-
+      get.df(dat, Loc, nrow = out$Nrows)
+    assign("Loc", Loc, parent.frame())
+
+    # Set data colnames
+    colnames(out[["data"]]) <- dataColnames
+
+    # Set the name of the data in the list
+    if(data_type=="catch"){
+      namdata <- paste(base::switch(
+        .ac(out$sex),
+        "undetermined" = "Both",
+        "male" = "Males",
+        "female" = "Females"
+      ),
+      base::switch(
+        .ac(out$type),
+        "TOTAL" = "Total",
+        "RETAINED" = "Retained",
+        "DISCARD" = "Discard"
+      ),
+      out$fleet,
+      # paste0("Seas", unique(out$data[, "seas"])),
+      sep = "_")
+    } else if (data_type=="surveys"){
+      namdata <- paste(base::switch(
+        .ac(out$sex),
+        "undetermined" = "Both",
+        "male" = "Males",
+        "female" = "Females"
+      ),
+      base::switch(.ac(out$type),
+                   "sel" = "Sel",
+                   "sel+ret" = "SelRet"),
+      out$fleet,
+      # paste0("Seas", unique(out$data[, "seas"])),
+      sep = "_")
+    } else if (data_type=="size_comp"){
+      namdata <- paste(
+        base::switch(
+          .ac(out$sex),
+          "undetermined" = "Both",
+          "male" = "Males",
+          "female" = "Females"
+        ),
+        base::switch(
+          .ac(out$type),
+          "TOTAL" = "Total",
+          "RETAINED" = "Retained",
+          "DISCARD" = "Discard"
+        ),
+        base::switch(
+          .ac(out$maturity),
+          "undetermined" = "BothMat",
+          "mature" = "Mature",
+          "immature" = "Immat"
+        ),
+        out$fleet,
+        # paste0("Seas", unique(out$data[, "seas"])),
+        sep = "_"
+      )
+    }
+    out[["namdata"]] <- namdata
+
+    return(out)
+  }
+
   # @title namCatch
   #
   # @description Name the catch data frame.
@@ -104,6 +266,7 @@ readGMACSdat <- function(FileName = NULL,
     nam <- paste(sex, type, fleet, Seas, sep = "_")
     return(nam)
   }
+
   # @title namSizeFq
   #
   # @description Name the Size Frequency data frame.
@@ -238,7 +401,6 @@ readGMACSdat <- function(FileName = NULL,
                                                          rate per season"
     )
   )
-
   if (verbose)
     cat("-> Read natural mortality settings. \n")
   # -------------------------------------------------------------------------
@@ -272,51 +434,79 @@ readGMACSdat <- function(FileName = NULL,
 
   # Catch data
   # -------------------------------------------------------------------------
+  DatOut[["CatchDF_format"]] <-
+    get.num(dat, Loc) # Input format for catch data (0: old format; 1: new format)
+
   DatOut[["N_CatchDF"]] <-
     get.num(dat, Loc) # Number of catch data frame
 
-  if (DatOut$N_CatchDF == 0) {
-    DatOut[["Nrows_CatchDF"]] <- ""
-  } else if (DatOut$N_CatchDF == 1) {
-    DatOut[["Nrows_CatchDF"]] <- get.num(dat, Loc)
-  } else {
-    DatOut[["Nrows_CatchDF"]] <- get.vec(dat, Loc)
-  }
-
-  if (DatOut$N_CatchDF == 0) {
-    DatOut[["Catch"]] <- ""
-  } else {
-    DatOut[["Catch"]] <- list()
-    namcatch <- NULL
-
-    for (n in 1:DatOut$N_CatchDF) {
-      DatOut[["Catch"]][[n]] <-
-        get.df(dat, Loc, nrow = DatOut$Nrows_CatchDF[n])
-      colnames(DatOut[["Catch"]][[n]]) <- c(
-        "year",
-        "seas",
-        "fleet",
-        "sex",
-        "obs",
-        "CV",
-        "Type",
-        "units",
-        "mult",
-        "effort",
-        "discard_mortality"
-      )
-      tmp <- namCatch(DatOut[["Catch"]][[n]])
-      namcatch <- c(namcatch, tmp)
+  # Read the catch data according to the format selected
+  if (DatOut$CatchDF_format == 0) {
+    if (DatOut$N_CatchDF == 0) {
+      DatOut[["Nrows_CatchDF"]] <- ""
+    } else if (DatOut$N_CatchDF == 1) {
+      DatOut[["Nrows_CatchDF"]] <- get.num(dat, Loc)
+    } else {
+      DatOut[["Nrows_CatchDF"]] <- get.vec(dat, Loc)
     }
-    names(DatOut[["Catch"]]) <- namcatch
-  }
 
+    if (DatOut$N_CatchDF == 0) {
+      DatOut[["Catch"]] <- ""
+    } else {
+      DatOut[["Catch"]] <- list()
+      namcatch <- NULL
+
+      for (n in 1:DatOut$N_CatchDF) {
+        DatOut[["Catch"]][[n]] <-
+          get.df(dat, Loc, nrow = DatOut$Nrows_CatchDF[n])
+        colnames(DatOut[["Catch"]][[n]]) <- c(
+          "year",
+          "seas",
+          "fleet",
+          "sex",
+          "obs",
+          "CV",
+          "Type",
+          "units",
+          "mult",
+          "effort",
+          "discard_mortality"
+        )
+        tmp <- namCatch(DatOut[["Catch"]][[n]])
+        namcatch <- c(namcatch, tmp)
+      }
+      names(DatOut[["Catch"]]) <- namcatch
+    }
+  } else if (DatOut$CatchDF_format == 1) {
+    if (DatOut$N_CatchDF == 0) {
+      DatOut[["Catch"]] <- ""
+    } else {
+      DatOut[["Catch"]] <- list()
+      namcatch <- NULL
+
+      for (n in 1:DatOut$N_CatchDF) {
+        outCatch <- get_CatchSurvSizeFreq_newForm(data_type = "catch",
+                                                  dat = dat,
+                                                  Loc = Loc)
+        DatOut[["Catch"]][[n]] <-
+          outCatch[!names(outCatch) == "namdata"]
+        namcatch <-
+          c(namcatch, .ac(outCatch[names(outCatch) == "namdata"]))
+      }
+      names(DatOut[["Catch"]]) <- namcatch
+    }
+  } else if (DatOut$CatchDF_format > 1) {
+    cat("The input format for catch data must be 0 (old format) or 1 (new format) !")
+    stop()
+  }
   if (verbose)
     cat("-> Read catch data. \n")
   # -------------------------------------------------------------------------
 
   # Relative abundance index
   # -------------------------------------------------------------------------
+  DatOut[["SurveyDF_format"]] <-
+    get.num(dat, Loc) # Input format for relative abundance data (0: old format; 1: new format)
   DatOut[["N_SurveyDF"]] <-
     get.num(dat, Loc) # Number of relative abundance indices
 
@@ -328,45 +518,69 @@ readGMACSdat <- function(FileName = NULL,
     }
   }
 
-  if (DatOut$N_SurveyDF == 0) {
-    DatOut[["Sv_type"]] <- ""
-  } else if (DatOut$N_SurveyDF == 1) {
-    # Data type for each abundance index (1: total selectivity; 2:retention*selectivity)
-    DatOut[["Sv_type"]] <- get.num(dat, Loc)
-  } else {
-    DatOut[["Sv_type"]] <- get.vec(dat, Loc)
-  }
-  if (DatOut$N_SurveyDF == 0) {
-    DatOut[["Nrows_SvDF"]] <- ""
-  } else {
-    DatOut[["Nrows_SvDF"]] <-
-      get.num(dat, Loc) # Number of rows of index data
+  if (DatOut$SurveyDF_format == 0) {
+    if (DatOut$N_SurveyDF == 0) {
+      DatOut[["Sv_type"]] <- ""
+    } else if (DatOut$N_SurveyDF == 1) {
+      # Data type for each abundance index (1: total selectivity; 2:retention*selectivity)
+      DatOut[["Sv_type"]] <- get.num(dat, Loc)
+    } else {
+      DatOut[["Sv_type"]] <- get.vec(dat, Loc)
+    }
+    if (DatOut$N_SurveyDF == 0) {
+      DatOut[["Nrows_SvDF"]] <- ""
+    } else {
+      DatOut[["Nrows_SvDF"]] <-
+        get.num(dat, Loc) # Number of rows of index data
+    }
+
+    if (DatOut$N_SurveyDF == 0) {
+      DatOut[["Surveys"]] <-  ""
+    } else {
+      DatOut[["Surveys"]] <- list()
+      tmp <- get.df(dat, Loc, nrow = DatOut$Nrows_SvDF)
+      colnames(tmp) <- c(
+        "Index",
+        "year",
+        "seas",
+        "fleet",
+        "sex",
+        "Mature",
+        "Abundance",
+        "CV",
+        "units",
+        "Timing"
+      )
+      for (n in 1:DatOut$N_SurveyDF) {
+        # n <- 1
+        DatOut[["Surveys"]][[n]] <-
+          tmp[which(tmp[, 'fleet'] == unique(tmp[, 'fleet'])[n]),]
+        names(DatOut[["Surveys"]])[n] <- DatOut$Survey_names[n]
+      }
+    }
+  } else if (DatOut$SurveyDF_format == 1) {
+    if (DatOut$N_SurveyDF == 0) {
+      DatOut[["Surveys"]] <-  ""
+    } else {
+      DatOut[["Surveys"]] <- list()
+      namsurveys <- NULL
+
+      for (n in 1:DatOut$N_SurveyDF) {
+        outSurvey <- get_CatchSurvSizeFreq_newForm(data_type = "surveys",
+                                                   dat = dat,
+                                                   Loc = Loc)
+        DatOut[["Surveys"]][[n]] <-
+          outSurvey[!names(outSurvey) == "namdata"]
+        namsurveys <-
+          c(namsurveys, .ac(outSurvey[names(outSurvey) == "namdata"]))
+      }
+      names(DatOut[["Surveys"]]) <- namsurveys
+    }
+  } else if (DatOut$SurveyDF_format > 1) {
+    cat("The input format for relative abundance data must be 0 (old format) or 1 (new format) !")
+    stop()
   }
 
-  if (DatOut$N_SurveyDF == 0) {
-    DatOut[["Surveys"]] <-  ""
-  } else {
-    DatOut[["Surveys"]] <- list()
-    tmp <- get.df(dat, Loc, nrow = DatOut$Nrows_SvDF)
-    colnames(tmp) <- c(
-      "Index",
-      "year",
-      "seas",
-      "fleet",
-      "sex",
-      "Mature",
-      "Abundance",
-      "CV",
-      "units",
-      "Timing"
-    )
-    for (n in 1:DatOut$N_SurveyDF) {
-      # n <- 1
-      DatOut[["Surveys"]][[n]] <-
-        tmp[which(tmp[, 'fleet'] == unique(tmp[, 'fleet'])[n]), ]
-      names(DatOut[["Surveys"]])[n] <- DatOut$Survey_names[n]
-    }
-  }
   if (verbose)
     cat("-> Read survey data. \n")
   # -------------------------------------------------------------------------
@@ -374,51 +588,77 @@ readGMACSdat <- function(FileName = NULL,
 
   # SIZE COMPOSITION DATA FOR ALL FLEETS
   # -------------------------------------------------------------------------
+  DatOut[["SizeFreqDF_format"]] <-
+    get.num(dat, Loc) # Input format for size composition data (0: old format; 1: new format)
+
   DatOut[["N_SizeFreq_df"]] <-
-    get.num(dat, Loc) #Number of length frequency matrix
+    get.num(dat, Loc) # Number of length frequency matrix
 
-  if (DatOut$N_SizeFreq_df == 0) {
-    DatOut[["Nrows_SiseFreqDF"]] <-  ""
-  } else if (DatOut$N_SizeFreq_df == 1) {
-    # Number of rows in each length frequency matrix
-    DatOut[["Nrows_SiseFreqDF"]] <-  get.num(dat, Loc)
-  } else {
-    DatOut[["Nrows_SiseFreqDF"]] <-  get.vec(dat, Loc)
-  }
-
-  if (DatOut$N_SizeFreq_df == 0) {
-    DatOut[["Nbins_SiseFreq"]] <-  ""
-  } else if (DatOut$N_SizeFreq_df == 1) {
-    # Number of bins in each length frequency matrix
-    DatOut[["Nbins_SiseFreq"]] <-  get.num(dat, Loc)
-  } else {
-    DatOut[["Nbins_SiseFreq"]] <-  get.vec(dat, Loc)
-  }
-
-  if (DatOut$N_SizeFreq_df == 0) {
-    DatOut[["SizeFreq"]] <- ""
-  } else {
-    DatOut[["SizeFreq"]] <- list() # Length frequency matrices
-    namSF <- NULL
-
-    for (n in 1:DatOut$N_SizeFreq_df) {
-      DatOut[["SizeFreq"]][[n]] <-
-        get.df(dat, Loc, nrow = DatOut$Nrows_SiseFreqDF[n])
-      colnames(DatOut[["SizeFreq"]][[n]]) <- c(
-        "year",
-        "seas",
-        "fleet",
-        "sex",
-        "Type",
-        "Shell",
-        "Maturity",
-        "Nsamp",
-        rep("", DatOut[["Nbins_SiseFreq"]][n])
-      )
-      tmp <- namSizeFq(DatOut[["SizeFreq"]][[n]])
-      namSF <- c(namSF, tmp)
+  if (DatOut$SizeFreqDF_format == 0) {
+    if (DatOut$N_SizeFreq_df == 0) {
+      DatOut[["Nrows_SiseFreqDF"]] <-  ""
+    } else if (DatOut$N_SizeFreq_df == 1) {
+      # Number of rows in each length frequency matrix
+      DatOut[["Nrows_SiseFreqDF"]] <-  get.num(dat, Loc)
+    } else {
+      DatOut[["Nrows_SiseFreqDF"]] <-  get.vec(dat, Loc)
     }
-    names(DatOut[["SizeFreq"]]) <- namSF
+
+    if (DatOut$N_SizeFreq_df == 0) {
+      DatOut[["Nbins_SiseFreq"]] <-  ""
+    } else if (DatOut$N_SizeFreq_df == 1) {
+      # Number of bins in each length frequency matrix
+      DatOut[["Nbins_SiseFreq"]] <-  get.num(dat, Loc)
+    } else {
+      DatOut[["Nbins_SiseFreq"]] <-  get.vec(dat, Loc)
+    }
+
+    if (DatOut$N_SizeFreq_df == 0) {
+      DatOut[["SizeFreq"]] <- ""
+    } else {
+      DatOut[["SizeFreq"]] <- list() # Length frequency matrices
+      namSF <- NULL
+
+      for (n in 1:DatOut$N_SizeFreq_df) {
+        DatOut[["SizeFreq"]][[n]] <-
+          get.df(dat, Loc, nrow = DatOut$Nrows_SiseFreqDF[n])
+        colnames(DatOut[["SizeFreq"]][[n]]) <- c(
+          "year",
+          "seas",
+          "fleet",
+          "sex",
+          "Type",
+          "Shell",
+          "Maturity",
+          "Nsamp",
+          rep("", DatOut[["Nbins_SiseFreq"]][n])
+        )
+        tmp <- namSizeFq(DatOut[["SizeFreq"]][[n]])
+        namSF <- c(namSF, tmp)
+      }
+      names(DatOut[["SizeFreq"]]) <- namSF
+    }
+  } else if (DatOut$SizeFreqDF_format == 1) {
+    if (DatOut$N_SizeFreq_df == 0) {
+      DatOut[["SizeFreq"]] <-  ""
+    } else {
+      DatOut[["SizeFreq"]] <- list()
+      namSizeFq <- NULL
+
+      for (n in 1:DatOut$N_SizeFreq_df) {
+        outSizeFq <- get_CatchSurvSizeFreq_newForm(data_type = "size_comp",
+                                                   dat = dat,
+                                                   Loc = Loc)
+        DatOut[["SizeFreq"]][[n]] <-
+          outSizeFq[!names(outSizeFq) == "namdata"]
+        namSizeFq <-
+          c(namSizeFq, outSizeFq[names(outSizeFq) == "namdata"]$namdata)
+      }
+      names(DatOut[["SizeFreq"]]) <- namSizeFq
+    }
+  } else if (DatOut$SizeFreqDF_format > 1) {
+    cat("The input format for size composition data must be 0 (old format) or 1 (new format) !")
+    stop()
   }
   if (verbose)
     cat("-> Read size composition data. \n")

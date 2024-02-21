@@ -375,6 +375,7 @@ readGMACSctl <- function(FileName = NULL,
   # -------------------------------------------------------------------------
 
   nsex <- DatFile$N_sexes
+  nmature <- DatFile$N_maturity
   Start_Y <- DatFile$Start_Y
   End_Y <- DatFile$End_Y
   nyrRetro <- End_Y - nyrRetro
@@ -455,17 +456,71 @@ readGMACSctl <- function(FileName = NULL,
   # DatOut[["lw_type"]] == 2 => vector of data
   # DatOut[["lw_type"]] == 3 => matrix of data
 
+  # if (DatOut[["lw_type"]] == 1) {
+  #   DatOut[["lw_alfa"]] <-
+  #     base::switch (.ac(nsex),
+  #                   # alpha Length-weight relationship
+  #                   "1" = get.num(dat, Loc),
+  #                   "2" = get.vec(dat, Loc))
+  #   DatOut[["lw_beta"]] <-
+  #     base::switch (.ac(nsex),
+  #                   # beta Length-weight relationship
+  #                   "1" = get.num(dat, Loc),
+  #                   "2" = get.vec(dat, Loc))
+  #   DatOut[["mean_wt_in"]] <- ""
+  # } else {
+  #   DatOut[["lw_alfa"]] <- ""
+  #   DatOut[["lw_beta"]] <- ""
+  #   if (nsex == 1) {
+  #     # Input weight at size
+  #     DatOut[["mean_wt_in"]] <-
+  #       base::switch (.ac(DatOut[["lw_type"]]),
+  #                     # Input weight at size
+  #                     "2" = get.vec(dat, Loc),
+  #                     "3" = get.df(dat, Loc, nrow = nsex * (End_Y + 1 - Start_Y + 1)))
+  #   } else {
+  #     DatOut[["mean_wt_in"]] <-
+  #       base::switch (
+  #         .ac(DatOut[["lw_type"]]),
+  #         # Input weight at size
+  #         "2" = get.df(dat, Loc, nrow = nsex),
+  #         "3" = get.df(dat, Loc, nrow = nsex * (End_Y + 1 - Start_Y + 1))
+  #       )
+  #   }
+  # }
+
   if (DatOut[["lw_type"]] == 1) {
-    DatOut[["lw_alfa"]] <-
-      base::switch (.ac(nsex),
-                    # alpha Length-weight relationship
-                    "1" = get.num(dat, Loc),
-                    "2" = get.vec(dat, Loc))
-    DatOut[["lw_beta"]] <-
-      base::switch (.ac(nsex),
-                    # beta Length-weight relationship
-                    "1" = get.num(dat, Loc),
-                    "2" = get.vec(dat, Loc))
+    # vector by sex and maturity (immature/mature)
+    # length-weight relationship parameters
+    if(nsex == 1){
+      tmp <- if(nmature == 1){
+        get.vec(dat, Loc)
+      } else {
+        get.df(dat, Loc, nrow = nsex * nmature)
+      }
+    } else if (nsex > 1){
+      get.df(dat, Loc, nrow = nsex * nmature)
+    }
+    # Split the parameters
+    if(nsex==1){
+      # alpha Length-weight relationship
+      DatOut[["lw_alfa"]] <- if(nmature==1){
+        tmp[1]
+      } else {
+        tmp[,1]
+      }
+      # beta Length-weight relationship
+      DatOut[["lw_beta"]] <- if(nmature==1){
+        tmp[2]
+      } else {
+        tmp[,2]
+      }
+    } else {
+      # alpha Length-weight relationship
+      DatOut[["lw_alfa"]] <- tmp[,1]
+      # beta Length-weight relationship
+      DatOut[["lw_beta"]] <- tmp[,2]
+    }
     DatOut[["mean_wt_in"]] <- ""
   } else {
     DatOut[["lw_alfa"]] <- ""
@@ -475,15 +530,15 @@ readGMACSctl <- function(FileName = NULL,
       DatOut[["mean_wt_in"]] <-
         base::switch (.ac(DatOut[["lw_type"]]),
                       # Input weight at size
-                      "2" = get.vec(dat, Loc),
-                      "3" = get.df(dat, Loc, nrow = nsex * (End_Y + 1 - Start_Y + 1)))
+                      "2" = if(nmature == 1){get.vec(dat, Loc)}else{get.df(dat, Loc, nrow = nsex * nmature)},
+                      "3" = get.df(dat, Loc, nrow = nsex * nmature * (End_Y + 1 - Start_Y + 1)))
     } else {
       DatOut[["mean_wt_in"]] <-
         base::switch (
           .ac(DatOut[["lw_type"]]),
           # Input weight at size
-          "2" = get.df(dat, Loc, nrow = nsex),
-          "3" = get.df(dat, Loc, nrow = nsex * (End_Y + 1 - Start_Y + 1))
+          "2" = get.df(dat, Loc, nrow = nsex * nmature),
+          "3" = get.df(dat, Loc, nrow = nsex * nmature * (End_Y + 1 - Start_Y + 1))
         )
     }
   }
@@ -501,6 +556,9 @@ readGMACSctl <- function(FileName = NULL,
                  # Proportion of mature at size by sex
                  "1" = get.vec(dat, Loc),
                  "2" = get.df(dat, Loc, nrow = nsex))
+
+  DatOut[["Func_maturity_TermMolting"]] <- get.num(dat, Loc)
+
   if (verbose)
     cat("\t-> Read Fecundity parameter control for MMB/MMA calculation \n")
   # -------------------------------------------------------------------------
@@ -691,13 +749,13 @@ readGMACSctl <- function(FileName = NULL,
                   "p2")
 
   if(nGrwth > 0){
-  DatOut[["Grwth_control"]] <-
-    get.df(dat, Loc, nrow = nGrwth) # Growth parameters control
-  colnames(DatOut[["Grwth_control"]]) <- tmpColname
+    DatOut[["Grwth_control"]] <-
+      get.df(dat, Loc, nrow = nGrwth) # Growth parameters control
+    colnames(DatOut[["Grwth_control"]]) <- tmpColname
   }
   if(nSizeIncPar>0){
     DatOut[["MoltProb_control"]] <-
-    get.df(dat, Loc, nrow = nSizeIncPar) # Growth parameters control
+      get.df(dat, Loc, nrow = nSizeIncPar) # Growth parameters control
     colnames(DatOut[["MoltProb_control"]]) <- tmpColname
   }
   # +++++++++++++++++++++++++++++
@@ -1208,20 +1266,20 @@ readGMACSctl <- function(FileName = NULL,
     get.num(dat, Loc) # Initial value for expected sex-ratio
   DatOut[["rec_ini_phz"]] <-
     get.num(dat, Loc) # Phase for initial recruitment estimation
-  DatOut[["verbose"]] <-
-    get.num(dat, Loc) # Verbose flag (0: off; 1: on; 2: objective function; 3: diagnostics)
+  # DatOut[["verbose"]] <-
+  #   get.num(dat, Loc) # Verbose flag (0: off; 1: on; 2: objective function; 3: diagnostics)
   DatOut[["bInitializeUnfished"]] <-
     get.num(dat, Loc) # Initial conditions (1: unfished, 2: steady-state, 3: free params, 4: free params revised)
   DatOut[["spr_lambda"]] <-
     get.num(dat, Loc) # Proportion of mature male biomass for SPR reference points
   DatOut[["nSRR_flag"]] <-
     get.num(dat, Loc) # Stock-Recruit-Relationship (0 = none, 1 = Beverton-Holt)
-  DatOut[["TurnOffPhase"]] <-
-    get.num(dat, Loc) # Maximum phase (stop the estimation after this phase)
-  DatOut[["StopAfterFnCall"]] <-
-    get.num(dat, Loc) # Maximum number of function calls
-  DatOut[["CalcRefPoints"]] <-
-    get.num(dat, Loc) # Calculate reference points (0:no, 1: yes)
+  # DatOut[["TurnOffPhase"]] <-
+  #   get.num(dat, Loc) # Maximum phase (stop the estimation after this phase)
+  # DatOut[["StopAfterFnCall"]] <-
+  #   get.num(dat, Loc) # Maximum number of function calls
+  # DatOut[["CalcRefPoints"]] <-
+  #   get.num(dat, Loc) # Calculate reference points (0:no, 1: yes)
   DatOut[["BRP_rec_sexR"]] <-
     get.num(dat, Loc) # Use years specified to computed average sex ratio in the calculation of average recruitment for reference points (0 = off -i.e. Rec based on End year, 1 = on)
   DatOut[["NyrEquil"]] <-

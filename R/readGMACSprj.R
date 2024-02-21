@@ -87,7 +87,7 @@ readGMACSprj <- function(FileName = NULL, verbose =TRUE) {
   dat <- dat[dat != ""]
 
   DatOut[["sourcefile"]] <- FileName
-  if(length(Com)== 0  || Com =="# references")
+  if(length(Com)== 0  || any(Com =="# references"))
     Com <- ""
   DatOut[["Comments"]] <- Com
 
@@ -147,7 +147,7 @@ readGMACSprj <- function(FileName = NULL, verbose =TRUE) {
   DatOut[["OFLgamma"]] <- get.num(dat, Loc) # Gamma
   DatOut[["ABCBuffer"]] <- get.num(dat, Loc) # ABC-OFL buffer
   DatOut[["Compute_yield_prj"]] <- get.num(dat, Loc) # (0: no; 1: year) for whether the yield function should be reported
-                                                     # if MSY is not computed, Compute_yield_prj = 0
+  # if MSY is not computed, Compute_yield_prj = 0
   if (verbose)
     cat("-> Read OFL specifications controls  \n")
   # -------------------------------------------------------------------------
@@ -158,11 +158,15 @@ readGMACSprj <- function(FileName = NULL, verbose =TRUE) {
     cat("-- Reading Projection specifications controls \n")
 
   DatOut[["pyr"]] <- get.num(dat, Loc) # Last year of the projection period
+  DatOut[["prj_type"]] <- get.num(dat, Loc) # Projection type (1 = Constant F; 2 = proportion of current F)
   DatOut[["prj_Nstrat"]] <- get.num(dat, Loc) # Number of strategies considered in the projections
-  # Range of F values
-  tmp <- get.vec(dat, Loc)
-  DatOut[["prj_lowF"]] <- tmp[1]
-  DatOut[["prj_hiF"]] <- tmp[2]
+  # Range of F values (empty if the number of strategies is 0)
+  # DatOut[["prj_lowF"]] <- tmp[1]
+  # DatOut[["prj_hiF"]] <- tmp[2]
+  if(DatOut[["prj_Nstrat"]] > 0){
+    tmp <- get.vec(dat, Loc)
+    DatOut[["prj_Frange"]] <- tmp
+  }
   DatOut[["prj_bycatch_on"]] <- get.num(dat, Loc) # Allow for bycatch fleets to have non-zero mortality
   DatOut[["prj_replicates"]] <- get.num(dat, Loc) # How many times each MCMC draw is run
   DatOut[["Fixed_prj_Bmsy"]] <- get.num(dat, Loc) # Should Bmsy be fixed?
@@ -224,7 +228,9 @@ readGMACSprj <- function(FileName = NULL, verbose =TRUE) {
   if (verbose)
     cat("-- Reading Harvest control rules (state strategy) specifications controls \n")
 
-  DatOut[["Apply_HCR_prj"]] <- get.num(dat, Loc) # Apply strategies [OFL, ABC] (1=yes;0=no)
+  DatOut[["Apply_HCR_prj"]] <- get.num(dat, Loc) # Apply strategies [OFL, ABC] (1=apply HCR; 0=constant F)
+  DatOut[["Apply_StateStrat_prj"]] <- get.num(dat, Loc) # Apply the state strategy (1=yes;0=no)
+  DatOut[["Nb_state_param"]] <- get.num(dat, Loc) # Number of state parameters
   DatOut[["MeanWStateMature"]] <- get.num(dat, Loc) # Mean weight to use - mature individuals
   DatOut[["MeanWStateLegal"]] <- get.num(dat, Loc) # Mean weight to use (legal)
 
