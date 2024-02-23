@@ -137,12 +137,19 @@ new features implemented in the new version of GMACS.</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">NewGMACSFeat</span><span class="op">(</span><span class="va">dirSrc</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">NewGMACSFeat</span><span class="op">(</span><span class="va">dirSrc</span>, updateGMACS <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
-    <dl><dt>Dir</dt>
+    <dl><dt>updateGMACS</dt>
+<dd><p>(logical)- Flag specifying if the development version of GMACS
+constitutes an update of the current version (in which case the version number
+remains identical) or an upgrade version (in which case the version number
+has to be incremented).</p></dd>
+
+
+<dt>Dir</dt>
 <dd><p>(character string)- path of the folder name that holds the version
 of GMACS that has been new developed.</p></dd>
 

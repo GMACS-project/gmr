@@ -174,9 +174,6 @@ readGMACSdat <- function(FileName = NULL,
                         rep("", out[["Nbins_SiseFreq"]]))
     }
 
-    # Loc <- 157
-
-
     out[["data"]] <-
       get.df(dat, Loc, nrow = out$Nrows)
     assign("Loc", Loc, parent.frame())
@@ -294,8 +291,9 @@ readGMACSdat <- function(FileName = NULL,
                         "2" = "Immat")
     fleet <-
       c(DatOut$F_Fleet_names, DatOut$Survey_names)[unique(df[, "fleet"])]
-    Seas <- paste0("Seas", unique(df[, "seas"]))
-    nam <- paste(sex, mat, type, fleet, Seas, sep = "_")
+    nam <- paste(sex, mat, type, fleet, sep = "_")
+    # Seas <- paste0("Seas", unique(df[, "seas"]))
+    # nam <- paste(sex, mat, type, fleet, Seas, sep = "_")
     return(nam)
   }
   # -------------------------------------------------------------------------
@@ -585,6 +583,7 @@ readGMACSdat <- function(FileName = NULL,
     cat("-> Read survey data. \n")
   # -------------------------------------------------------------------------
 
+  # Loc <- 113
 
   # SIZE COMPOSITION DATA FOR ALL FLEETS
   # -------------------------------------------------------------------------

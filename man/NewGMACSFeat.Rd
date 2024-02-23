@@ -4,9 +4,14 @@
 \alias{NewGMACSFeat}
 \title{Write details of new implementations in the gmabase.TPL file}
 \usage{
-NewGMACSFeat(dirSrc)
+NewGMACSFeat(dirSrc, updateGMACS = NULL)
 }
 \arguments{
+\item{updateGMACS}{(logical)- Flag specifying if the development version of GMACS
+constitutes an update of the current version (in which case the version number
+remains identical) or an upgrade version (in which case the version number
+has to be incremented).}
+
 \item{Dir}{(character string)- path of the folder name that holds the version
 of GMACS that has been new developed.}
 }

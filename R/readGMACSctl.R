@@ -626,7 +626,7 @@ readGMACSctl <- function(FileName = NULL,
           tmp[s,] <- tmpYearsizeVaries
 
         } else {
-          tmp[s,] <- tmpYearsizeVaries[s,]
+          tmp[s,] <- .an(tmpYearsizeVaries[s,])
         }
       }
     }
@@ -679,7 +679,7 @@ readGMACSctl <- function(FileName = NULL,
         if(min(tmpMoltVaries)==0){
           tmp[s,] <- tmpYearMoltVaries
         } else {
-          tmp[s,] <- tmpYearMoltVaries[s,]
+          tmp[s,] <- .an(tmpYearMoltVaries[s,])
 
         }
       }
@@ -777,8 +777,13 @@ readGMACSctl <- function(FileName = NULL,
   # +++++++++++++++++++++++++++++
   if (DatOut[["bUseCustomMoltProbability"]] == 0) {
     # Fixed Molt probability
-    DatOut[["CustomMoltProbabilityMatrix"]] <-
-      get.df(dat, Loc, nrow = nclass * nsex * DatOut[["nMoltVaries"]])
+    tmp <- NULL
+    for(s in 1:nsex){
+      tmp <- rbind(tmp,
+                   get.df(dat, Loc, nrow = DatOut[["nMoltVaries"]][s])
+      )
+    }
+    DatOut[["CustomMoltProbabilityMatrix"]] <- tmp
   } else {
     DatOut[["CustomMoltProbabilityMatrix"]] <- ""
   }

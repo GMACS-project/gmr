@@ -5,12 +5,17 @@
 #'
 #' @param Dir (character string)- path of the folder name that holds the version
 #' of GMACS that has been new developed.
+#' @param updateGMACS (logical)- Flag specifying if the development version of GMACS
+#' constitutes an update of the current version (in which case the version number
+#' remains identical) or an upgrade version (in which case the version number
+#' has to be incremented).
 #'
 #' @return Add descriptive lines at the end of the gmacsbase.tpl file to detail
 #' the new features that have been implemented.
 #'
 #
-NewGMACSFeat <- function(dirSrc) {
+NewGMACSFeat <- function(dirSrc,
+                         updateGMACS = NULL) {
   # 1. Read in the gmacsbase.tpl ----
   gmacsbase <- file.path(dirSrc, "gmacsbase.tpl")
   text <- readLines(gmacsbase)
@@ -19,13 +24,23 @@ NewGMACSFeat <- function(dirSrc) {
   header <-
     which(stringr::str_detect(text, pattern = " !! TheHeader"))
   Vers <- text[header]
-  Vers <-
-    sub(
-      pattern = stringr::str_squish('!! TheHeader = adstring(\"## GMACS Version'),
-      replacement = ";(Upgrade GMACS to version",
-      x = Vers,
-      fixed = TRUE
-    )
+  if(updateGMACS){
+    Vers <-
+      sub(
+        pattern = stringr::str_squish('!! TheHeader = adstring(\"## GMACS Version'),
+        replacement = ";(Update GMACS version",
+        x = Vers,
+        fixed = TRUE
+      )
+  } else {
+    Vers <-
+      sub(
+        pattern = stringr::str_squish('!! TheHeader = adstring(\"## GMACS Version'),
+        replacement = ";(Upgrade GMACS to version",
+        x = Vers,
+        fixed = TRUE
+      )
+  }
   Vers <- stringr::str_split(string = Vers, pattern = ';')[[1]][2:3]
   Vers <- stringr::str_squish(Vers)
   Vers <-

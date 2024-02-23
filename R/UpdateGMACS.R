@@ -23,10 +23,40 @@
 #
 UpdateGMACS <- function(dirSrc = NULL,
                         dirNew = NULL){
-
+  fsep <- .Platform$file.sep
 
   # 1. Specify the new implementation in the gmacsbase.tpl file ----
-  NewGMACSFeat(dirSrc)
+  # Check if the changes constitute an update or an upgrade of the version
+  # Read the detaile from the latest version
+  GMACSdetails <- file.path(dirNew, "GMACS_Version_details.txt", fsep = fsep)
+  text <- readLines(GMACSdetails)
+  oldVer <- text[stringr::str_detect(string = text, pattern = "GMACS version")]
+  oldVer <- stringr::str_squish(stringr::str_remove(string = stringr::str_squish(oldVer), pattern = "- GMACS version:"))[1]
+
+  # Read the gmasbase.tpl for the new version
+  gmacsbase <- file.path(dirSrc, "gmacsbase.tpl", fsep = fsep)
+  text <- readLines(gmacsbase)
+  # Get the number version ----
+  header <-
+    which(stringr::str_detect(text, pattern = " !! TheHeader"))
+  Vers <- text[header]
+  Vers <-
+    sub(
+      pattern = stringr::str_squish('!! TheHeader = adstring(\"## GMACS Version'),
+      replacement = "",
+      x = Vers,
+      fixed = TRUE
+    )
+  Vers <- stringr::str_split(string = Vers, pattern = ';')[[1]][1]
+  Vers <- stringr::str_squish(Vers)
+  if(oldVer == Vers){
+    updateVer <- TRUE
+  } else {
+    updateVer <- FALSE
+  }
+
+  NewGMACSFeat(dirSrc,
+               updateGMACS = updateVer)
 
   # 2. Copy all files from the Dvpt_Version to the Latest_Version ----
   cop.files <- list.files(dirSrc)[!list.files(dirSrc) %in% ("build")]
@@ -43,9 +73,9 @@ UpdateGMACS <- function(dirSrc = NULL,
 
   for (nm in 1:length(stock.files)) {
     # Clean the Latest_Version directory
-    tmp <- file.path(dirNew, "build/", stock.files[nm], sep = "")
+    tmp <- file.path(dirNew, "build", stock.files[nm], fsep = fsep)
 
-    while(length(list.files(path = tmp, recursive = FALSE))>12){
+    while(length(list.files(path = tmp, recursive = FALSE))>15){
       Sys.sleep(0.1)
       clean_bat(path = tmp, verbose = FALSE)
     }
@@ -53,7 +83,7 @@ UpdateGMACS <- function(dirSrc = NULL,
     # Clean the Dvpt_Version directory
     tmp <- file.path(dirSrc, "build/", stock.files[nm], sep = "")
 
-    while(length(list.files(path = tmp, recursive = FALSE))>12){
+    while(length(list.files(path = tmp, recursive = FALSE))>15){
       Sys.sleep(0.1)
       clean_bat(path = tmp, verbose = FALSE)
     }
@@ -68,6 +98,5 @@ UpdateGMACS <- function(dirSrc = NULL,
     )
   }
   GetVerSpec(Dir = dirNew)
-
 }
 

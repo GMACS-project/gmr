@@ -167,8 +167,10 @@ insertTime2 <- function(object = NULL,
 
 
     while (is.na(New.ver)) {
-      text = "========================================\nYou've been modifying GMACS.\nPlease, provide a name for the new version.\n========================================\nThe name of the new version has to be of the form to: 'Version X.YY.X'.\n
-\n*** The last updated version number is indicated in the dialog box - Please update this number.***"
+      text = "========================================\nYou've been modifying GMACS.\nIf these modifications are an update,
+then keep the same version name as displayed in the dialog box. If these modifications constistute an updgrade, please, provide a name for the new version.\n========================================\n
+The name of the new version has to be of the form to: 'Version X.YY.X'.\n
+\n*** The last updated version number is indicated in the dialog box - Please update this number. ***"
       New.ver <- svDialogs::dlgInput(message = text, default = print(Ex.vers))$res
       Sys.sleep(0.1)
     }
