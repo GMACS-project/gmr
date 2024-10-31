@@ -11,7 +11,8 @@ writeGmacsprjfile(
   stock = "",
   model_name = "",
   Ass_Year = "",
-  DirTPL = NULL
+  DirTPL = NULL,
+  Ver_number = NULL
 )
 }
 \arguments{
@@ -29,7 +30,11 @@ created using the \code{\link[=readGMACSprj]{readGMACSprj()}} function.}
 \item{Ass_Year}{(character string)- Year of this assessment.}
 
 \item{DirTPL}{(character string)- the directory where the gmacsbase.TPL file
-you are using for the stock assessment is hold.}
+you are using for the stock assessment is hold. This is used to identify the
+version of Gmacs.}
+
+\item{Ver_number}{(character)- The version of Gmacs. This is used only when
+developing new code versions of Gmacs.}
 }
 \value{
 create a new .prj file.

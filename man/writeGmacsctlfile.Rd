@@ -14,9 +14,12 @@ writeGmacsctlfile(
   Ass_Year = "",
   nsex = NULL,
   nmature = NULL,
+  nclass = NULL,
   Start_Y = NULL,
   End_Y = NULL,
-  DirTPL = NULL
+  nyrRetro = NULL,
+  DirTPL = NULL,
+  Ver_number = NULL
 )
 }
 \arguments{
@@ -43,8 +46,15 @@ don't provide the \code{DatFile}.}
 \item{nmature}{(integer; optional)- Number of maturity type(s) considered in the model.
 This is required if you don't provide the \code{DatFile}.}
 
+\item{nclass}{(integer; optional)- Number of size class considered in the model.}
+
+\item{nyrRetro}{(integer)- Number of year for the retrospective analysis.}
+
 \item{DirTPL}{(character string)- the directory where the gmacsbase.TPL file
 you are using for the stock assessment is hold.}
+
+\item{Ver_number}{(character)- The version of Gmacs. This is used only when
+developing new code versions of Gmacs.}
 
 \item{Start_Y;End_Y}{(integer; optional)- First and last year of the assessment period.
 This is required if you don't provide the \code{DatFile}.}

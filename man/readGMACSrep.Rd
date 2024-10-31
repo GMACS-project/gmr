@@ -27,11 +27,91 @@ of the \code{\link[=readGMACSctl]{readGMACSctl()}} function.}
 }
 \value{
 the gmacs.rep file as a named list.
+
+\itemize{
+\item \code{sourcefile} - The file source.
+\item \code{log_q_catch} - The estimated catchability (log space).
+\item \code{sdnr_MAR_cpue} - The survey-specific standard deviation and
+median.
+\item \code{sdnr_MAR_lf} - The standard deviation and median for each size
+composition data.
+\item \code{Francis_weights} - The Francis weights.
+\item \code{slx_capture} - The capture selectivity.
+\item \code{slx_retaind} - The probability of retention.
+\item \code{slx_discard} - The probability of discard.
+\item \code{Selectivity} - The size-specific selectivity for the capture,
+retained and discards.
+\item \code{retained} - The first and last year probability of retention
+by size class.
+\item \code{Growth_matrix} - The sex-specific growth transition matrix.
+\item \code{spr_syr} - The first year for computing Rbar.
+\item \code{spr_nyr} - The last year for computing Rbar.
+\item \code{spr_rbar} - The mean recruitment for SPR calculation.
+\item \code{proj_rbar} - The mean recruitment for the projections.
+\item \code{spr_sexr} - The sex-ratio for SPR calculation.
+\item \code{spr_fofl} - The fishing mortality relative to MSY for the OFL.
+\item \code{spr_cofl_ret} - The retained portion of the OFL.
+\item \code{spr_yield} - The yield summary (SSB/SSB_F0; SSB/spr_Bmsy; Fbar; OFL).
+\item \code{Catches_like} - The likelihood for each catch data frame.
+\item \code{Index_like} - The likelihood for each survey data frame.
+\item \code{Size_comp_like} - The likelihood for each size composition data frame.
+\item \code{Recruit_pen} - The recruitment penalties.
+\item \code{Growth_like} - The likelihood for the growth data.
+
+\item \code{MeanF_pen} - The penalty for the mean fishing mortality.
+\item \code{MeanF_dev} - The penalty for the fishing mortality deviations.
+\item \code{M_devs} - The penalty for the natural mortality.
+\item \code{Rec_ini} - The penalty for the initial recruitment.
+\item \code{Rec_dev} - The penalty for the recruitment deviations.
+\item \code{Sex_ratio} - The penalty for the sex-ratio.
+\item \code{Molt_prob_smooth} - The penalty for the smoother of the probability
+of molting.
+\item \code{Free_sel_smooth} - The penalty for the smoother of selectivity
+(when the parameters are freely estimated).
+\item \code{Initial_estimated_numbers_at_length} - The penalty for the initial number at length.
+\item \code{Fdevs (flt)} - The penalty for the male fishing mortality deviations.
+\item \code{Fdovs (flt)} - The penalty for the female fishing mortality deviations.
+
+}
 }
 \description{
 This functions reads the gmacs.rep file (report file) as a named list
 within R.
 }
+\examples{
+\dontrun{
+# Stock ----
+stock <- "SNOW_crab"
+# GMACS input files ----
+datfileName <- "snow_21_M09.dat"
+ctlfileName <- "snow_21_M09.ctl"
+# read gmacs.dat ----
+fileName <- "gmacs.dat"
+fileName <- file.path(dir_Base, stock, fileName, fsep = fsep)
+GMACSdat <- readGMACS.dat(path = fileName, verbose = TRUE)
+# Read the data file ----
+datFile <- file.path(dir_Base, stock, datfileName, fsep = fsep)
+datFile <- readGMACSdat(FileName = datFile, verbose = T)
+# Read the control file ----
+ctlFile <- file.path(dir_Base, stock, ctlfileName, fsep = fsep)
+ctlFile <- readGMACSctl(
+  FileName = ctlFile,
+  verbose = T,
+  DatFile = datFile,
+  nyrRetro = GMACSdat$N_Year_Retro
+)
+# Read the gmacs.par file ----
+repfile  <- readGMACSrep(
+FileName = file.path(Dir_Dvpt_Vers, "build", stock, "gmacs.rep", fsep = fsep),
+verbose = TRUE,
+DatFile = datFile,
+CtlFile = ctlFile,
+nyrRetro = GMACSdat$N_Year_Retro
+)
+}
+
+}
 \seealso{
-\code{\link{readGMACSdat}}, \code{\link{readGMACSctl}}, \code{\link{readGMACSallOUT}}
+\code{\link{readGMACSdat}}, \code{\link{readGMACSctl}},
+\code{\link{readGMACSallOUT}}.
 }

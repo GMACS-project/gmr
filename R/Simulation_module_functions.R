@@ -107,7 +107,8 @@ prepSim <- function(Dir = NULL,
     Dir = DirStock,
     verbose = TRUE,
     DatFile = DatFile,
-    CtlFile = CtlFile
+    CtlFile = CtlFile,
+    GMACSdat = GmacsFile
   )
   if(verbose){
     cat("\n")

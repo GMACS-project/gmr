@@ -6,6 +6,12 @@
 #' compiles the model and uses the `.buildGMACS()`
 #' function to provide a new executable.
 #'
+#' @param DirFold (character string)- Path to the folder where the \code{ADMBpaths}
+#' file is hosted and where the development folder (i.e., the one containing the .TPL
+#' file for the development version is located.
+#' If \code{DirFold = NULL}, then the function will assume that this "development"
+#' folder indicated in \code{.nameFold} can be accessed from the current working
+#' directory.
 #' @param .nameFold (character string); name of the subfolder holding the development
 #' version you want to work on. The default is `Dvpt_Version` but you can
 #' have renamed this folder.
@@ -27,7 +33,8 @@
 #' @export
 #'
 #'
-.GetGmacsExe <- function(.nameFold = "Dvpt_Version",
+.GetGmacsExe <- function(DirFold = NULL,
+                         .nameFold = "Dvpt_Version",
                          .nameVer = NULL,
                          ADMBpaths = NULL,
                          verbose = FALSE,
@@ -42,7 +49,11 @@
         "========================================\nYou have specified a folder name other than 'Dvpt_Version' to work on GMACS and/or develop a new version.\n========================================\n
 \nPlease confirm that the following directory is the one you want to work in (0:No, 1: Yes):\n",
         # print(paste0(getwd(), "/", .nameFold, "/")),
-        file.path(getwd(), .nameFold, fsep = fsep),
+        ifelse(
+          is.null(DirFold),
+          yes = file.path(getwd(), .nameFold, fsep = fsep),
+          no = file.path(DirFold, .nameFold, fsep = fsep)
+        ),
         sep = ""
       )
       check <-
@@ -58,7 +69,15 @@
   } else {
     GMACS_version <- "Dvpt_Version"
   }
-  Dir <-  file.path(getwd(), .nameFold, fsep = fsep)
+
+  if (!is.null(DirFold)) {
+    Dir <-  file.path(DirFold, .nameFold, fsep = fsep)
+  } else {
+    Dir <-  file.path(getwd(), .nameFold, fsep = fsep)
+  }
+
+  # 1.Get an executable for GMACS ----
+  oldWD = getwd()
 
   # Need to compile the model?
   # vector of length(.GMACS_version)
@@ -72,21 +91,24 @@
   # Check directories for ADMB
   # Define the name of the file containing the different pathways needed to build
   # the GMACS executable
-  suppressWarnings(PBSadmb::readADpaths(ADMBpaths))
+  suppressWarnings(PBSadmb::readADpaths(ifelse(
+    is.null(DirFold),
+    ADMBpaths,
+    file.path(DirFold, ADMBpaths, fsep = fsep)
+  )))
 
   cat("\n Verifying the paths for ADMB, the C/C++ compiler and the editor ....\n")
-  if (!PBSadmb::checkADopts())
+  if (!PBSadmb::checkADopts()) {
     stop(
       "The definition of the pathways to locate ADMB,the C/C++ compiler and/or the editer are wrong.\nPlease check the ADMBpaths file."
     )
-
+    setwd(oldWD)
+  }
   cat("# ------------------------------------------------------------------- #\n")
   cat("        Now building GMACS for the ", GMACS_version[vv], " \n")
   cat("# ------------------------------------------------------------------- #\n")
 
-  # 1.Get an executable for GMACS ----
-  oldWD = getwd()
-  # on.exit(setwd(oldWD));
+
 
   # Clean the base directory from previous version
   clean_root(path = Dir[vv])
@@ -187,11 +209,11 @@
         logfile = logFiles,
         verbose = TRUE
       )
-      FileName <- file.path(dirname(DirTmp), 'Error_convertion.txt', fsep = fsep)
+      FileName <-
+        file.path(dirname(DirTmp), 'Error_convertion.txt', fsep = fsep)
       fs::file_create(FileName)
       base::sink(FileName)
       cat(
-
         "\n\n # ######################################################## #\n",
         "#             ERROR CONVERTION MESSAGE                     #\n",
         "# ######################################################## #\n",
@@ -250,7 +272,8 @@
         verbose = TRUE
       )
 
-      FileName <- file.path(dirname(DirTmp), 'Error_compilation.txt', fsep = fsep)
+      FileName <-
+        file.path(dirname(DirTmp), 'Error_compilation.txt', fsep = fsep)
       fs::file_create(FileName)
       base::sink(FileName)
       cat(
@@ -321,4 +344,3 @@
   cat("--Re-setting working directory to '", oldWD, "' \n", sep = "")
   #--setwd(oldWD) <-does this on exit
 }
-

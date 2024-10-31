@@ -14,17 +14,25 @@
 #' the new features that have been implemented.
 #'
 #
-NewGMACSFeat <- function(dirSrc,
-                         updateGMACS = NULL) {
+NewGMACSFeat <- function(dirSrc, updateGMACS = NULL) {
   # 1. Read in the gmacsbase.tpl ----
   gmacsbase <- file.path(dirSrc, "gmacsbase.tpl")
   text <- readLines(gmacsbase)
+  while (text[length(text)] == "") {
+    text <- text[-c(length(text))]
+  }
+  # text <- c(text, "")
+  unlink(gmacsbase, recursive = FALSE, force = TRUE)
+  fs::file_create(gmacsbase)
+  fileConn <- file(gmacsbase)
+  writeLines(text = text, fileConn)
+  close(fileConn)
 
   # 2. Get the number version ----
   header <-
     which(stringr::str_detect(text, pattern = " !! TheHeader"))
   Vers <- text[header]
-  if(updateGMACS){
+  if (updateGMACS) {
     Vers <-
       sub(
         pattern = stringr::str_squish('!! TheHeader = adstring(\"## GMACS Version'),
@@ -111,14 +119,6 @@ You'll be then asked to provide details for each item. For example:
             ", pattern = '\n'))"
           )
         ))
-
-        if (length(tmp) > 1) {
-          startl <- ifelse(test = i == 1,
-                           yes = 2,
-                           no = 1)
-          for (l in startl:length(tmp))
-            tmp[l] <- paste0("// ", tmp[l])
-        }
         eval(parse(text = paste0("Impl_", i, " <- tmp")))
       }
 
@@ -138,8 +138,8 @@ You'll be then asked to provide details for each item. For example:
                          replacement = '')
 
   TxtImpl[1] <- paste(Vers1, TxtImpl[1], sep = " ")
-  if(length(TxtImpl)>1)
-    for(i in 2:length(TxtImpl))
+  if (length(TxtImpl) > 1)
+    for (i in 2:length(TxtImpl))
       TxtImpl[i] <- paste0("// ", TxtImpl[i])
 
   TxtImpl <-

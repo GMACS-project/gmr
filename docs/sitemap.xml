@@ -34,7 +34,13 @@
     <loc>/reference/clean_files.html</loc>
   </url>
   <url>
+    <loc>/reference/clean_Inputfiles.html</loc>
+  </url>
+  <url>
     <loc>/reference/clean_root.html</loc>
+  </url>
+  <url>
+    <loc>/reference/CompareCodeVersion.html</loc>
   </url>
   <url>
     <loc>/reference/copy_GMACSinputs.html</loc>
@@ -124,7 +130,13 @@
     <loc>/reference/Gen_GmacsSim.html</loc>
   </url>
   <url>
+    <loc>/reference/getInpOutFiles.html</loc>
+  </url>
+  <url>
     <loc>/reference/GetVerSpec.html</loc>
+  </url>
+  <url>
+    <loc>/reference/get_Param_name.html</loc>
   </url>
   <url>
     <loc>/reference/GMACS.html</loc>
@@ -304,6 +316,9 @@
     <loc>/reference/SetGMACSfold.html</loc>
   </url>
   <url>
+    <loc>/reference/set_DevStruct.html</loc>
+  </url>
+  <url>
     <loc>/reference/set_ggtheme.html</loc>
   </url>
   <url>
@@ -344,6 +359,9 @@
   </url>
   <url>
     <loc>/reference/writeGmacsprjfile.html</loc>
+  </url>
+  <url>
+    <loc>/reference/write_Gmacs_InputFiles.html</loc>
   </url>
   <url>
     <loc>/reference/write_TPL.html</loc>

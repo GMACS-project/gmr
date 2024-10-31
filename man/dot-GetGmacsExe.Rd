@@ -5,6 +5,7 @@
 \title{.GetGmacsExe}
 \usage{
 .GetGmacsExe(
+  DirFold = NULL,
   .nameFold = "Dvpt_Version",
   .nameVer = NULL,
   ADMBpaths = NULL,
@@ -13,6 +14,13 @@
 )
 }
 \arguments{
+\item{DirFold}{(character string)- Path to the folder where the \code{ADMBpaths}
+file is hosted and where the development folder (i.e., the one containing the .TPL
+file for the development version is located.
+If \code{DirFold = NULL}, then the function will assume that this "development"
+folder indicated in \code{.nameFold} can be accessed from the current working
+directory.}
+
 \item{.nameFold}{(character string); name of the subfolder holding the development
 version you want to work on. The default is `Dvpt_Version` but you can
 have renamed this folder.}

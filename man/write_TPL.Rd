@@ -4,17 +4,20 @@
 \alias{write_TPL}
 \title{write_TPL}
 \usage{
-write_TPL(vv = NULL, Dir = NULL, .update = NULL)
+write_TPL(vv = NULL, Dir = NULL, .update = NULL, End_Devel = FALSE)
 }
 \arguments{
-\item{vv}{Numeric: indicate the version - loop on the length(Dir).}
+\item{vv}{(Numeric)- indicate the version - loop on the length(Dir).}
 
-\item{Dir}{list of Character string: hold the directories for the versions of
+\item{Dir}{(character vector)- hold the directories for the versions of
 GMACS considered in the analysis.}
 
-\item{.update}{Logical: is it to update a new version of GMACS? If TRUE,
-the name of the new version of GMACS and the date of the compilation will be
-modified in the gmacsbase.tpl file.}
+\item{.update}{(logical)- Flag to specify if this is to update a new version
+of GMACS. If TRUE, the name of the new version of GMACS and the date of the
+compilation will be modified in the `gmacsbase.tpl` file.}
+
+\item{End_Devel}{(logical)- Flag to specify if gmacs.tpl is written at the end
+of a development period. Used when updating Gmacs.}
 }
 \value{
 a new gmacs.tpl file corresponding to the merging of gmacsbase.tpl

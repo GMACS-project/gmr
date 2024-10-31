@@ -57,40 +57,30 @@ GMACS <- function(Spc = NULL,
     stop("The 'Spc' argument in the GMACS() function is empty.\n")
   }
   if (length(Spc) == 1 && Spc == "all") {
+    # Spc <-
+    #   grep(
+    #     list.files(file.path(
+    #       dirname(getwd()), "Assessment_data", fsep = fsep
+    #     )
+    #     ),
+    #     pattern = '.bat',
+    #     invert = TRUE,
+    #     value = TRUE
+    #   )
     Spc <-
       grep(
-        list.files(file.path(
-          dirname(getwd()), "Assessment_data", fsep = fsep
-          )
-        ),
-        pattern = '.bat',
+        list.files(file.path(Dir, "build", fsep = fsep)),
+        pattern = 'debug|release',
         invert = TRUE,
         value = TRUE
       )
 
     nam.Spc <- sort(Spc)
     Spc <- Spc[order(match(Spc, nam.Spc))]
-
-  #   if (which(Spc == "AIGKC") > 0) {
-  #     Spc <-
-  #       c(paste(Spc[which(Spc == "AIGKC")], c("/EAG", "/WAG"), sep = ""), Spc[-1])
-  #   }
   }
-  #
-  # for (nm in 1:length(Spc)) {
-  #   if (Spc[nm] == "WAG" ||
-  #       Spc[nm] == "EAG")
-  #     Spc[nm] <- paste0("AIGKC/", Spc[nm])
-  # }
-
-  # cat("\nThis analysis includes the following species:\n",
-  #     paste0(Spc, collapse = ", "),
-  #     "\n")
   cat("\nThis analysis includes the following species:\n",
       paste0("- ", Spc, collapse = "\n"),
       "\n")
-
-
   cat("\n")
 
   # 2. Check for consistency between options----
@@ -123,9 +113,9 @@ GMACS <- function(Spc = NULL,
     if (!is.null(ASS) && ASS==TRUE) {
       cat(
         "\nPlease provide the name of the last assessment model you want to consider in the comparison analysis.\n"
-        )
+      )
       stop("The 'AssMod_names' argument in the GMACS() function is empty\n.")
-      }
+    }
 
   if (length(compile) != length(Dir)) {
     cat("\nPlease precise if you want to compile or not each GMACS version.\n")

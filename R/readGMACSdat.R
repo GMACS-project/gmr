@@ -5,16 +5,84 @@
 #' @param FileName (character string)- path (and name) of the data file (e.g. snow.data)
 #' @param verbose (logical)- (TRUE/FALSE); flag to print processing information
 #'
-#' @return the .dat file as a named list.
+#' @return A list with the content of the model.dat file.
+#' \itemize{
+#'   \item \code{sourcefile} - The file source.
+#'   \item \code{Comments} - Specifications about the GMACS version used and the stock
+#'   assessed.
+#'   \item \code{Start_Y} - first year in the model.
+#'   \item \code{End_Y} - Last year in the model.
+#'   \item \code{N_year} - Number of years in total (i.e., End_Y-DatOut+ 1).
+#'   \item \code{N_seasons} - Number of seasons in the model.
+#'   \item \code{N_fleet} - Number of fleet(s) in the model.
+#'   \item \code{N_sexes} - Number of sex(es) in the model.
+#'   \item \code{N_shell_cdt} - Number of shell condition in the model.
+#'   \item \code{N_maturity} - Number of maturity state(s) in the model.
+#'   \item \code{N_sizeC} - Number of size class in the model.
+#'   \item \code{Recr_Season} - The season recruitment occurs.
+#'   \item \code{Grwth_Season} - The season growth occurs.
+#'   \item \code{SSB_Season} - The season to calculate the Spawning Stock Biomass.
+#'   \item \code{N_Season} - The seaspn for the number (N) output.
+#'   \item \code{Max_sizeC} - The maximum size class in the model.
+#'   \item \code{Size_breaks} - The size breaks considered in the population.
+#'   \item \code{M_in_Type} - The natural mortality per season input type (vector or matrix).
+#'   \item \code{M_Seas_prop} - The proportion of natural mortality per season.
+#'   \item \code{F_Fleet_names} - The names of the fishing fleets.
+#'   \item \code{Survey_names} - The names of the surveys.
+#'   \item \code{F_Season_Type} - The type of fishing mortality per season
+#'   (0: instantaneous; 1: continuous).
+#'   \item \code{CatchDF_format} - The input format for catch data
+#'   (0: old format; 1: new format).
+#'   \item \code{N_CatchDF} - The number of catch data frame.
+#'   \item \code{Nrows_CatchDF} - The number of rows in each catch data frame.
+#'   \item \code{Catch} - The catch data.
+#'   \item \code{SurveyDF_format} - The input format for survey data
+#'   (0: old format; 1: new format).
+#'   \item \code{N_SurveyDF} - The number of survey data frame.
+#'   \item \code{Sv_type} - The data type for each abundance index
+#'   (1: total selectivity; 2:retention*selectivity).
+#'   \item \code{Nrows_SvDF} - The number of rows in each survey data frame.
+#'   \item \code{Surveys} - Teh survey data.
+#'   \item \code{SizeFreqDF_format} - The input format for size composition data
+#'   (0: old format; 1: new format).
+#'   \item \code{N_SizeFreq_df} - The number of size composition data frame.
+#'   \item \code{Nrows_SiseFreqDF} - The number of rows in each size composition data frame.
+#'   \item \code{Nbins_SiseFreq} - The number of bins in each size composition data frame.
+#'   \item \code{SizeFreq} - The size composition data.
+#'   \item \code{GrowthObsType} - The type of observation for growth (increment or
+#'   change in size-class)
+#'   \item \code{NGrowthObs} - The number of observations (lines) for each growth data frame.
+#'   \item \code{GrowthData} - The growth data.
+#'   \item \code{NenvIndics} - The number of environmental indices considered.
+#'   \item \code{EnvYrs} - The years cover for each environmental index.
+#'   \item \code{EnvData} - Teh environmental data.
+#'   \item \code{eof} - Logical indicating the end of the file (used for checking the reading).
+#' }
+#'
 #'
 #' @seealso \code{\link{readGMACS.dat}},\code{\link{readGMACSctl}},
 #' \code{\link{readGMACSprj}}
 #'
+#' @examples
+#' \dontrun{
+#' # Stock ----
+#' stock <- "SNOW_crab"
+#' # GMACS input files ----
+#' datfileName <- "snow_21_M09.dat"
+#' ctlfileName <- "snow_21_M09.ctl"
+#' # read gmacs.dat ----
+#' fileName <- "gmacs.dat"
+#' fileName <- file.path(dir_Base, stock, fileName, fsep = fsep)
+#' GMACSdat <- readGMACS.dat(path = fileName, verbose = TRUE)
+#' # Read the data file ----
+#' datFile <- file.path(dir_Base, stock, datfileName, fsep = fsep)
+#' datFile <- readGMACSdat(FileName = datFile, verbose = T)
+#' }
+#'
 #' @export
 #' @md
 #
-readGMACSdat <- function(FileName = NULL,
-                         verbose = TRUE) {
+readGMACSdat <- function(FileName = NULL, verbose = TRUE) {
   DatOut <- list()
 
   # 1- Internal functions
@@ -168,10 +236,7 @@ readGMACSdat <- function(FileName = NULL,
       out[["Nbins_SiseFreq"]] <-
         get.num(dat, Loc) # Number of bins in that length frequency matrix
 
-      dataColnames <- c("year",
-                        "seas",
-                        "Nsamp",
-                        rep("", out[["Nbins_SiseFreq"]]))
+      dataColnames <- c("year", "seas", "Nsamp", rep("", out[["Nbins_SiseFreq"]]))
     }
 
     out[["data"]] <-
@@ -182,36 +247,42 @@ readGMACSdat <- function(FileName = NULL,
     colnames(out[["data"]]) <- dataColnames
 
     # Set the name of the data in the list
-    if(data_type=="catch"){
+    if (data_type == "catch") {
       namdata <- paste(base::switch(
         .ac(out$sex),
         "undetermined" = "Both",
         "male" = "Males",
         "female" = "Females"
-      ),
-      base::switch(
+      ), base::switch(
         .ac(out$type),
         "TOTAL" = "Total",
         "RETAINED" = "Retained",
         "DISCARD" = "Discard"
-      ),
-      out$fleet,
-      # paste0("Seas", unique(out$data[, "seas"])),
+      ), out$fleet, # paste0("Seas", unique(out$data[, "seas"])),
       sep = "_")
-    } else if (data_type=="surveys"){
-      namdata <- paste(base::switch(
-        .ac(out$sex),
-        "undetermined" = "Both",
-        "male" = "Males",
-        "female" = "Females"
-      ),
-      base::switch(.ac(out$type),
-                   "sel" = "Sel",
-                   "sel+ret" = "SelRet"),
-      out$fleet,
-      # paste0("Seas", unique(out$data[, "seas"])),
-      sep = "_")
-    } else if (data_type=="size_comp"){
+    } else if (data_type == "surveys") {
+      namdata <- paste(
+        base::switch(
+          .ac(out$sex),
+          "undetermined" = "Both",
+          "male" = "Males",
+          "female" = "Females"
+        ),
+        base::switch(.ac(out$type), "sel" = "Sel", "sel+ret" = "SelRet"),
+        out$fleet,
+
+
+        paste0("Seas", unique(out$data[, "seas"])),
+        base::switch(
+          .ac(out$unit),
+          "ABUNDANCE" = "Abundance",
+          "BIOMASS" = "Biomass"
+        ),
+
+
+        sep = "_"
+      )
+    } else if (data_type == "size_comp") {
       namdata <- paste(
         base::switch(
           .ac(out$sex),
@@ -232,7 +303,11 @@ readGMACSdat <- function(FileName = NULL,
           "immature" = "Immat"
         ),
         out$fleet,
-        # paste0("Seas", unique(out$data[, "seas"])),
+
+
+        paste0("Seas", unique(out$data[, "seas"])),
+
+
         sep = "_"
       )
     }
@@ -292,8 +367,8 @@ readGMACSdat <- function(FileName = NULL,
     fleet <-
       c(DatOut$F_Fleet_names, DatOut$Survey_names)[unique(df[, "fleet"])]
     nam <- paste(sex, mat, type, fleet, sep = "_")
-    # Seas <- paste0("Seas", unique(df[, "seas"]))
-    # nam <- paste(sex, mat, type, fleet, Seas, sep = "_")
+    Seas <- paste0("Seas", unique(df[, "seas"]))
+    nam <- paste(sex, mat, type, fleet, Seas, sep = "_")
     return(nam)
   }
   # -------------------------------------------------------------------------
@@ -552,7 +627,7 @@ readGMACSdat <- function(FileName = NULL,
       for (n in 1:DatOut$N_SurveyDF) {
         # n <- 1
         DatOut[["Surveys"]][[n]] <-
-          tmp[which(tmp[, 'fleet'] == unique(tmp[, 'fleet'])[n]),]
+          tmp[which(tmp[, 'fleet'] == unique(tmp[, 'fleet'])[n]), ]
         names(DatOut[["Surveys"]])[n] <- DatOut$Survey_names[n]
       }
     }
@@ -582,8 +657,6 @@ readGMACSdat <- function(FileName = NULL,
   if (verbose)
     cat("-> Read survey data. \n")
   # -------------------------------------------------------------------------
-
-  # Loc <- 113
 
   # SIZE COMPOSITION DATA FOR ALL FLEETS
   # -------------------------------------------------------------------------

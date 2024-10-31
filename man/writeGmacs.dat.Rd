@@ -11,7 +11,8 @@ writeGmacs.dat(
   stock = "",
   model_name = "",
   Ass_Year = "",
-  DirTPL = NULL
+  DirTPL = NULL,
+  Ver_number = NULL
 )
 }
 \arguments{
@@ -20,7 +21,7 @@ writeGmacs.dat(
 \item{FileName}{(character string)- name of the new gmacs.dat file.}
 
 \item{gmacsDat}{(character string)- Object (list) containing the ex gmacs.dat
-file - The list is created using the [readGMACS_dat()] function.}
+file - The list is created using the \code{\link[=readGMACS_dat]{readGMACS_dat()}} function.}
 
 \item{stock}{(character string)- name of the stock of interest.}
 
@@ -30,6 +31,9 @@ file - The list is created using the [readGMACS_dat()] function.}
 
 \item{DirTPL}{(character string)- the directory where the gmacsbase.TPL file
 you are using for the stock assessment is hold.}
+
+\item{Ver_number}{(character)- The version of Gmacs. This is used only when
+developing new code versions of Gmacs.}
 }
 \value{
 create a new gmacs.dat file.

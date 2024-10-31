@@ -35,8 +35,8 @@ nothing
 }
 \description{
 Function to create empty folders needed to run GMACS: \code{/build},
-\code{/build/debug}, \code{/build/release}, and a folder for the species (Spc) of
-interest (\code{/build/Spc})
+\code{/build/debug}, \code{/build/release}, and a folder for the stock(S)
+(\code{Spc}) of interest (\code{/build/Spc}).
 }
 \details{
 Both the input and output files of GMACS will be contained in the

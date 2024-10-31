@@ -12,10 +12,79 @@ readGMACSdat(FileName = NULL, verbose = TRUE)
 \item{verbose}{(logical)- (TRUE/FALSE); flag to print processing information}
 }
 \value{
-the .dat file as a named list.
+A list with the content of the model.dat file.
+\itemize{
+\item \code{sourcefile} - The file source.
+\item \code{Comments} - Specifications about the GMACS version used and the stock
+assessed.
+\item \code{Start_Y} - first year in the model.
+\item \code{End_Y} - Last year in the model.
+\item \code{N_year} - Number of years in total (i.e., End_Y-DatOut+ 1).
+\item \code{N_seasons} - Number of seasons in the model.
+\item \code{N_fleet} - Number of fleet(s) in the model.
+\item \code{N_sexes} - Number of sex(es) in the model.
+\item \code{N_shell_cdt} - Number of shell condition in the model.
+\item \code{N_maturity} - Number of maturity state(s) in the model.
+\item \code{N_sizeC} - Number of size class in the model.
+\item \code{Recr_Season} - The season recruitment occurs.
+\item \code{Grwth_Season} - The season growth occurs.
+\item \code{SSB_Season} - The season to calculate the Spawning Stock Biomass.
+\item \code{N_Season} - The seaspn for the number (N) output.
+\item \code{Max_sizeC} - The maximum size class in the model.
+\item \code{Size_breaks} - The size breaks considered in the population.
+\item \code{M_in_Type} - The natural mortality per season input type (vector or matrix).
+\item \code{M_Seas_prop} - The proportion of natural mortality per season.
+\item \code{F_Fleet_names} - The names of the fishing fleets.
+\item \code{Survey_names} - The names of the surveys.
+\item \code{F_Season_Type} - The type of fishing mortality per season
+(0: instantaneous; 1: continuous).
+\item \code{CatchDF_format} - The input format for catch data
+(0: old format; 1: new format).
+\item \code{N_CatchDF} - The number of catch data frame.
+\item \code{Nrows_CatchDF} - The number of rows in each catch data frame.
+\item \code{Catch} - The catch data.
+\item \code{SurveyDF_format} - The input format for survey data
+(0: old format; 1: new format).
+\item \code{N_SurveyDF} - The number of survey data frame.
+\item \code{Sv_type} - The data type for each abundance index
+(1: total selectivity; 2:retention*selectivity).
+\item \code{Nrows_SvDF} - The number of rows in each survey data frame.
+\item \code{Surveys} - Teh survey data.
+\item \code{SizeFreqDF_format} - The input format for size composition data
+(0: old format; 1: new format).
+\item \code{N_SizeFreq_df} - The number of size composition data frame.
+\item \code{Nrows_SiseFreqDF} - The number of rows in each size composition data frame.
+\item \code{Nbins_SiseFreq} - The number of bins in each size composition data frame.
+\item \code{SizeFreq} - The size composition data.
+\item \code{GrowthObsType} - The type of observation for growth (increment or
+change in size-class)
+\item \code{NGrowthObs} - The number of observations (lines) for each growth data frame.
+\item \code{GrowthData} - The growth data.
+\item \code{NenvIndics} - The number of environmental indices considered.
+\item \code{EnvYrs} - The years cover for each environmental index.
+\item \code{EnvData} - Teh environmental data.
+\item \code{eof} - Logical indicating the end of the file (used for checking the reading).
+}
 }
 \description{
 Read the GMACS data file.
+}
+\examples{
+\dontrun{
+# Stock ----
+stock <- "SNOW_crab"
+# GMACS input files ----
+datfileName <- "snow_21_M09.dat"
+ctlfileName <- "snow_21_M09.ctl"
+# read gmacs.dat ----
+fileName <- "gmacs.dat"
+fileName <- file.path(dir_Base, stock, fileName, fsep = fsep)
+GMACSdat <- readGMACS.dat(path = fileName, verbose = TRUE)
+# Read the data file ----
+datFile <- file.path(dir_Base, stock, datfileName, fsep = fsep)
+datFile <- readGMACSdat(FileName = datFile, verbose = T)
+}
+
 }
 \seealso{
 \code{\link{readGMACS.dat}},\code{\link{readGMACSctl}},

@@ -21,6 +21,49 @@ create a new gmacs.dat file.
 Write a new gmacs.par file. This function is used to modify within
 R a pre-existent gmacs.par file.
 }
+\examples{
+\dontrun{
+# Stock ----
+stock <- "SNOW_crab"
+# GMACS input files ----
+datfileName <- "snow_21_M09.dat"
+ctlfileName <- "snow_21_M09.ctl"
+
+# read gmacs.dat ----
+fileName <- "gmacs.dat"
+fileName <- file.path(dir_Base, stock, fileName, fsep = fsep)
+GMACSdat <- readGMACS.dat(path = fileName, verbose = TRUE)
+# Read the data file ----
+datFile <- file.path(dir_Base, stock, datfileName, fsep = fsep)
+datFile <- readGMACSdat(FileName = datFile, verbose = T)
+# Read the control file ----
+ctlFile <- file.path(dir_Base, stock, ctlfileName, fsep = fsep)
+ctlFile <- readGMACSctl(
+  FileName = ctlFile,
+  verbose = T,
+  DatFile = datFile,
+  nyrRetro = GMACSdat$N_Year_Retro
+)
+
+# Read the gmacs.par file ----
+GMACSparfile <- readGMACSpar(
+Dir =file.path(Dir_Dvpt_Vers, "build", stock, fsep = fsep),
+FileName = "gmacs.par",
+verbose = TRUE,
+DatFile = datFile,
+CtlFile = ctlFile,
+GMACSdat = GMACSdat
+)
+
+# Write the gmacs.par file as a pin file
+writeGmacsPAR(
+Dir = file.path(Dir_Dvpt_Vers, "build", stock, fsep = fsep),
+FileName = "gmacs.pin",
+gmacsPar = gmacs_par
+)
+
+}
+}
 \seealso{
 \code{\link{readGMACSpar}}
 }

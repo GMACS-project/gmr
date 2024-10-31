@@ -4,16 +4,26 @@
 \alias{insertTime}
 \title{insertTime}
 \usage{
-insertTime(object = NULL, pattern = NULL, .update = NULL)
+insertTime(
+  object = NULL,
+  pattern = NULL,
+  .update = NULL,
+  devel = FALSE,
+  New_ver = NULL
+)
 }
 \arguments{
-\item{object}{Character string: Input vector/table}
+\item{object}{(character string)- Input vector/table}
 
-\item{pattern}{Character string: pattern to look for.}
+\item{pattern}{(character string)- pattern to look for.}
 
 \item{.update}{Logical: is it to update a new version of GMACS? If TRUE,
 the name of the new version of GMACS and the date of the compilation will be
 modified in the gmacsbase.tpl file.}
+
+\item{devel}{(logical)- flag to specify if this is a development version.}
+
+\item{New_ver}{(character)- the development version number.}
 }
 \value{
 List of object: the first object is the line wherein the text should

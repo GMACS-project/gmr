@@ -6,9 +6,10 @@ home:
 template:
   params:
     bootstrap: 5
-    bootswatch: yeti
-    docsearch:
-      index_name: gmr
+    light-switch: true
+    bslib:
+      primary: "#0054AD"
+      danger: "#A6081A"
 
 development:
   mode: auto
@@ -30,6 +31,8 @@ navbar:
     right:
     - github
     - Twitter
+    - lightswitch
+
   components:
     home:
       icon: fa-home fa-lg
@@ -61,6 +64,8 @@ navbar:
       menu:
         - text: Changelog
           href: news/index.html
+        - text: "gmr V 1.3.7"
+          href: https://github.com/GMACS-project/gmr/releases/tag/V1.3.7
         - text: "gmr V 1.3.6"
           href: https://github.com/GMACS-project/gmr/releases/tag/V1.3.6
         - text: "gmr V 1.3.5"
@@ -114,6 +119,7 @@ reference:
   - readGMACSdat
   - readGMACSctl
   - readGMACSprj
+  - getInpOutFiles
   - GMACSversion
 - subtitle: Functions to create specific folders and clean output files from GMACS
   contents:
@@ -122,6 +128,7 @@ reference:
   - clean_files
   - clean_root
   - clean_bat_Sim
+  - clean_Inputfiles
 - subtitle: Functions to (re)write the input/output files
   contents:
   - writeGmacs.dat
@@ -129,6 +136,7 @@ reference:
   - writeGmacsctlfile
   - writeGmacsprjfile
   - writeGmacsPAR
+  - write_Gmacs_InputFiles
 - title: Conducting a stock assessment using GMACS
   desc: >
     Set of functions for working with GMACS while realizing specific tasks
@@ -147,8 +155,10 @@ reference:
   desc: >
     Set of functions for implementing and releasing a new version (including making comparison)
   contents:
+  - set_DevStruct
   - Do_Comp
   - UpdateGMACS
+  - CompareCodeVersion
 - title: Realizing a simulation-estimation analysis
   desc: >
     Set of functions to generate simulated data and realize estimations in the context
@@ -272,3 +282,4 @@ reference:
   - GetVerSpec
   - .getVerGMACS
   - NewGMACSFeat
+  - get_Param_name

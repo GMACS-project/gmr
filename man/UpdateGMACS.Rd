@@ -4,27 +4,102 @@
 \alias{UpdateGMACS}
 \title{UpdateGMACS}
 \usage{
-UpdateGMACS(dirSrc = NULL, dirNew = NULL)
+UpdateGMACS(
+  dirSrc = NULL,
+  dirNew = NULL,
+  dir_Assdata = NULL,
+  dir_Supp = NULL,
+  ADMBpaths = NULL,
+  Update_LastAss_file = TRUE,
+  UpdateLast_GmacsVer = TRUE,
+  stock = "all",
+  verbose = FALSE,
+  cleanStockFolder = FALSE,
+  cleanInputFiles = FALSE,
+  cleanTest = FALSE
+)
 }
 \arguments{
-\item{dirSrc}{(character string)- This is the path to the folder that has been
+\item{dirSrc}{(path)- This is the path to the folder that has been
 used to develop the new version of GMACS. Typically, this corresponds to the path
-to the \code{Dvpt_Version} folder, if following the basic workflow for updating
-GMACS.}
+to the \code{Testing_Versions} folder, if following the basic workflow to
+update/upgrade GMACS.}
 
-\item{dirNew}{(character string)- This is the path to the folder that will hold
+\item{dirNew}{(path)- This is the path to the folder that will hold
 the latest version of GMACS after the check steps. Typically, this corresponds
 to the path to the \code{Latest_Version} folder, if following the basic workflow
-for updating GMACS.}
+to update/upgrade GMACS.}
+
+\item{dir_Assdata}{(path)- This is the path to the folder holding the assessment
+files for each stock. If following the basic workflow to update/upgrade GMACS,
+this is the \code{Assessment_data} fodler, where the stock-specific input files
+used to run the last version of Gmacs are saved.}
+
+\item{ADMBpaths}{(filepath): path to the repertory holding the file defining
+required ADMB paths. By default (\code{ADMBpaths = NULL}), the function will
+look for that file in the relative folder of the \code{dirNew} repertory. See
+the details section for more information about this \verb{ADMB files}.}
+
+\item{Update_LastAss_file}{(logical)- If true, the stock-specific input files
+will be copy to the \code{dir_Assdata}. Since this folder is intended to hold
+the last available input file for each stock, this argument is set as
+\code{Update_LastAss_file = TRUE} by default.}
+
+\item{UpdateLast_GmacsVer}{(logical)- Because the development version is ran
+using a .pin file and no estimation, this flag allows to update the last
+version folder (\code{dirNew}) by runing Gmacs with estimation. Default,
+\code{UpdateLast_GmacsVer = TRUE}}
+
+\item{stock}{(character string; vector)- Stock input file folder names to be
+copied. If set as \code{"all"} (default), then the function will consider the names of
+the stock in the \code{dirNew} repertory (under the folder \code{build}).}
+
+\item{verbose}{(logical)- flag to print processing information. Default,
+\code{verbose = FALSE}.}
+
+\item{cleanStockFolder}{(logical)- flag to delete stock-specific subfolders in
+the \code{dirSrc} folder.}
+
+\item{cleanInputFiles}{(logical)- flag to delete the Gmacs version specific
+input files folder in the relative repertory of the \code{dirSrc} folder.}
+
+\item{cleanTest}{(logical)- floag to delete the \code{dirSrc} folder.}
+
+\item{dir_supp}{(path; vector)- Optional. This argument can be used to copy both
+the Gmacs codes and the stock-specific input files in to one/multiple directories
+(different from \code{dirNew} and \code{dir_Assdata}, if applicable).}
 }
 \value{
-Copy all the files from the development folder to the latest_version
-folder and create the \code{GMACS_Version_details.txt} file that gives
-specifications about the version of GMACS that is updating.
+Copy both the Gmacs codes and the stock-specific input files from the
+development folder to:
+\describe{
+\item{\code{dirNew}}{the folder holding the last available/stable version of
+Gmacs;}
+\item{\code{dir_Assdata}}{the folder holding the last available stock-specific
+input files in terms of Gmacs version (Gmacs code are not copied in to that
+folder);}
+}
+The function creates the \code{GMACS_Version_details.txt} file that gives
+details about the version of GMACS that is updating, including the last
+implementations.
 }
 \description{
 Function used when updating and releasing a new version of GMACS.
 It allows to copy and paste all the GMACS files (for one or several stocks)
 resulting from the Development version from this directory to the Latest_Version
 directory.
+}
+\details{
+All in the stock-specific input files are updated with the Gmacs version numder.
+The .TPL file is also updated with the specification of the implementations
+made during the developement of this new version of Gmacs.
+
+if a \code{build} folder exists in the directory(ies) where the
+stock assessment files have to be copied, then it will be used as the folder
+to save the output of the stock-specific runs.
+
+The \code{ADMBpaths} refers to the repertory that holds either the
+"ADpaths_Windows.txt" file for the windows machine or the "ADpaths_MacOS.txt"
+file for Mac. The function automatically detect which machine you are working
+on.
 }

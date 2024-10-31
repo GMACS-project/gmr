@@ -8,7 +8,9 @@ copy_GMACSinputs(
   fromDir = NULL,
   toDir = NULL,
   GMACS_files = NULL,
-  overwrite = NULL
+  overwrite = NULL,
+  verbose = TRUE,
+  do_pinFile = TRUE
 )
 }
 \arguments{
@@ -27,6 +29,12 @@ from the base model directory to your current model in development.}
 
 \item{overwrite}{(logical) - Overwrite the input files if they already exist
 in the \code{toDir} repertory.}
+
+\item{verbose}{(logical)- flag to print processing information.}
+
+\item{do_pinFile}{(logical)- flag to indicate if the "gmacs.pin" has to be
+copied over if available in the \code{path} folder.
+Default, \code{do_pinFile = TRUE}.}
 }
 \description{
 Reads the gmacs.dat file to figure out the names of the control, data,

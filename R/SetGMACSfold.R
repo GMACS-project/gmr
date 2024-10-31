@@ -1,8 +1,8 @@
 #' @title Create the needed folders to run GMACS
 #'
 #' @description Function to create empty folders needed to run GMACS: \code{/build},
-#' \code{/build/debug}, \code{/build/release}, and a folder for the species (Spc) of
-#' interest (\code{/build/Spc})
+#' \code{/build/debug}, \code{/build/release}, and a folder for the stock(S)
+#' (\code{Spc}) of interest (\code{/build/Spc}).
 #'
 #' @param vv - integer index in \code{Dir} indicating root folder to create these
 #' base folders.

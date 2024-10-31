@@ -9,7 +9,8 @@ readGMACSpar(
   FileName = "gmacs.par",
   verbose = NULL,
   DatFile = NULL,
-  CtlFile = NULL
+  CtlFile = NULL,
+  GMACSdat = NULL
 )
 }
 \arguments{
@@ -22,18 +23,78 @@ readGMACSpar(
 \item{DatFile}{(list)- Object containing the .dat file - This is the output
 of the \code{\link[=readGMACSdat]{readGMACSdat()}} function.}
 
-\item{CtlFile}{(list)- Object (list) containing the .ctl file - This is the output
+\item{CtlFile}{(list)- Object containing the .ctl file - This is the output
 of the \code{\link[=readGMACSctl]{readGMACSctl()}} function.}
+
+\item{GMACSdat}{(list)- Object containing the gmacs.dat file - This is the output
+of the \code{\link[=readGMACS.dat]{readGMACS.dat()}} function.}
 }
 \value{
 the gmacs.par file as a named list. Where data frame are used, the
 columns are parameter_ID/value.
+
+\itemize{
+\item \code{Nparams} - The number of parameters.
+\item \code{ObjFvalue} - The objective function value.
+\item \code{MaxGradComp} - The maximum gradient component.
+\item \code{theta} - The key parameter controls (core parameters - theta parameters).
+\item \code{Grwth} - The growth parameters.
+\item \code{Vul} - The vulnerability (selectivity and retention) parameters.
+\item \code{Envpar_Slx}
+\item \code{Slx_Devs} - The selectivity deviations.
+\item \code{Fbar} - The mean fishing mortality parameters.
+\item \code{Fdev} - The fishing fleet-specific weights for male.
+\item \code{Foff} - The female fishing mortality offset to male F.
+\item \code{Fdov} - The fishing fleet-specific weights for female.
+\item \code{rec_ini} - The initial recruitment by size-class.
+\item \code{rec_dev_est} - The year-specific recruitment deviations.
+\item \code{logit_rec_prop_est} - The year-specific sex-ratio recruitment.
+\item \code{Mdev} - The natural mortality deviation.
+\item \code{M_mat} - The sex-specific natural mortality multiplier for each
+maturity state.
+\item \code{EffSamp_size} - The effective sample size.
+\item \code{survey_Q} - The survey-specific catchability.
+\item \code{add_cv} - The survey-specific additional CV.
+}
 }
 \description{
 Read the gmacs.par file. This is an output of GMACS that contains
 estimates of all parameters
 }
+\examples{
+\dontrun{
+# Stock ----
+stock <- "SNOW_crab"
+# GMACS input files ----
+datfileName <- "snow_21_M09.dat"
+ctlfileName <- "snow_21_M09.ctl"
+# read gmacs.dat ----
+fileName <- "gmacs.dat"
+fileName <- file.path(dir_Base, stock, fileName, fsep = fsep)
+GMACSdat <- readGMACS.dat(path = fileName, verbose = TRUE)
+# Read the data file ----
+datFile <- file.path(dir_Base, stock, datfileName, fsep = fsep)
+datFile <- readGMACSdat(FileName = datFile, verbose = T)
+# Read the control file ----
+ctlFile <- file.path(dir_Base, stock, ctlfileName, fsep = fsep)
+ctlFile <- readGMACSctl(
+  FileName = ctlFile,
+  verbose = T,
+  DatFile = datFile,
+  nyrRetro = GMACSdat$N_Year_Retro
+)
+# Read the gmacs.par file ----
+GMACSparfile <- readGMACSpar(Dir =file.path(Dir_Dvpt_Vers, "build", stock, fsep = fsep),
+FileName = "gmacs.par",
+verbose = TRUE,
+DatFile = datFile,
+CtlFile = ctlFile,
+GMACSdat = GMACSdat
+)
+}
+
+}
 \seealso{
 \code{\link{readGMACS.dat}},\code{\link{readGMACSdat}},\code{\link{readGMACSctl}},
-\code{\link{readGMACSprj}}
+\code{\link{readGMACSprj}}.
 }

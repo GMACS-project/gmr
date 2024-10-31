@@ -5,10 +5,95 @@
 #' @param FileName - path (and name) of the projection file (e.g. snow.prj)
 #' @param verbose - (TRUE/FALSE); flag to print processing information
 #'
-#' @return the .prj file as a named list.
+#' @return A list with the content of the model.prj file.
+#' \itemize{
+#'   \item \code{sourcefile} - The file source.
+#'   \item \code{Comments} - Specifications about the GMACS version used and the stock
+#'   assessed.
+#'   \item \code{Calc_MSY} - Compute MSY ?
+#'   \item \code{Ffixed} - The mortality rate applied to each fishery.
+#'   \item \code{spr_syr} - The first year for average recruitment/MMB for Bspr calculation.
+#'   \item \code{spr_nyr} - The last year for average recruitment/MMB for Bspr calculation.
+#'   \item \code{spr_SexR_syr} - The first year for computing the sex ratio used in the
+#'   calculation of the BRPs.
+#'   \item \code{spr_SexR_nyr} - The last year for computing the sex ratio used in the
+#'   calculation of the BRPs.
+#'   \item \code{spr_aveF_syr} - The first year for computing the average fishing
+#'   mortality for discards.
+#'   \item \code{spr_aveF_nyr} - The last year for computing the average fishing
+#'   mortality for discards.
+#'   \item \code{spr_M_syr} - The first year for computing the natural mortality.
+#'   \item \code{spr_M_nyr} - The last year for computing the natural mortality.
+#'   \item \code{spr_Prop_syr} - The first year for computing the season length.
+#'   \item \code{spr_Prop_nyr} - The last year for computing the season lengths.
+#'   \item \code{spr_grow_yr} - The first year for computing growth.
+#'   \item \code{spr_sel_syr} - The first year for computing the average vulnearbility.
+#'   \item \code{spr_sel_nyr} - The last year for computing the average vulnearbility.
+#'   \item \code{spr_target} - The target for teh SPR ratio for Bmsy proxy.
+#'   \item \code{OFLTier} - The tier system considered.
+#'   \item \code{OFLalpha} - The alpha value used for that tier system (i.e., teh cut-off).
+#'   \item \code{OFLbeta} - The beta value used for that tier system (i.e., the limit).
+#'   \item \code{OFLgamma} - The gamma value used in the tier system.
+#'   \item \code{ABCBuffer} - The ABC-OFL buffer to consider.
+#'   \item \code{Compute_yield_prj} - Is the yield function reported ?
+#'   \item \code{pyr} - The last year of the projection period.
+#'   \item \code{prj_type} - The projection type (Constant F; proportion of current F).
+#'   \item \code{prj_Nstrat} - The number of strategies considered in the projection.
+#'   \item \code{prj_Frange} - The range of F values for the strategies considered  in the projections.
+#'   \item \code{prj_bycatch_on} - Allow for bycatch fleets to have non-zero mortality in the projections.
+#'   \item \code{prj_replicates} - How many times each MCM draw is run in the projections.
+#'   \item \code{Fixed_prj_Bmsy} - Should Bmsy be fixed?
+#'   \item \code{proj_syr} - The first year for computing the average recruitment in the projections.
+#'   \item \code{proj_nyr} - The last year for computing the average recruitment in the projections.
+#'   \item \code{proj_SexR_syr} - The first year for computing the average sex-ratio
+#'    in the projections.
+#'   \item \code{proj_SexR_nyr} - The last year for computing the average sex-ratio
+#'   in the projections.
+#'   \item \code{proj_aveF_syr} - The first year for computing the average fishing
+#'   moratlity for discards in the projections.
+#'   \item \code{proj_aveF_nyr} - The last year for computing the average fishing
+#'   moratlity for discards in the projections.
+#'   \item \code{proj_M_syr} -  The first year for computing the natural mortality in the projections.
+#'   \item \code{proj_M_nyr} - The last year for computing the natural mortality in the projections.
+#'   \item \code{proj_Prop_syr} -  The first year for computing the season lengths in the projections.
+#'   \item \code{proj_Prop_nyr} - The last year for computing the season lengths in the projections.
+#'   \item \code{proj_grow_yr} - The year for specifying growth in the projections.
+#'   \item \code{proj_sel_syr} -  The first year for computing the average vulnerability
+#'   in the projections.
+#'   \item \code{proj_sel_nyr} -  The last year for computing the average vulnerability
+#'   in the projections.
+#'   \item \code{Stock_rec_prj} - The stock recruitment option for the projections.
+#'   \item \code{Age_at_rec_prj} - The age at recruitment in the projections.
+#'   \item \code{prj_futRec_syr} - The first year for generating recruitment in the projections.
+#'   \item \code{prj_futRec_nyr} - The last year for generating recruitment in the projections.
+#'   \item \code{mean_rec_prj} - The mean recruitment for the projections.
+#'   \item \code{SigmaR_prj} - The sigma used for recruitment in the projections.
+#'   \item \code{Prow_prj} - A scalor in for the recruitment deviations used in the projections.
+#'   \item \code{Initial_eps} - The first recruitment deviations.
+#'   \item \code{Apply_HCR_prj} - Which strategy to apply? (Harvest Control Rules strategies; constant F)
+#'   \item \code{Apply_StateStrat_prj} - Apply the state strategy?
+#'   \item \code{Nb_state_param} - The number of state strategy parameters.
+#'   \item \code{MeanWStateMature} - The mean weight of the mature individuals.
+#'   \item \code{MeanWStateLegal} - The mean (legal) weight of the mature individuals.
+#'   \item \code{max_prj} - The number of function call (stop after max_prj mcdraws).
+#'   \item \code{full_prj_diag} - Output a full diagnostic?
+#'   \item \code{eof} - Logical indicating the end of the file (used for checking the reading).
+#' }
 #'
 #' @seealso \code{\link{readGMACS.dat}},\code{\link{readGMACSdat}},
 #' \code{\link{readGMACSctl}}
+#'
+#' @examples
+#' \dontrun{
+#' # Stock ----
+#' stock <- "SNOW_crab"
+#' # GMACS input files ----
+#' prjfileName <- "snow_21_M09.prj"
+#' # Read the projection file ----
+#' prjfile <- file.path(dir_Base, stock, prjfileName, fsep = fsep)
+#' prjfile <- readGMACSprj(FileName = prjfile, verbose = T)
+#' }
+#'
 #'
 #' @export
 #' @md

@@ -17,10 +17,140 @@ of the \code{\link[=readGMACSdat]{readGMACSdat()}} function.}
 \item{nyrRetro}{(integer)- Number of year for the retrospective analysis}
 }
 \value{
-the .ctl file as a named list.
+A list with the content of the model.ctl file.
+\itemize{
+\item \code{sourcefile} - The file source.
+\item \code{Comments} - Specifications about the GMACS version used and the stock
+assessed.
+\item \code{ntheta} - The number of key parameters control.
+\item \code{theta_control} - The matrix pf teh key parameters control.
+\item \code{lw_type} - The type of length-weight (LW) relationship.
+\item \code{lw_alfa} - The alpha parameter of the LW relationship (if \code{lw_type = 1}).
+\item \code{lw_beta} - The beta parameter of the LW relationship (if \code{lw_type = 1}).
+\item \code{mean_wt_in} - The vector/matrix of mean weight-at-size (if \code{lw_type = 2,3}).
+\item \code{maturity} - The proportion of mature at size by sex.
+\item \code{legal_maturity} - The legal definition of the proportion of mature at size by sex.
+\item \code{Func_maturity_TermMolting} - Use functional maturity for terminally molting animals?
+\item \code{bUseCustomGrowthMatrix} - The selected option for the growth matrix.
+\item \code{bUseGrowthIncrementModel} - The selected option for the growth increment model.
+\item \code{bUseCustomMoltProbability} - The selected molt probability function.
+\item \code{bUseCustomMatureProbability} - The selected option for the maturity probability
+(only applicable if nmature = 2)
+\item \code{nSizeClassRec} - The maximum size-class for recruitment
+\item \code{nSizeIncVaries} - The number of size increment periods
+\item \code{iYrsSizeIncChanges} - The year(s) for which the size increment change.
+\item \code{nMoltVaries} - The number of molt periods.
+\item \code{iYrsMoltChanges} - The year(s) for which molt change.
+\item \code{BetaParRelative} - Are the beta parameters relative?
+\item \code{nMatureVaries} - The number of maturity probability periods
+\item \code{iYrsMatureChanges} - The year(s) for which maturity probability change.
+\item \code{nGrwth} - The total number of growth parameters
+(depends upon nSizeIncVaries).
+\item \code{nSizeIncPar} - The number of size increment parameters.
+\item \code{Grwth_control} - The matrix of growth controls.
+\item \code{MoltProb_control} - The matrix of molting probability controls.
+\item \code{MatureProb_control} - The matrix of mature probability controls.
+\item \code{CustomGrowthMatrix} - The custom growth-increment matrix or size-transition
+matrix.
+\item \code{CustomMoltProbabilityMatrix} - The custom molt probability matrix.
+\item \code{slx_nsel_period_in} - The number of selectivity time period per fleet.
+\item \code{slx_bsex_in} - The number of sex specific selectivity.
+\item \code{slx_type_in} - The sex-specific selectivity type.
+\item \code{slx_include_in} - Is there any insertion of a fleet selectivity in another?
+\item \code{slx_extra_in} - Extra parameter for each selectivity pattern.
+\item \code{ret_nret_period_in} - The number of retention time period per fleet.
+\item \code{ret_bsex_in} -  The number of sex specific retention.
+\item \code{ret_type_in} - The sex-specific retention type.
+\item \code{ret_extra_in} - Extra parameter for each retention pattern.
+\item \code{slx_nret} - Boolean for retention/discard.
+\item \code{slx_max_at_1_in} - Is the selectivity for the maximum size class
+forced to be 1?
+\item \code{slx_cols} - The number of parameter required for each vulnerability pattern.
+\item \code{slx_npar} - The number of parameter for each pattern of selectivity.
+\item \code{nslx_pars} - The total number of vulnerability parameters.
+\item \code{Selex_control} - the matrix of selectivity control.
+\item \code{Ret_control} - The matrix of retention control.
+\item \code{NumAsympRet} - The number of asymptotic vulnerability parameters.
+\item \code{AsympSel_control} - The asymptotic parameter control.
+\item \code{nslx_envpars} - The number of climate-driven selectivity parameters.
+\item \code{NSlx_devs_param} - The number of parameters controlling selectivity deviations.
+\item \code{devParPhase} - The estimation phase for the deviation parameter
+(when a random walk is considered).
+\item \code{q_controls} - The catchability control parameters.
+\item \code{add_cv_controls} - Additional CV control parameters for catchability.
+\item \code{add_cv_links} - Use of additional variance for each survey (0: ignore; >0 use).
+\item \code{f_controls} - The fishing mortality control.
+\item \code{nAgeCompType} - The size composition likelihood type.
+\item \code{bTailCompression} - The auto tail compression specification.
+\item \code{nvn_ival} - The initial value(s) for effective sample size.
+\item \code{nvn_phz} - The phase of estimation for the effective sample size.
+\item \code{iCompAggregator} - Should the data be aggregated?
+\item \code{lf_catch} - The type of predictions for the size composition data (survey-like / catch-like)
+\item \code{lf_lambda} - The lamdba for effective sample size.
+\item \code{lf_emphasis} - The weight (lambda) for the overall likelihood
+\item \code{m_type} - The type of natural mortality.
+\item \code{MrelFem}- How does M for females relate to that for males (0 absolute; 1 relative)
+\item \code{Mdev_phz_def} - The phase of estimation for natural mortality.
+\item \code{m_stdev} - The standard deviation used in the natural mortality deviations.
+\item \code{m_nNodes_sex} - The sex-specific number of nodes in natural mortality.
+\item \code{m_nodeyear_sex} - The sex-specific years for nodes in natural mortality.
+\item \code{nSizeDevs} - The number of breakpoints in natural mortality by size class.
+\item \code{m_size_nodeyear} - The specific years for the deviations (blocks) in
+natural mortality by size class.
+\item \code{Init_Mdev} - Use a specific initial value for natural mortality deviations?
+\item \code{nMdev} - The number of natural mortality deviations.
+\item \code{Mdev_controls} - Natural mortality deviation control.
+\item \code{tag_emphasis} - The emphasis (weight) for the tagging likelihood.
+\item \code{m_maturity} - Is there any maturity-specific natural mortality?
+\item \code{m_mat_controls} - Immature/mature natural mortality control if any.
+\item \code{rdv_syr} - The first year of recruitment estimation deviations.
+\item \code{rdv_eyr} - The last year of recruitment estimation deviations.
+\item \code{Term_molt} - Consider terminal molting in the model?
+\item \code{rdv_phz} - The phase for recruitment estimation.
+\item \code{rec_prop_phz} - The phase for recruitment sex-ratio estimation.
+\item \code{init_sex_ratio} - The initial value for expected sex-ratio.
+\item \code{rec_ini_phz} - The phase for initial recruitment estimation.
+\item \code{bInitializeUnfished} - The specification for the initial conditions
+(unfished, steady-state, free params, free params revised)
+\item \code{spr_lambda} - The proportion of mature male biomass for SPR reference points.
+\item \code{nSRR_flag} - The stock-Recruit-Relationship (none, Beverton-Holt)
+\item \code{BRP_rec_sexR} - Use years specified to computed average sex ratio in
+the calculation of average recruitment for reference points.
+\item \code{NyrEquil} - The year to compute equilibrium.
+\item \code{catch_emphasis} - The weight on catch for the likelihood component.
+\item \code{Penalty_fdevs} - Penalties on deviations.
+\item \code{Penalty_emphasis} - Penalties on priors
+\item \code{eof} - Logical indicating the end of the file (used for checking the reading).
+}
 }
 \description{
 Read the GMACS control file.
+}
+\examples{
+\dontrun{
+# Stock ----
+stock <- "SNOW_crab"
+# GMACS input files ----
+datfileName <- "snow_21_M09.dat"
+ctlfileName <- "snow_21_M09.ctl"
+# read gmacs.dat ----
+fileName <- "gmacs.dat"
+fileName <- file.path(dir_Base, stock, fileName, fsep = fsep)
+GMACSdat <- readGMACS.dat(path = fileName, verbose = TRUE)
+# Read the data file ----
+datFile <- file.path(dir_Base, stock, datfileName, fsep = fsep)
+datFile <- readGMACSdat(FileName = datFile, verbose = T)
+# Read the control file ----
+ctlFile <- file.path(dir_Base, stock, ctlfileName, fsep = fsep)
+ctlFile <- readGMACSctl(
+  FileName = ctlFile,
+  verbose = T,
+  DatFile = datFile,
+  nyrRetro = GMACSdat$N_Year_Retro
+)
+}
+
+
 }
 \seealso{
 \code{\link{readGMACS.dat}},\code{\link{readGMACSdat}},

@@ -4,14 +4,17 @@
 \alias{clean_files}
 \title{Clean files in a folder}
 \usage{
-clean_files(path = ".", names = c("no_file"), verbose = FALSE)
+clean_files(path = ".", filename = NULL, names = c("no_file"), verbose = FALSE)
 }
 \arguments{
-\item{path}{character string or file path representing the root folder to be cleaned}
+\item{path}{(path)- path to the root folder to be cleaned.}
 
-\item{names}{vector of character strings representing files in the root folder to be removed}
+\item{filename}{(character vector)- file name(s) to be removed.}
 
-\item{verbose}{(TRUE/FALSE) flag to print filenames being deleted}
+\item{names}{(character vector)- character strings representing the files in
+the root folder to be removed.}
+
+\item{verbose}{(logical)- flag to print file names being deleted}
 }
 \value{
 nothing

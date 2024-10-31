@@ -15,12 +15,16 @@
 #' @param Ass_Year (character string)- Year of this assessment
 #' @param nsex (integer; optional)- Number of sexes considered in the model. This is required if you
 #' don't provide the \code{DatFile}.
+#' @param nclass (integer; optional)- Number of size class considered in the model.
+#' @param nyrRetro (integer)- Number of year for the retrospective analysis.
 #' @param nmature (integer; optional)- Number of maturity type(s) considered in the model.
 #' This is required if you don't provide the \code{DatFile}.
 #' @param Start_Y;End_Y (integer; optional)- First and last year of the assessment period.
 #' This is required if you don't provide the \code{DatFile}.
 #' @param DirTPL (character string)- the directory where the gmacsbase.TPL file
 #' you are using for the stock assessment is hold.
+#' @param Ver_number (character)- The version of Gmacs. This is used only when
+#' developing new code versions of Gmacs.
 #'
 #' @return create a new .ctl file.
 #'
@@ -38,10 +42,18 @@ writeGmacsctlfile <- function(Dir = NULL,
                               Ass_Year = "",
                               nsex = NULL,
                               nmature = NULL,
+                              nclass = NULL,
                               Start_Y = NULL,
                               End_Y = NULL,
-                              DirTPL = NULL) {
+                              nyrRetro = NULL,
+                              DirTPL = NULL,
+                              Ver_number = NULL) {
 
+  # Local function
+  do.table <- function(dat=NULL, param = NULL){
+    for(i in 1:dim(dat)[1])
+      cat(unlist(dat[i,]), paste0("\t\t\t# ", param[i], "\n"))
+  }
 
   # Check for arguments
   if(is.null(DatFile)){
@@ -57,34 +69,66 @@ writeGmacsctlfile <- function(Dir = NULL,
     Start_Y <- DatFile$Start_Y
     End_Y <- DatFile$End_Y
     Fleet_names <- c(DatFile$F_Fleet_names,DatFile$Survey_names)
+    nshell <- DatFile$N_shell_cdt
+    nclass <- DatFile$N_sizeC
+
   }
 
+  nam_sex <- base::switch(.ac(nsex),
+                          "0" = "Undet_Both",
+                          "1" = "Male",
+                          "2" = c("Male", "Female"))
+  nam_mat <- base::switch(.ac(nmature),
+                          "1" = "BothMature",
+                          "2" = c("Mature", "Immature"))
+  nam_shell <- base::switch(.ac(nshell),
+                            "1" = "Undet_shell",
+                            "2" = c("New_shell", "Old_shell"))
+  nam_SizeC <- paste("size_Class", 1:nclass, sep="_")
+  nam_SizeC[1] <- paste0("#_", nam_SizeC[1])
 
-  FileName <- file.path(Dir, FileName)
-  fs::file_create(FileName)
+
+  # Get the names of the parameters
+  parnam <- get_Param_name(
+    CtlFile = CtlFile,
+    DatFile = DatFile,
+    nyrRetro = nyrRetro
+  )
+
+  FileName2 <- file.path(Dir, FileName)
+  fs::file_create(FileName2)
 
   # Get GMACS version number and compilation date
-  tmp <- GMACSversion(Dir = DirTPL)
-  Ver <- tmp$ver
-  Comp <- tmp$Comp
+  if(!is.null(Ver_number)){
+    Ver <- paste0("GMACS Version: ",Ver_number)
+    Comp <- "_Gmacs Development version"
+  } else {
+    tmp <- GMACSversion(Dir = DirTPL)
+    Ver <- stringr::str_squish(tmp$ver)
+    Comp <- tmp$Comp
+  }
 
   obj <- CtlFile
 
-  base::sink(FileName)
+  base::sink(FileName2)
 
 
   cat("# ============================================================ #\n")
   cat("#                  GMACS main control file \n")
   cat("# \n")
   cat("#_*** \n")
-  cat("#_", Ver, "\n")
-  cat("#_Last GMACS mofification made by: ", Comp, "\n")
-  cat("#_Date of writing the control file:", .ac(Sys.time()), "\n")
+  cat(stringr::str_squish(string = paste0("#_", Ver)), "\n")
+  if(is.null(Ver_number)){
+    cat(stringr::str_squish(string = paste0("#_Last GMACS mofification made by: ", Comp)), "\n")
+  } else {
+    cat(stringr::str_squish(string = paste0("#", Comp)), "\n")
+  }
+  cat(stringr::str_squish(string = paste0("#_Date of writing the control file:", .ac(Sys.time()))), "\n")
   cat("#_*** \n")
   cat("# \n")
-  cat("#_Stock of interest: ", stock, "\n")
-  cat("#_Model name: ", model_name, "\n")
-  cat("#_Year of assessment: ", Ass_Year, "\n")
+  cat(stringr::str_squish(string = paste0("#_Stock of interest: ", stock)), "\n")
+  cat(stringr::str_squish(string = paste0("#_Model name: ", model_name)), "\n")
+  cat(stringr::str_squish(string = paste0("#_Year of assessment: ", Ass_Year)), "\n")
   cat("# ============================================================ #\n")
   cat("\n")
   cat("# -------------------------------------- #\n")
@@ -109,9 +153,10 @@ writeGmacsctlfile <- function(Dir = NULL,
   cat("# ************************************** #\n")
   cat("# \n")
   cat("#_Init_val_| Lower_Bd_| Upper_Bd_| Phase_| Prior_type_| p1_| p2\n")
-  utils::write.table(obj$theta_control,
-                     row.names = FALSE,
-                     col.names = FALSE)
+  # utils::write.table(obj$theta_control,
+  #                    row.names = FALSE,
+  #                    col.names = FALSE)
+  do.table(dat = obj$theta_control, param = parnam$nameTheta)
   cat("# -------------------------------------- #\n")
   cat("\n")
 
@@ -126,15 +171,14 @@ writeGmacsctlfile <- function(Dir = NULL,
   cat(obj$lw_type, "\n")
 
   if(obj$lw_type == 1){
-    nam_sex <- base::switch(.ac(nsex),
-                            "1" = "Male(s)",
-                            "2" = c("Males","Females"))
     cat("#_lw_alfa_| lw_beta \n")
     inc <- 0
     for(s in 1:nsex){
       cat("# ", nam_sex[s], "\n")
       tmp <- as.data.frame(cbind(obj$lw_alfa[s:(s+nmature-1)+inc],obj$lw_beta[s:(s+nmature-1)+inc]))
-      utils::write.table(tmp, col.names = FALSE, row.names = FALSE)
+      # utils::write.table(tmp, col.names = FALSE, row.names = FALSE)
+      tmpParam <- paste(nam_sex[s], nam_mat)
+      do.table(dat = tmp, param = tmpParam)
       inc <- inc + nmature-1
     }
   } else if(obj$lw_type == 2){
@@ -143,15 +187,16 @@ writeGmacsctlfile <- function(Dir = NULL,
       base::switch(.ac(nsex),
                    "0" = cat("#_Vector of combined (males & females) mean weight-at-size for each maturity type.\n"),
                    "1" = cat("#_vector of male mean weight-at-size for each maturity type.\n"))
+      cat(nam_SizeC, "\n")
       if(nmature == 1){
         cat(obj$mean_wt_in, "\n")
       } else {
         utils::write.table(obj$mean_wt_in, col.names = FALSE, row.names = FALSE)
       }
     } else {
-      nam_sex <- base::switch(.ac(nsex),
-                              "1" = "male(s)",
-                              "2" = c("males","females"))
+      # nam_sex <- base::switch(.ac(nsex),
+      #                         "1" = "male(s)",
+      #                         "2" = c("males","females"))
       inc <- 0
       for(s in 1:nsex){
         cat(paste0("#_vectors of ",nam_sex[s]," mean weight-at-size for immature and mature individuals\n"))
@@ -162,19 +207,27 @@ writeGmacsctlfile <- function(Dir = NULL,
     }
 
   } else if (obj$lw_type == 3){
-
     if(nsex == 0 || nsex == 1){
+      tmpParam <- rep(paste(Start_Y:(End_Y+1),nam_sex, nam_mat, sep = " - "), nmature)
       base::switch(.ac(nsex),
                    "0" = cat("#_Matrix of combined (males & females) mean weight-at-size\n"),
                    "1" = cat("#_Matrix of male mean weight-at-size\n"))
-      utils::write.table(obj$mean_wt_in, col.names = FALSE, row.names = FALSE)
+      cat(nam_SizeC, "\n")
+      # utils::write.table(obj$mean_wt_in, col.names = FALSE, row.names = FALSE)
+      do.table(dat = obj$mean_wt_in, param = tmpParam)
     } else {
       tmp <- (End_Y + 1 - Start_Y + 1)*nmature
       cat("#_Matrix of male mean weight-at-size\n")
-      utils::write.table(obj$mean_wt_in[1:tmp,], col.names = FALSE, row.names = FALSE)
+      cat(nam_SizeC, "\n")
+      tmpParam <- rep(paste(Start_Y:(End_Y+1),nam_sex[1], nam_mat, sep = " - "), nmature)
+      # utils::write.table(obj$mean_wt_in[1:tmp,], col.names = FALSE, row.names = FALSE)
+      do.table(dat = obj$mean_wt_in[1:tmp,], param = tmpParam)
       cat("\n")
       cat("#_Matrix of female mean weight-at-size\n")
-      utils::write.table(obj$mean_wt_in[(tmp+1):dim(obj$mean_wt_in)[1],], col.names = FALSE, row.names = FALSE)
+      cat(nam_SizeC, "\n")
+      tmpParam <- rep(paste(Start_Y:(End_Y+1),nam_sex[1], nam_mat, sep = " - "), nmature)
+      # utils::write.table(obj$mean_wt_in[(tmp+1):dim(obj$mean_wt_in)[1],], col.names = FALSE, row.names = FALSE)
+      do.table(dat = obj$mean_wt_in[(tmp+1):dim(obj$mean_wt_in)[1],], param = tmpParam)
     }
   }
   cat("# -------------------------------------- #\n")
@@ -184,12 +237,14 @@ writeGmacsctlfile <- function(Dir = NULL,
   cat("##_Fecundity for MMB/MMA calculation\n")
   cat("# -------------------------------------- #\n")
   cat("#_Maturity definition: Proportion of mature at size by sex\n")
+  cat(nam_SizeC, "\n")
   if(nsex == 1){
     cat(.an(obj$maturity), "\n")
   } else {
     utils::write.table(obj$maturity, col.names = FALSE, row.names = FALSE)
   }
   cat("#_Legal definition of the proportion of mature at size by sex\n")
+  cat(nam_SizeC, "\n")
   if(nsex == 1){
     cat(.an(obj$legal_maturity), "\n")
   } else {
@@ -240,7 +295,7 @@ writeGmacsctlfile <- function(Dir = NULL,
   cat("# ************************************** #\n")
   cat("#_If the custom growth model option = 1 then the molt probability function must be 1 \n")
   cat(obj$bUseCustomMoltProbability, "\n")
-  # cat(" \n")
+  cat(" \n")
 
   cat("#_Maximum of size-classes to which recruitment must occur (males then females)\n")
   # if(nsex == 1){
@@ -272,11 +327,36 @@ writeGmacsctlfile <- function(Dir = NULL,
   }
   # cat(tmp, "\n")
   utils::write.table(tmp, col.names = FALSE, row.names = FALSE)
-
+  cat("\n")
 
   cat("#_Are the beta parameters relative to a base level?\n")
   cat(obj$BetaParRelative, "\n")
   cat("\n")
+
+  if(nmature == 2){
+    cat("#_Maturity probability function\n")
+    cat("# ************************************** #\n")
+    cat("#_0 = Pre-specified maturity probqbility\n")
+    cat("#_1 = Constant probability of molting (flat approach)\n")
+    cat("#_2 = Logistic function\n")
+    cat("#_3 = Free estimated parameters\n")
+    cat("# ************************************** #\n")
+    cat(obj$bUseCustomMatureProbability, "\n")
+    # cat(" \n")
+    cat("#_Number of blocks of maturity probability\n")
+    cat(obj$nMatureVaries, "\n")
+    cat("#_Year(s) with changes in maturity probability\n")
+    cat("#_-> 1 line per sex - blank if no change\n")
+    tmp <- NULL
+    for(s in 1:nsex){
+      if((obj$nMatureVaries[s]-1)>0){
+        tmp <- rbind(tmp,obj$iYrsMatureChanges[s,])
+      }
+    }
+    # cat(tmp, "\n")
+    utils::write.table(tmp, col.names = FALSE, row.names = FALSE)
+    cat("\n")
+  }
 
   cat("#_Growth increment model controls\n")
   cat("# ************************************** #\n")
@@ -294,7 +374,9 @@ writeGmacsctlfile <- function(Dir = NULL,
   cat("# ************************************** #\n")
   cat("# \n")
   cat("#_Init_val_| Lower_Bd_| Upper_Bd_| Phase_| Prior_type_| p1_| p2\n")
-  utils::write.table(obj$Grwth_control[1:obj$nGrwth,], col.names = FALSE, row.names = FALSE)
+  # utils::write.table(obj$Grwth_control[1:obj$nGrwth,], col.names = FALSE, row.names = FALSE)
+  if(!is.null(obj$Grwth_control))
+    do.table(dat = obj$Grwth_control[1:obj$nGrwth,], param = parnam$nameGrwth[1:obj$nGrwth])
   cat("\n")
 
   cat("#_Molt probability controls\n")
@@ -313,8 +395,40 @@ writeGmacsctlfile <- function(Dir = NULL,
   cat("# ************************************** #\n")
   cat(" \n")
   cat("#_Init_val_| Lower_Bd_| Upper_Bd_| Phase_| Prior_type_| p1_| p2\n")
-  utils::write.table(obj$MoltProb_control, col.names = FALSE, row.names = FALSE)
+  # utils::write.table(obj$MoltProb_control, col.names = FALSE, row.names = FALSE)
+  if(!is.null(obj$MoltProb_control)){
+    StartParMolt <- obj$nGrwth+1
+    EndParMolt <- obj$nGrwth+obj$nSizeIncPar
+    do.table(dat = obj$MoltProb_control, param = parnam$nameGrwth[StartParMolt:EndParMolt])
+  }
   cat("\n")
+
+
+  cat("#_Mature probability controls\n")
+  cat("# ************************************** #\n")
+  cat("#_For each parameter columns are:\n")
+  cat("#_Init_val: Initial value for the parameter (must lie between lower and upper bounds)\n")
+  cat("#_Lower_Bd & Upper_Bd: Range for the parameter\n")
+  cat("#_Phase: Set equal to a negative number not to estimate\n")
+  cat("#_Available prior types:\n")
+  cat("#_-> 0 = Uniform   - parameters are the range of the uniform prior\n")
+  cat("#_-> 1 = Normal    - parameters are the mean and sd\n")
+  cat("#_-> 2 = Lognormal - parameters are the mean and sd of the log\n")
+  cat("#_-> 3 = Beta      - parameters are the two beta parameters [see dbeta]\n")
+  cat("#_-> 4 = Gamma     - parameters are the two gamma parameters [see dgamma]\n")
+  cat("#_p1; p2: priors\n")
+  cat("# ************************************** #\n")
+  cat(" \n")
+  cat("#_Init_val_| Lower_Bd_| Upper_Bd_| Phase_| Prior_type_| p1_| p2\n")
+  if (nmature == 2 && !is.null(obj$MatureProb_control)) {
+    StartParMat <- obj$nGrwth + obj$nSizeIncPar + 1
+    EndParMat <- length(parnam$nameGrwth)
+
+    do.table(dat = obj$MatureProb_control,
+             param = parnam$nameGrwth[StartParMat:EndParMat])
+  }
+  cat("\n")
+
   cat("#_Custom growth-increment matrix or size-transition matrix (if any)\n")
   if(obj$bUseCustomGrowthMatrix == 1 || obj$bUseCustomGrowthMatrix == 2){
     utils::write.table(obj$CustomGrowthMatrix, col.names = FALSE, row.names = FALSE)
@@ -325,6 +439,14 @@ writeGmacsctlfile <- function(Dir = NULL,
   cat("#_Custom molt probability matrix  (if any)\n")
   if(obj$bUseCustomMoltProbability == 0){
     utils::write.table(obj$CustomMoltProbabilityMatrix, col.names = FALSE, row.names = FALSE)
+  } else {
+    cat("# \n")
+  }
+  cat("\n")
+
+  cat("#_Custom maturity probability matrix  (if any)\n")
+  if(nmature == 2 && obj$bUseCustomMatureProbability == 0){
+    utils::write.table(obj$CustomMatureProbabilityMatrix, col.names = FALSE, row.names = FALSE)
   } else {
     cat("# \n")
   }
@@ -463,11 +585,12 @@ writeGmacsctlfile <- function(Dir = NULL,
     } else {
       cat("#", paste0("Gear-",g)," \n")
     }
-    for(i in 1:dim(tmp)[1]){
-      # tmp2 <- tmp[i,]
-      # cat(unlist(tmp2)," \n")
-      cat(unlist(tmp[i,])," \n")
-    }
+    # for(i in 1:dim(tmp)[1]){
+    #   cat(unlist(tmp[i,])," \n")
+    # }
+    do.table(dat = tmp, param = parnam$selname1[which(obj$Selex_control$Fleet==g)])
+    if(g == N_index)
+      end_sel <- max(which(obj$Selex_control$Fleet==g))
   }
   cat("\n")
   cat("#_Retention parameter controls\n")
@@ -505,11 +628,10 @@ writeGmacsctlfile <- function(Dir = NULL,
     } else {
       cat("#", paste0("Gear-",g)," \n")
     }
-    for(i in 1:dim(tmp)[1]){
-      # tmp2 <- tmp[i,]
-      # cat(unlist(tmp2)," \n")
-      cat(unlist(tmp[i,])," \n")
-    }
+    # for(i in 1:dim(tmp)[1]){
+    #   cat(unlist(tmp[i,])," \n")
+    # }
+    do.table(dat = tmp, param = parnam$selname1[end_sel + which(obj$Ret_control$Fleet==(-1*g))])
   }
   cat("\n")
   cat("#_Number of asymptotic retention parameter\n")
@@ -524,7 +646,12 @@ writeGmacsctlfile <- function(Dir = NULL,
   cat("#_Phase: Set equal to a negative number not to estimate\n")
   cat("# ************************************** #\n")
   cat("#_Fleet_| Sex_| Year_| Init_val_| Lower_Bd_| Upper_Bd_| Phase \n")
-  utils::write.table(obj$AsympSel_control, col.names = FALSE, row.names = FALSE)
+  # utils::write.table(obj$AsympSel_control, col.names = FALSE, row.names = FALSE)
+  if(!is.null(obj$AsympSel_control)){
+    do.table(dat = obj$AsympSel_control, param = parnam$Asymptname)
+  } else {
+    utils::write.table(obj$AsympSel_control, col.names = FALSE, row.names = FALSE)
+  }
   cat("# -------------------------------------- #\n")
   cat("\n")
 
@@ -542,17 +669,20 @@ writeGmacsctlfile <- function(Dir = NULL,
   cat("\n")
   cat("#_Vulnerability impact")
   cat("#_Init_val_| Lower_Bd_| Upper_Bd_| Phase \n")
-  if(obj$nslx_envpars > 0)
-    utils::write.table(obj$SlxEnvPar, col.names = FALSE, row.names = FALSE)
+  if(obj$nslx_envpars > 0){
+    # utils::write.table(obj$SlxEnvPar, col.names = FALSE, row.names = FALSE)
+    do.table(obj$SlxEnvPar, param = parnam$selenvnames1)
+  }
   cat("# -------------------------------------- #\n")
   cat("\n")
 
   cat("#_Deviation parameter phase for the random walk in vulnerability parameters\n")
   cat("#_Need to be defined\n")
   if(!is.null(obj$devParPhase)){
-    cat(obj$devParPhase, "\n")
+    cat(obj$devParPhase, "\t# ", parnam$seldevnames1, "\n")
   } else {
     cat("-1")
+    cat("-1", "\t# ", parnam$seldevnames1, "\n")
   }
   cat("\n")
 
@@ -576,7 +706,8 @@ writeGmacsctlfile <- function(Dir = NULL,
   cat("# Loglik_mult: weight for the likelihood\n")
   cat("# ************************************** #\n")
   cat("# Init_val | Lower_Bd | Upper_Bd | Phase | Prior_type | p1 | p2 | Q_anal | CV_mult | Loglik_mult\n")
-  utils::write.table(obj$q_controls, col.names = FALSE, row.names = FALSE)
+  # utils::write.table(obj$q_controls, col.names = FALSE, row.names = FALSE)
+  do.table(dat = obj$q_controls, param = parnam$nameCatchability)
   cat("# -------------------------------------- #\n")
   cat("\n")
 
@@ -597,7 +728,8 @@ writeGmacsctlfile <- function(Dir = NULL,
   cat("# p1; p2: priors\n")
   cat("# ************************************** #\n")
   cat("# Init_val | Lower_Bd | Upper_Bd | Phase | Prior_type| p1 | p2\n")
-  utils::write.table(obj$add_cv_controls, col.names = FALSE, row.names = FALSE)
+  # utils::write.table(obj$add_cv_controls, col.names = FALSE, row.names = FALSE)
+  do.table(dat = obj$add_cv_controls, param = parnam$nameAddCV)
   cat(" \n")
   cat("# Additional variance control for each survey (0 = ignore; >0 = use)\n")
   cat(obj$add_cv_links, "\n")
@@ -634,7 +766,8 @@ writeGmacsctlfile <- function(Dir = NULL,
     "Low_bd_Y_female_F",
     "Up_bd_Y_female_F"
   ), sep = "", collapse = " | "), "\n")
-  utils::write.table(obj$f_controls, col.names = FALSE, row.names = FALSE)
+  # utils::write.table(obj$f_controls, col.names = FALSE, row.names = FALSE)
+  do.table(dat = obj$f_controls, param = parnam$nameFbar)
   cat("# -------------------------------------- #\n")
   cat("\n")
 
@@ -746,7 +879,8 @@ writeGmacsctlfile <- function(Dir = NULL,
   cat("# Init_val | Lower_Bd | Upper_Bd | Phase | Size_spec\n")
 
   if(obj$Init_Mdev > 0){
-    utils::write.table(obj$Mdev_controls, col.names = FALSE, row.names = FALSE)
+    # utils::write.table(obj$Mdev_controls, col.names = FALSE, row.names = FALSE)
+    do.table(dat = obj$Mdev_controls, param = parnam$nameMortality)
   } else {
     cat("\n")
   }
@@ -780,7 +914,9 @@ writeGmacsctlfile <- function(Dir = NULL,
   cat("# p1; p2: priors\n")
   cat("# ************************************** #\n")
   cat("# Init_val | Lower_Bd | Upper_Bd | Phase | Prior_type| p1 | p2\n")
-  utils::write.table(obj$m_mat_controls, col.names = FALSE, row.names = FALSE)
+  # utils::write.table(obj$m_mat_controls, col.names = FALSE, row.names = FALSE)
+  if(!is.null(obj$m_mat_controls))
+    do.table(dat = obj$m_mat_controls, param = parnam$nameMat_NatMort)
   cat("# -------------------------------------- #\n")
   cat("\n")
 
@@ -832,26 +968,12 @@ writeGmacsctlfile <- function(Dir = NULL,
   cat("# Penalties on deviations\n")
   cat("# ************************************** #\n")
   cat("# ",paste(c("Fdev_total", "Fdov_total", "Fdev_year", "Fdov_year"), sep = "", collapse = " | "), "\n")
-  utils::write.table(obj$Penalty_fdevs, col.names = FALSE, row.names = FALSE)
+  # utils::write.table(obj$Penalty_fdevs, col.names = FALSE, row.names = FALSE)
+  if(!is.null(obj$Penalty_fdevs))
+    do.table(dat = obj$Penalty_fdevs, param = names(parnam$nameFdev))
   cat("\n")
   cat("# Account for priors (penalties)\n")
   cat("# ************************************** #\n")
-  # cat("# ", paste(c(
-  #   "Log_fdevs",
-  #   "meanF",
-  #   "Mdevs",
-  #   "Rec_devs",
-  #   "Initial_devs",
-  #   "Fst_dif_dev",
-  #   "Mean_sex-Ratio",
-  #   "Molt_prob",
-  #   "Free_selectivity",
-  #   "Init_n_at_len",
-  #   "Fvecs",
-  #   "Fdovs",
-  #   "Vul_devs"
-  # ), sep = "", collapse = " | "), "\n")
-  # utils::write.table(obj$Penalty_emphasis, col.names = FALSE, row.names = FALSE)
   namPenal <- c(
     "Log_fdevs",
     "meanF",
@@ -882,3 +1004,4 @@ writeGmacsctlfile <- function(Dir = NULL,
 
   base::sink()
 }
+

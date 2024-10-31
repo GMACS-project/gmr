@@ -4,19 +4,21 @@
 \alias{insertTime2}
 \title{insertTime2}
 \usage{
-insertTime2(object = NULL, pattern = NULL, .update = NULL)
+insertTime2(object = NULL, pattern = NULL, .update = NULL, devel = FALSE)
 }
 \arguments{
-\item{object}{Character string: Input vector/table}
+\item{object}{(character string) Input vector/table}
 
-\item{pattern}{Character string: pattern to look for.}
+\item{pattern}{(character string) pattern to look for.}
 
 \item{.update}{Logical: is it to update a new version of GMACS? If TRUE,
 the name of the new version of GMACS and the date of the compilation will be
 modified in the gmacsbase.tpl file.}
+
+\item{devel}{(logical)- flag to specify if this is a development version.}
 }
 \value{
-List of object: the first object is the line wherein the text should
+a list. The first object is the line wherein the text should
 added (it corresponds to the line where the header is specified in gmacsbase.tpl).
 The second object is the new header definition. If this is not an update of
 GMACS, then the header of the gmacsbase.tpl file will not be modified but

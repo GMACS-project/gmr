@@ -16,10 +16,43 @@ readGMACS.dat(path = NULL, verbose = TRUE)
 }}
 }
 \value{
-the gmacs.dat file as a named list.
+A list with the content of the gmacs.dat file.
+\itemize{
+\item \code{DatFileName} - The name of the data input file (e.g., model.dat).
+\item \code{CtlFileName} - The name of the control input file (e.g., model.ctl).
+\item \code{PrjFileName} - The name of the projection input file (e.g., model.prj).
+\item \code{Weight_Unit} - The unit use for the weight data.
+\item \code{Number_Unit} - The unit use for the numbers data.
+\item \code{Stock_name} - The name of the stock considered.
+\item \code{Jitter} - The jitter configuration (Yes/No).
+\item \code{sd_Jitter} - The sd used in the jitter (if applicable).
+\item \code{OutVar_BRPs} - Output variance for the Biological Reference Points.
+\item \code{OutVar_Recr} - Output variance for the recruitment.
+\item \code{OutVar_SSB} - Output variance for the Spawning Stock Biomass.
+\item \code{OutVar_Fbar} -   Output variance for the mean fishing mortality.
+\item \code{OutVar_DynB0} - Output variance for the dynamic B0 approach.
+\item \code{N_Year_Retro} - The number of year for the retrospective analysis.
+\item \code{TurnOffPhase} - The maximum number of phase(s) (i.e., stop the estimation after this phase)
+\item \code{StopAfterFnCall} - The number of function call.
+\item \code{CalcRefPoints} - Specify if the reference points are computed during the run.
+\item \code{UsePinFile} - Use the .pin file to specify (initial) values for parameters.
+\item \code{Verbose} - Verbose flag.
+\item \code{eof} - Logical indicating the end of the file (used for checking the reading).
+}
 }
 \description{
 Read the gmacs.dat file.
+}
+\examples{
+\dontrun{
+# Stock ----
+stock <- "SNOW_crab"
+# read gmacs.dat ----
+fileName <- "gmacs.dat"
+fileName <- file.path(dir_Base, stock, fileName, fsep = fsep)
+GMACSdat <- readGMACS.dat(path = fileName, verbose = TRUE)
+}
+
 }
 \seealso{
 \code{\link{readGMACSdat}},\code{\link{readGMACSctl}},

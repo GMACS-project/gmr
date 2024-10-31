@@ -14,98 +14,110 @@ knitr::opts_chunk$set(
 ```
 
 
-# gmr 1.3.6.9001
+# gmr 1.3.7.9001
 *************************************************************************
 
 Here are some of the items for the next release:
 
-- [ ] Update the functions to read GMACS output files (related to the GMACS version 2.01.M.09)
+- [ ] Add examples and finish documenting functions.
 - [ ] Check all plotting functions
-- [ ] Create vignettes to build and run gmacs, make comparison
+- [ ] Create vignettes to build and run gmacs, make comparisons between code versions and between models settings
 - [ ] Create SAFE document templates
 - [ ] Add data and implement examples in the package
+
+# gmr 1.3.7
+*************************************************************************
+
+(GitHub issue/PR numbers in parentheses)
+
+This new version includes implementations linked to GMACS version 2.10.01, which involved changes to the read/write functions of GMACS input files, implementation of a new workflow to update/upgrade Gmacs (development module). This version also includes a better documentation of most functions with examples. 
+
+## New functions
+
+### Functions to deal with Gmacs input/output files
+  * `clean_Inputfiles ()`: clean Gmacs input files in a folder.
+  * `get_Param_name()`: get the name of all parameters. Useful to write .par/.pin files.
+  * `getInpOutFiles()`: read all the Gmacs input files ('gmacs.dat', 'model.dat', 'model.ctl', 'model.prj') and and if they exist, the Gmacs output files ('Gmacsall.out', 'gmacs.par', 'gmacs.rep', 'simdata.out').
+      
+### Functions related to the development module
+  * `set_DevStruct()`: Set up structure folder for the development of a new code version of Gmacs.
+  * `CompareCodeVersion()`: run tests of comparison between two code versions of Gmacs.
+    
+## Updated functions
+
+### Functions to deal with Gmacs input/output files
+  * `clean_files()`: add the possibility to give specific file names and improve the process of deletion.
+  * `copy_GMACSinputs()`: improve the process for copying files and checks.
+  * `readGMACS.dat()`: add the read of the units.
+  * `readGMACSallOUT()`: add new implementation of Gmacs and names for all parameters.
+  * `readGMACSctl()`: add the maturity probability.
+  * `readGMACSpar()`: add the description of each parameter and update stuff about maturity probability, environmental impact on selex.
+  * `writeGmacs.dat()`: add stuff related to the development module.
+  * `writeGmacsctlfile()`: add stuff related to the development module and the maturity probability.
+  * `writeGmacsdatfile()`: add stuff related to the development module and new format for catch, size frequency and survey data frames.
+  * `writeGmacsPAR()`: update to account for the number of digits when writing the '.par'/'.pin' files.
+  * `writeGmacsprjfile()`: add stuff related to the development module.
+  * `write_Gmacs_InputFiles()`: write all the stock-specific Gmacs input files
+    
+### Functions to deal Gmacs code, executables and updates
+  * `.GetGmacsExe()`: add the possibility to specify the path to the repertory that holds the '.tpl' file.
+  * `insertTime()`;`insertTime2()`: add a development option.
+  * `NewGMACSFeat()`: improve the way of adding new features in the 'gmacsbase.tpl'.
+  * `UpdateGMACS()`: change the header to update/upgrade Gmacs, add cleaning options related to the development module.
+  * `write_TPL()`: add stuff about the development module.
 
 # gmr 1.3.6
 *************************************************************************
 
 (GitHub issue/PR numbers in parentheses)
 
-This new version includes implementations linked to GMACS version 2.01.M.09, 
-which involved changes to the read/write functions of GMACS input files. Changes
-have also been made to the GMACS compilation functions to create a temporary folder
-when compiling GMACS, making it easier to resolve errors in the code (#26).
+This new version includes implementations linked to GMACS version 2.01.M.09, which involved changes to the read/write functions of GMACS input files. Changes have also been made to the GMACS compilation functions to create a temporary folder when compiling GMACS, making it easier to resolve errors in the code (#26).
 
 ## New functions
 
-  1. Functions to copy all GMACS input files
+###  Functions to copy all GMACS input files
   * `Copy_GMACS_Input_files()`: copy one or multiple GMACS input file(s).
   
 ## Updated functions
 
-  1. Functions to read GMACS input/output files
-  * `read_GMACS_dat()`: incorporating 1) stock specification (weight unit and stock name),
-  2) other controls settings (maximum phase, number of function calls, calculation of 
-  reference points, use of pin file, and verbose).
-  * `readGMACSctl()`: 1) incorporating the maturity specific length-weight relationship,
-  2) the functional maturity terminally molting, 3) removing the other controls 
-  settings (maximum phase, number of function calls, calculation of reference points, 
-  use of pin file, and verbose).
-  * `readGMACSdat()`: incorporating the option for the new format of input catch,
-  relative abundance indices and size composition.
-  * `readGMACSprj()`: incorporating 1) new options for the projection specifications
-  controls (number of state strategies and F range), and 2) new options for the Harvest
-  Control rules settings (Apply strategies [OFL, ABC], Apply the state strategy,
-  Number of state parameters).
+### Functions to read GMACS input/output files
+  * `read_GMACS_dat()`: incorporating 1) stock specification (weight unit and stock name), 2) other controls settings (maximum phase, number of function calls, calculation of reference points, use of pin file, and verbose).
+  * `readGMACSctl()`: 1) incorporating the maturity specific length-weight relationship, 2) the functional maturity terminally molting, 3) removing the other controls settings (maximum phase, number of function calls, calculation of reference points, use of pin file, and verbose).
+  * `readGMACSdat()`: incorporating the option for the new format of input catch, relative abundance indices and size composition.
+  * `readGMACSprj()`: incorporating 1) new options for the projection specifications controls (number of state strategies and F range), and 2) new options for the Harvest Control rules settings (Apply strategies [OFL, ABC], Apply the state strategy, Number of state parameters).
   * `writeGmacs_dat()`: account for stock specification and other controls settings.
-  * `writeGmacsctlfile()`: account for the maturity specific length-weight relationship,
-  2) the functional maturity terminally molting, and 3) removing the other controls 
-  settings.
-  * `writeGmacsdatfile()`: account for the new format of input catch,
-  relative abundance indices and size composition.
-  * `writeGmacsprjfile()`: account for the new options for 1) the projection specifications
-  controls, and 2) the Harvest Control rules settings.
-  
-  2. Functions to update and release a new version of GMACS
-  
-  The updates improve the workflow for updating GMACS.
-  
-  * `GetGmacsExe()`: A temporary folder is now created when compiling GMACS. 
-  If errors when converting gmacs.tpl to gmacs.cpp or compiling gmacs,
-  either a "Error_convertion.txt" or a "Error_compilation.txt" file is created 
-  and indicates the source of the errors.
-  * `clean_root`: delete (if applicable) the "Error_convertion.txt" and/or 
-  "Error_compilation.txt" files when updating GMACS.
+  * `writeGmacsctlfile()`: account for the maturity specific length-weight relationship, 2) the functional maturity terminally molting, and 3) removing the other controls settings.
+  * `writeGmacsdatfile()`: account for the new format of input catch, relative abundance indices and size composition.
+  * `writeGmacsprjfile()`: account for the new options for 1) the projection specifications controls, and 2) the Harvest Control rules settings.
+
+###  Functions to update and release a new version of GMACS
+
+The updates improve the workflow for updating GMACS.
+
+  * `GetGmacsExe()`: A temporary folder is now created when compiling GMACS. If errors when converting 'gmacs.tpl' to gmacs.cpp or compiling gmacs, either a "Error_convertion.txt" or a "Error_compilation.txt" file is created and indicates the source of the errors.
+  * `clean_root`: delete (if applicable) the "Error_convertion.txt" and/or "Error_compilation.txt" files when updating GMACS.
 
 # gmr 1.3.5
 *************************************************************************
 
 (GitHub issue/PR numbers in parentheses)
 
-This new release includes implementations related to the incorporation of 
-i) environmental impacts and possibility of random walk in the vulnerability 
-parameters (selectivity and retention parameters) (#24).
+This new release includes implementations related to the incorporation of i) environmental impacts and possibility of random walk in the vulnerability parameters (selectivity and retention parameters) (#24).
 
 ## Updated functions
 
-  1. Functions to read GMACS input/output files
+### Functions to read GMACS input/output files
   * `readGMACSdat()`: incorporating the read of environmental indices.
-  * `readGMACSctl()`: 1) change in the selectivity and retention matrices to allow 
-  environmental impacts and random walk; 2) Now read phase for random walk deviations;
-  3) new internal function to count the number of random deviation parameters to be 
-  estimated.
+  * `readGMACSctl()`: 1) change in the selectivity and retention matrices to allow environmental impacts and random walk; 2) Now read phase for random walk deviations; 3) new internal function to count the number of random deviation parameters to be estimated.
   * `readGMACSpar()`: Accounting for the environmental parameters.
-  * `readGMACSallOUT()`: Reading environmental parameters and deviations in
-  vulnerability.
-  * `writeGmacsctlfile()`: account for environmental parameters and random walk 
-  deviations + formatting.
+  * `readGMACSallOUT()`: Reading environmental parameters and deviations in vulnerability.
+  * `writeGmacsctlfile()`: account for environmental parameters and random walk deviations + formatting.
   * `writeGmacsdatfile()`: account for environmental data and formatting.
-  * `writeGmacsPAR()`: account for environmental parameters and deviations in 
-  vulnerability + formatting.
+  * `writeGmacsPAR()`: account for environmental parameters and deviations in vulnerability + formatting.
   
-  2. Functions to update and release a new version of GMACS
-  
-  The updates improve the workflow for updating GMACS.
-  
+### Functions to update and release a new version of GMACS
+
+The updates improve the workflow for updating GMACS.
   * `Do_Comp()`
   * `Do_GMACS()`
   * `GMACS()`
@@ -118,27 +130,23 @@ parameters (selectivity and retention parameters) (#24).
 
 (GitHub issue/PR numbers in parentheses)
 
-This new release includes implementations related to the CPT modelling workshop
-hold in January 2023. Major implementations includes updates of i) plotting 
-functions, ii) functions allowing to read and write GMACS input/output files, 
-and iii) functions used when implementing and releasing a new version of GMACS (#20).
+This new release includes implementations related to the CPT modelling workshop hold in January 2023. Major implementations includes updates of i) plotting functions, ii) functions allowing to read and write GMACS input/output files, and iii) functions used when implementing and releasing a new version of GMACS (#20).
 
 ## New functions
 
-  1. Functions to plot GMACS outputs
+### Functions to plot GMACS outputs
   * `BaseThemeGMR()`: Specify the basic theme of `gmr` when plotting outputs
   
-  2. Functions to read GMACS output files
+### Functions to read GMACS output files
   * `readGMACSallOUT()`: reads the `gmacsall.out` file
   * `readGMACSrep()`: read the `gmacs.rep` file
   
-  3. Function to update GMACS
-  *`NewGMACSFeat()`: creates a summary file detailing the latest implementations
-  in the gmacsbase.TPL file, when they've been done and by whom.
+### Function to update GMACS
+  *`NewGMACSFeat()`: creates a summary file detailing the latest implementations in the gmacsbase.TPL file, when they've been done and by whom.
   
 ## Updated functions
 
-  1. Functions to plot GMACS outputs
+### Functions to plot GMACS outputs
   * `.get_F_df()`
   * `.get_cpue_df()`
   * `plot_catch()`
@@ -147,7 +155,7 @@ and iii) functions used when implementing and releasing a new version of GMACS (
   * `plot_basicOutput()`
   * `plot_catch()`
   
-  2. Functions to read/write GMACS input/output files
+### Functions to read/write GMACS input/output files
   * `readGMACS.dat()`
   * `readGMACSdat()`
   * `readGMACSctl()`
@@ -160,7 +168,7 @@ and iii) functions used when implementing and releasing a new version of GMACS (
   * `writeGmacsdatfile()`
   * `writeGmacsprjfile()`
   
-  3. Functions to update and release a new version of GMACS 
+### Functions to update and release a new version of GMACS 
   * `.GetGmacsExe()`
   *`createGmacsExe()`
   * `GMACS()`
@@ -173,8 +181,7 @@ and iii) functions used when implementing and releasing a new version of GMACS (
 
 (GitHub issue/PR numbers in parentheses)
 
-This new release comes with the PR (#19) and updates the function to read the 
-control file and the one to realize simulations.
+This new release comes with the PR (#19) and updates the function to read the control file and the one to realize simulations.
 
 ## Updated functions
 
@@ -195,15 +202,12 @@ This new release allows to run the simulation under Linux.
 
   * `RunGmacsSim()` (#17)
 
-
 # gmr 1.3.1
 *************************************************************************
 
 (GitHub issue/PR numbers in parentheses)
 
-This new release incorporates a new function to plot the basic outputs from GMACS 
-and give the possibility to specify a given file to set the directories needed to 
-call ADMB within R.
+This new release incorporates a new function to plot the basic outputs from GMACS and give the possibility to specify a given file to set the directories needed to call ADMB within R.
 
 ## New functions
 
@@ -219,21 +223,20 @@ call ADMB within R.
 
 (GitHub issue/PR numbers in parentheses)
 
-This is a minor version update of `gmr` that includes new functions to i) work with 
-the simulation module of GMACS, ii) read input and some output files of GMACS and, 
-iii) write the GMACS input files.
+This is a minor version update of `gmr` that includes new functions to i) work with the simulation module of GMACS, ii) read input and some output files of GMACS and, iii) write the GMACS input files.
 
 ## New functions
 
-  1. Functions to read GMACS input files
+### Functions to read GMACS input files
   * `readGMACSfiles()`: Function to read all the GMACS input files
   * `readGMACS.dat()`: Function to read the gmacs.dat file
   * `readGMACSdat()`: Function to read the the data file
   * `readGMACSctl()`: Function to read the control file 
   * `readGMACSprj`: Function to read the projection file
+    
 All these functions return the input files as a named list.
   
-  2. Functions to write the GMACS input/output files
+### Functions to write the GMACS input/output files
   *`writeGmacs.dat()`: function to write the gmacs.dat file
   *`writeGmacsdatfile()`: function to write data file
   *`writeGmacsctlfile()`: function to write the control file
@@ -241,7 +244,7 @@ All these functions return the input files as a named list.
   *`writeGmacsPAR()`: function to write the gmacs.par file
   * `GMACSversion()`: Function to extract the Version number of GMACS
   
-  3. Generate simulation using GMACS
+### Generate simulation using GMACS
   *`prepSim()`: function to get the original input files for the simulation approach
   *`GenSimFiles()`: function to get generate the input files to get the simulated data for each simulation
   *`SimData()`: Function to generate the data
@@ -292,18 +295,12 @@ the various windows prompt (#1).
 
 ## New functions
 
-  * `GMACS()`, which allows you to compile, run and make comparison of different
-  versions of GMACS for one or several stocks. This is the main function to work 
-  with the GMACS model with the `gmr` package.
-  * `Do_GMACS()`, which is called by the `GMACS()` function. It allows to build the 
-  GMACS executable, run the model and make comparison between multiple versions 
-  of GMACS if the user ask for.
-  * `Do_Comp()`, which establishes comparison tables of management quantities 
-  between different versions of GMACS.
+  * `GMACS()`, which allows you to compile, run and make comparison of different versions of GMACS for one or several stocks. This is the main function to work with the GMACS model with the `gmr` package.
+  * `Do_GMACS()`, which is called by the `GMACS()` function. It allows to build the GMACS executable, run the model and make comparison between multiple versions of GMACS if the user ask for.
+  * `Do_Comp()`, which establishes comparison tables of management quantities between different versions of GMACS.
   * `.GetGmacsExe()`, which allows to update and "release" a new version of GMACS.
   * `.CallTerm()`, which allows to call a R terminal to execute a specific command.
-  * `read.OUT()`, which is designed to read the gmacsall.OUT (output of GMACS) to 
-  find estimates of specific management/biological quantities.
+  * `read.OUT()`, which is designed to read the 'gmacsall.OUT' (output of GMACS) to find estimates of specific management/biological quantities.
   
 Other functions (called within the ones described above) have also been added to
 the `gmr` package but are internal functions.

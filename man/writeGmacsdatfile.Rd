@@ -12,7 +12,11 @@ writeGmacsdatfile(
   stock = "",
   model_name = "",
   Ass_Year = "",
-  DirTPL = NULL
+  DirTPL = NULL,
+  CatchDF_format = NULL,
+  SurveyDF_format = NULL,
+  SizeFreqDF_format = NULL,
+  Ver_number = NULL
 )
 }
 \arguments{
@@ -34,6 +38,23 @@ created using the \code{\link[=readGMACSdat]{readGMACSdat()}} function.}
 
 \item{DirTPL}{(character string)- the directory where the gmacsbase.TPL file
 you are using for the stock assessment is hold.}
+
+\item{CatchDF_format}{(integer)- Overwrite the catch data format. If 0, catch
+data will be written using the 'old' format; if 1, catch data will be written
+using the 'new' format. Both the \verb{maturity states} and \verb{shell condition}
+that are incorporated in the 'new format' are not used in the model but this
+is for a future option. By default, both of them will be set as undetermined
+when switching from the 'old' to the 'new' format.}
+
+\item{SurveyDF_format}{(integer)- Overwrite the relative abundance index data
+format. If 0, survey data will be written using the 'old' format; if 1, survey
+data will be written using the 'new' format.}
+
+\item{SizeFreqDF_format}{(integer)- Overwrite the size frequency data
+format. If 0, size frequency data will be written using the 'old' format;
+if 1, size frequency data will be written using the 'new' format.
+@param Ver_number (character)- The version of Gmacs. This is used only when
+developing new code versions of Gmacs.}
 }
 \value{
 create a new .dat file.
