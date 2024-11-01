@@ -182,12 +182,11 @@ GMACSversion <- function(DirTPL = NULL) {
 
   oldWD = getwd()
   on.exit(setwd(oldWD))
-  # tmpDir <- unlist(strsplit(DirTPL, "build"))[1]
   tmpDir <- DirTPL
   setwd(tmpDir)
 
-  # TPL <- readLines("gmacs.tpl")
   TPL <- readLines("gmacsbase.tpl")
+
   header <- which(stringr::str_detect(TPL, pattern = "!! TheHeader"))
   header <- TPL[header]
 

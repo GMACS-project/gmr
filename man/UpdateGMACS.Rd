@@ -10,6 +10,8 @@ UpdateGMACS(
   dir_Assdata = NULL,
   dir_Supp = NULL,
   ADMBpaths = NULL,
+  UpdateInputFiles = TRUE,
+  Stock_models_names = NULL,
   Update_LastAss_file = TRUE,
   UpdateLast_GmacsVer = TRUE,
   stock = "all",
@@ -39,6 +41,16 @@ used to run the last version of Gmacs are saved.}
 required ADMB paths. By default (\code{ADMBpaths = NULL}), the function will
 look for that file in the relative folder of the \code{dirNew} repertory. See
 the details section for more information about this \verb{ADMB files}.}
+
+\item{UpdateInputFiles}{(logical)- Flag to re-write all the input files in
+order to update the Gmacs version name and the date of last compilation. By
+default, \code{UpdateInputFiles = TRUE}. You need to fill in the
+\code{Stock_models_names} list to provide the names of the files, the model
+name and the year of assessment.}
+
+\item{Stock_models_names}{(list)- named list providing the stock-specific input
+files names, the name of the model and the year of the assessment for which these
+are used for. See the \code{\link[=write_Gmacs_InputFiles]{write_Gmacs_InputFiles()}} documentation for more details.}
 
 \item{Update_LastAss_file}{(logical)- If true, the stock-specific input files
 will be copy to the \code{dir_Assdata}. Since this folder is intended to hold

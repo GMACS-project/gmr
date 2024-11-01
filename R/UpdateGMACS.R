@@ -24,6 +24,14 @@
 #' required ADMB paths. By default (\code{ADMBpaths = NULL}), the function will
 #' look for that file in the relative folder of the \code{dirNew} repertory. See
 #' the details section for more information about this `ADMB files`.
+#' @param UpdateInputFiles (logical)- Flag to re-write all the input files in
+#' order to update the Gmacs version name and the date of last compilation. By
+#' default, \code{UpdateInputFiles = TRUE}. You need to fill in the
+#' \code{Stock_models_names} list to provide the names of the files, the model
+#' name and the year of assessment.
+#' @param Stock_models_names (list)- named list providing the stock-specific input
+#' files names, the name of the model and the year of the assessment for which these
+#' are used for. See the [write_Gmacs_InputFiles()] documentation for more details.
 #' @param Update_LastAss_file (logical)- If true, the stock-specific input files
 #' will be copy to the \code{dir_Assdata}. Since this folder is intended to hold
 #' the last available input file for each stock, this argument is set as
@@ -57,8 +65,6 @@
 #' file for Mac. The function automatically detect which machine you are working
 #' on.
 #'
-#'
-#'
 #' @return Copy both the Gmacs codes and the stock-specific input files from the
 #' development folder to:
 #' \describe{
@@ -80,6 +86,8 @@ UpdateGMACS <- function(dirSrc = NULL,
                         dir_Assdata = NULL,
                         dir_Supp = NULL,
                         ADMBpaths = NULL,
+                        UpdateInputFiles = TRUE,
+                        Stock_models_names = NULL,
                         Update_LastAss_file = TRUE,
                         UpdateLast_GmacsVer = TRUE,
                         stock = "all",
@@ -223,13 +231,46 @@ UpdateGMACS <- function(dirSrc = NULL,
     StockNames <- stock
   }
 
+  # Re write the input file to update the version and date of compilation of Gmacs
+  if(UpdateInputFiles){
+    if(is.null(Stock_models_names)){
+      stp1 <- paste0("The named list giving the information about the model input file names is missing. The input files won't be updated")
+      war(text = stp1)
+    } else {
+      if(any(!StockNames %in% names(Stock_models_names))){
+        res1 <- StockNames[which(!StockNames %in% names(Stock_models_names))]
+        StockNamesUpdate <- StockNames[!StockNames %in% res1]
+        stp2 <- paste(
+          "The information for :\n", paste("\t-",res1,collapse = "\n"),
+          "\nare missing in the 'Stock_models_names' list.\n\t--> Their input files will not be updated."
+        )
+        war(text = stp2)
+      } else {
+        StockNamesUpdate <- StockNames
+      }
+      dir_InputFiles <- file.path(dirname(dirSrc), "Stock_Input_files", basename(dirSrc), fsep = fsep)
+      write_Gmacs_InputFiles(
+        stock = StockNamesUpdate,
+        Stock_NameFiles = Stock_models_names,
+        verbose = FALSE,
+        dir_InputFiles = dirSrc,
+        dir_WriteFiles = c(dir_InputFiles,dirSrc),
+        CatchDF_format = NULL,
+        SurveyDF_format = NULL,
+        SizeFreqDF_format = NULL,
+        cleanup = TRUE,
+        dir_TPL = dirSrc,
+        Gmacs_Version = NULL
+      )
+    }
+  } # End UpdateInputFiles
+
   # Clean repertories and Copy files ----
   dir_new <- ifelse(
     basename(dirNew) == "build",
     yes = dirNew,
     no = file.path(dirNew, "build", fsep = fsep)
   )
-  # Run over the stocks ----
   for (nm in 1:length(StockNames)) {
     # Clean the Latest_Version directory
     tmpDirStock <- file.path(dir_new, StockNames[nm], fsep = fsep)
@@ -378,7 +419,7 @@ UpdateGMACS <- function(dirSrc = NULL,
   }
   # Remove the Gmacs version specific stock input files folder used for the test
   if(cleanInputFiles){
-    dir_InputFiles <- file.path(dirname(dir_test), "Stock_Input_files", basename(dir_test), fsep = fsep)
+    dir_InputFiles <- file.path(dirname(dirSrc), "Stock_Input_files", basename(dirSrc), fsep = fsep)
     if(dir.exists(dir_InputFiles)){
       if(verbose){
         cat(paste0("Deleting folder:\n", dir_InputFiles, "\n"))

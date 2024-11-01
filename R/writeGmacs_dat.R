@@ -38,7 +38,7 @@ writeGmacs.dat <- function(Dir = NULL,
     Ver <- paste0("GMACS Version: ",Ver_number)
     Comp <- "_Gmacs Development version"
   } else {
-    tmp <- GMACSversion(Dir = DirTPL)
+    tmp <- GMACSversion(DirTPL = DirTPL)
     Ver <- stringr::str_squish(tmp$ver)
     Comp <- tmp$Comp
   }
@@ -56,7 +56,7 @@ writeGmacs.dat <- function(Dir = NULL,
   } else {
     cat(stringr::str_squish(string = paste0("#", Comp)), "\n")
   }
-  cat(stringr::str_squish(string = paste0("#_Date of writing the gmacs.dat file:", .ac(Sys.time()))), "\n")
+  cat(stringr::str_squish(string = paste0("#_Date of writing the gmacs.dat file: ", .ac(Sys.time()))), "\n")
   cat("# *** \n")
   cat("# \n")
   cat(stringr::str_squish(string = paste0("#_Stock of interest: ", stock)), "\n")
