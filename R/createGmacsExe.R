@@ -42,8 +42,14 @@ createGmacsExe <-
     # Check directories for ADMB
     # Define the name of the file containing the different pathways needed to build
     # the GMACS executable
-    suppressWarnings(PBSadmb::readADpaths(ADMBpaths))
-
+    if(!file.exists(ADMBpaths)){
+      warning("The 'ADMBpaths' file does not exist. Please check the ADMBpaths argument\n")
+      stop()
+    } else {
+      PBSadmb::setupAD(ADMBpaths)
+      suppressWarnings(PBSadmb::readADpaths(ADMBpaths))
+    }
+    
     cat("\n Verifying the paths for ADMB, the C/C++ compiler and the editor ....\n")
     if (!PBSadmb::checkADopts())
       stop(
