@@ -104,6 +104,7 @@
     )
     setwd(oldWD)
   }
+  PBSadmb::setupAD(ADMBpaths)
   cat("# ------------------------------------------------------------------- #\n")
   cat("        Now building GMACS for the ", GMACS_version[vv], " \n")
   cat("# ------------------------------------------------------------------- #\n")
@@ -321,7 +322,8 @@
     add = FALSE,
     verbose = verbose,
     pathfile = NULL,
-    args = args
+    args = args,
+    ADMBpaths = ADMBpaths
   )
   cat("OK after building gmacs executable ...\n")
 

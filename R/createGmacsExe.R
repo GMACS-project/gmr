@@ -49,7 +49,7 @@ createGmacsExe <-
       PBSadmb::setupAD(ADMBpaths)
       suppressWarnings(PBSadmb::readADpaths(ADMBpaths))
     }
-    
+
     cat("\n Verifying the paths for ADMB, the C/C++ compiler and the editor ....\n")
     if (!PBSadmb::checkADopts())
       stop(
@@ -220,7 +220,8 @@ createGmacsExe <-
         add = FALSE,
         verbose = verbose,
         pathfile = NULL,
-        args = args
+        args = args,
+        ADMBpaths = ADMBpaths
       )
       cat("OK after building gmacs executable ...\n")
 
