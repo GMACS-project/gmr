@@ -36,7 +36,8 @@ the following: \code{nsex; Start_Y; End_Y}}
 
 \item{stock}{(character string)- name of the stock of interest}
 
-\item{model_name}{(character string)- name of the model currently considered (e.g., "model 22.A")}
+\item{model_name}{(character string)- name of the model currently considered
+(e.g., "model 22.A").}
 
 \item{Ass_Year}{(character string)- Year of this assessment}
 

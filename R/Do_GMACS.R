@@ -1,4 +1,5 @@
 
+
 #' @title Do_GMACS
 #'
 #' @description This function allows one to build the GMACS executable, run GMACS
@@ -25,8 +26,11 @@
 #' @param LastAssDat Logical. If TRUE, the latest available data will be used for
 #' the analysis i.e. the model will be executed using the data stored in the
 #' the "Assessment_data" folder.
-#' @param ADMBpaths string name of 2-column text file that details the relevant
-#' paths for the R variables admbpath, gccpath, and editor.
+#' @param ADMBpaths Path to the repertory holding the ADMBpath file. This file
+#' is a string name of 2-column text file that details the relevant paths for the
+#' R variables admbpath, gccpath, and editor. By default the function detect the
+#' name of this file based on the OS of the machine (windows OS
+#' \code{"ADpaths_Windows.txt"} and Mac OS \code{"ADpaths_MacOS.txt"}).
 #' @param make.comp Logical. If TRUE, comparisons will be made between the various
 #' \code{GMACS_version}s considered in the analysis.
 #' @inheritParams PBSadmb::convAD
@@ -55,14 +59,17 @@ Do_GMACS <- function(Spc = NULL,
                      make.comp = NULL,
                      verbose = NULL,
                      cleanRun = NULL) {
+  fsep <- .Platform$file.sep
 
   for (vv in 1:length(Dir)) {
-
-
     # Check directories for ADMB
     # Define the name of the file containing the different pathways needed to build
     # the GMACS executable
-    suppressWarnings(PBSadmb::readADpaths(file.path(dirname(Dir[vv]), ADMBpaths)));
+    ADMBfile <- ifelse(isWindowsOS(),
+                       "ADpaths_Windows.txt",
+                       "ADpaths_MacOS.txt")
+    suppressWarnings(PBSadmb::readADpaths(file.path(ADMBpaths, ADMBfile, fsep = fsep)))
+
     cat("\nVerifying the paths for ADMB, the C/C++ compiler and the editor ....\n")
     if (!PBSadmb::checkADopts())
       stop(
@@ -70,16 +77,24 @@ Do_GMACS <- function(Spc = NULL,
       )
 
     # 1.Get an executable for GMACS ----
-    gmacs_exe <- ifelse(isWindowsOS(),"gmacs.exe","gmacs")
+    gmacs_exe <- ifelse(isWindowsOS(), "gmacs.exe", "gmacs")
     if (compile[vv] == 1) {
-      cat("\n# ------------------------------------------------------------------- #\n")
-      cat("# ------------------------------------------------------------------- #\n")
+      cat(
+        "\n# ------------------------------------------------------------------- #\n"
+      )
+      cat(
+        "# ------------------------------------------------------------------- #\n"
+      )
       cat("        Now building GMACS for the ", GMACS_version[vv], " \n")
-      cat("# ------------------------------------------------------------------- #\n")
-      cat("# ------------------------------------------------------------------- #\n")
+      cat(
+        "# ------------------------------------------------------------------- #\n"
+      )
+      cat(
+        "# ------------------------------------------------------------------- #\n"
+      )
 
 
-      createGmacsExe(vv,Dir,verbose=ifelse(is.logical(verbose),verbose,FALSE))
+      createGmacsExe(vv, Dir, verbose = ifelse(is.logical(verbose), verbose, FALSE))
     } else {
       if (!file.exists(file.path(Dir[vv], gmacs_exe))) {
         stop(
@@ -195,7 +210,11 @@ Do_GMACS <- function(Spc = NULL,
       # id <- GMACS_term(.Dir = paste(Dir[vv], "build/", Spc[nm], sep=""), verbose = verbose)
       id <-
         gmr::.CallTerm(
-          command = ifelse(.Platform$OS.type=="windows",gmacs_exe,paste0("./",gmacs_exe)),
+          command = ifelse(
+            .Platform$OS.type == "windows",
+            gmacs_exe,
+            paste0("./", gmacs_exe)
+          ),
           .Dir = file.path(Dir[vv], "build", Spc[nm]),
           verbose = verbose
         )
@@ -232,14 +251,12 @@ Do_GMACS <- function(Spc = NULL,
           cat("\nAll assessment have been carried out.\n")
 
           # run clean functions to delete files
-          if(cleanRun){
+          if (cleanRun) {
             for (nm in 1:length(Spc)) {
               if (verbose) {
-                if(nm == 1)
+                if (nm == 1)
                   cat("Now cleaning the following repertory(ies):\n")
-                cat(
-                  "\t =>",
-                  file.path(Dir[vv], "build", Spc[nm]), "\n")
+                cat("\t =>", file.path(Dir[vv], "build", Spc[nm]), "\n")
               }
               pathRun <- file.path(Dir[vv], "build", Spc[nm])
               clean_bat(path = pathRun, verbose = FALSE)

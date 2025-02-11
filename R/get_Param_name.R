@@ -8,8 +8,11 @@
 #' @param CtlFile (list)- Object containing the .ctl file - This is the output
 #' of the [readGMACSctl()] function.
 #' @param nyrRetro (integer)- Number of year for the retrospective analysis
+#' @param Do_comp (logical) - flag to specify if a comparison has to be done betwenn
+#' the expected parameters and those provided in the `.par` file. This is mainly
+#' use in developement mode. Default, \code{Do_comp = FALSE}.
 #'
-#' @return the name as the parameters as a named list.
+#' @return the name of the parameters as a named list.
 #'
 #' @seealso \code{\link{readGMACSallOUT}}.
 #'
@@ -17,7 +20,8 @@
 #
 get_Param_name <- function(DatFile = NULL,
                            CtlFile = NULL,
-                           nyrRetro = NULL) {
+                           nyrRetro = NULL,
+                           Do_comp = FALSE) {
   nsex <- DatFile$N_sexes
   Start_Y <- DatFile$Start_Y
   End_Y <- DatFile$End_Y
@@ -27,13 +31,22 @@ get_Param_name <- function(DatFile = NULL,
   N_fleet <- DatFile$N_fleet
   nmature <- DatFile$N_maturity
   nshell <- DatFile$N_shell_cdt
-  fleetname <-
-    stringi::stri_remove_empty(c(DatFile$F_Fleet_names, DatFile$Survey_names))
+  if(DatFile$do_Index){
+    fleetname <-
+      stringi::stri_remove_empty(DatFile$F_Fleet_names)
+  } else {
+    fleetname <-
+      stringi::stri_remove_empty(c(DatFile$F_Fleet_names, DatFile$Survey_names))
+  }
+  Survname <-
+    stringi::stri_remove_empty(DatFile$Survey_names)
 
-  nam_sex <- base::switch(.ac(nsex),
-                          "0" = "Undet_Both",
-                          "1" = "Male",
-                          "2" = c("Male", "Female"))
+  nam_sex <- base::switch(
+    .ac(nsex),
+    "0" = "Undet_Both",
+    "1" = "Male",
+    "2" = c("Male", "Female")
+  )
   nam_mat <- base::switch(.ac(nmature),
                           "1" = "BothMature",
                           "2" = c("Mature", "Immature"))
@@ -69,9 +82,7 @@ get_Param_name <- function(DatFile = NULL,
       nperiod <- slx_period[f]
 
       for (h in 1:(bsex[f] + 1)) {
-        type <- base::switch (.ac(nsex),
-                              "1" = type_in[f],
-                              "2" = type_in[h, f])
+        type <- base::switch (.ac(nsex), "1" = type_in[f], "2" = type_in[h, f])
         extra <- extra_in[h, f]
 
         if (type == 0) {
@@ -147,35 +158,90 @@ get_Param_name <- function(DatFile = NULL,
         }
       }
     }
-    out <- list(nslx_rows_in = nslx_rows_in,
-                slx_type_npar = slx_type_npar)
+    out <- list(nslx_rows_in = nslx_rows_in, slx_type_npar = slx_type_npar)
     return(out)
   }
+
   # Get fhit and yhit for the fishing deviations
-  fhit <- array(NA, dim = c(nyrRetro-Start_Y+1, nseason, N_fleet))
-  yhit <- array(NA, dim = c(nyrRetro-Start_Y+1, nseason, N_fleet))
+  fhit <- array(NA, dim = c(nyrRetro - Start_Y + 1, nseason, N_fleet))
+  yhit <- array(NA, dim = c(nyrRetro - Start_Y + 1, nseason, N_fleet))
   rownames(fhit) <-
     rownames(yhit) <- Start_Y:nyrRetro
-  for (k in 1:DatFile$N_CatchDF){
+  for (k in 1:DatFile$N_CatchDF) {
     for (i in 1:DatFile$Nrows_CatchDF[k])
-      if (DatFile$Catch[[k]][i,"year"] <= nyrRetro && DatFile$Catch[[k]][i,"year"] >= Start_Y){
-        y <- DatFile$Catch[[k]][i,"year"]
-        j <- DatFile$Catch[[k]][i,"seas"]
-        g <- DatFile$Catch[[k]][i,"fleet"]
-        h <- DatFile$Catch[[k]][i,"sex"]
+      if (DatFile$Catch[[k]][i, "year"] <= nyrRetro &&
+          DatFile$Catch[[k]][i, "year"] >= Start_Y) {
+        y <- DatFile$Catch[[k]][i, "year"]
+        j <- DatFile$Catch[[k]][i, "seas"]
+        g <- DatFile$Catch[[k]][i, "fleet"]
+        h <- DatFile$Catch[[k]][i, "sex"]
 
-        if (is.na(fhit[rownames(fhit) == y,j,g])){
-          fhit[rownames(fhit) == y,j,g] <- 1
+        if (is.na(fhit[rownames(fhit) == y, j, g])) {
+          fhit[rownames(fhit) == y, j, g] <- 1
         }
 
-        if (is.na(yhit[rownames(fhit) == y,j,g]) && h == 2 ){
-          yhit[rownames(fhit) == y,j,g] <- 1
+        if (is.na(yhit[rownames(fhit) == y, j, g]) && h == 2) {
+          yhit[rownames(fhit) == y, j, g] <- 1
         }
       }
   }
+
+  # Names of parameters for comparison
+  nameComp <- NULL
+  if(Do_comp){
+    for (i in 1:CtlFile$ntheta)
+      nameComp <- c(nameComp, paste0("theta[",i,"]"))
+    for (i in 1:CtlFile$nGrwth)
+      nameComp <- c(nameComp, paste0("Grwth[",i,"]"))
+    for (i in 1:CtlFile$n_Mpar)
+      nameComp <- c(nameComp, paste0("M_pars_est[",i,"]"))
+    for (i in 1:CtlFile$nslx_pars)
+      nameComp <- c(nameComp, paste0("log_slx_pars[",i,"]"))
+    if(CtlFile$NumAsympRet>0)
+      for (i in 1:CtlFile$NumAsympRet)
+        nameComp <- c(nameComp, paste0("Asymret[",i,"]"))
+    if(CtlFile$nslx_envpars>0){
+      for (i in 1:CtlFile$nslx_envpars)
+        nameComp <- c(nameComp, paste0("slx_env_pars[",i,"]"))
+    } else {
+      nameComp <- c(nameComp, paste0("slx_env_pars[1]"))
+    }
+    if(CtlFile$NSlx_devs_param>0){
+      for (i in 1:CtlFile$NSlx_devs_param)
+        nameComp <- c(nameComp, paste0("sel_devs[",i,"]"))
+    } else {
+      nameComp <- c(nameComp, paste0("sel_devs[1]"))
+    }
+    for(i in 1:N_fleet)
+      nameComp <- c(nameComp, paste0("log_fbar[",i,"]"))
+    for(i in 1:N_fleet)
+      nameComp <- c(nameComp, paste0("log_fdev[",i,"]"))
+    for(i in 1:N_fleet)
+      nameComp <- c(nameComp, paste0("log_foff[",i,"]"))
+    for(i in 1:N_fleet)
+      nameComp <- c(nameComp, paste0("log_fdov[",i,"]"))
+    nameComp <- c(nameComp, paste0("rec_dev_est"))
+    nameComp <- c(nameComp, paste0("logit_rec_prop_est"))
+    for (i in 1:CtlFile$nMdev)
+      nameComp <- c(nameComp, paste0("m_dev_est[",i,"]"))
+    for (i in 1:nsex)
+      nameComp <- c(nameComp, paste0("m_mat_mult[",i,"]"))
+    nVn <- max(CtlFile$iCompAggregator)
+    for (i in 1:nVn)
+      nameComp <- c(nameComp, paste0("log_vn[",i,"]"))
+    for(i in 1:DatFile$N_SurveyDF)
+      nameComp <- c(nameComp, paste0("survey_q[",i,"]"))
+    for(i in 1:DatFile$N_SurveyDF)
+      nameComp <- c(nameComp, paste0("log_add_cv[",i,"]"))
+    if(CtlFile$Dev_settings$n_deviations>0){
+      for(i in 1:CtlFile$Dev_settings$n_deviations)
+        nameComp <- c(nameComp, paste0("par_devs[",i,"]"))
+    } else {
+      nameComp <- c(nameComp, paste0("par_devs[1]"))
+    }
+  }
   # Total name
   name1 <- NULL
-
   # Get parameters from theta control matrix ----
   parname1 <- NULL
   # Natural mortality
@@ -358,7 +424,7 @@ get_Param_name <- function(DatFile = NULL,
       }
     }
 
-  if(nmature == 2){
+  if (nmature == 2) {
     for (h in 1:nsex)
       for (igrow in 1:CtlFile$nMatureVaries[h]) {
         if (CtlFile$bUseCustomMatureProbability == 2) {
@@ -391,6 +457,89 @@ get_Param_name <- function(DatFile = NULL,
   }
   name1 <- c(name1, nameGrwth)
   # -------------------------------------------------------------------------
+
+  # Natural mortality parameter names ----
+  namNatMortCtl <-
+    namNatMortParam <- NULL
+  for (h in 1:nsex) {
+    for (m in 1:nmature) {
+      namNatMortCtl <-
+        c(namNatMortCtl, paste0(nam_sex[h], " ; ", nam_mat[m]))
+    }
+  }
+
+  # Get M controls
+  M_control <- CtlFile[["M_control"]]
+  Block_struct <- CtlFile[["Block_struct"]]
+  blocklimits <- CtlFile[["blocklimits"]]
+  M_type <- M_control[, "M_type"]
+  M_extra <- M_control[, 'M_extra']
+  M_size_breakpnts <- M_control[, "M_size_breakpnts"]
+  M_mirror <- M_control[, "M_mirror"]
+  M_block <- M_control[, "M_block"]
+  M_env_link <- M_control[, "M_env_link"]
+  M_Rand_Walk <- M_control[, "M_Rand_Walk"]
+
+  for (s in 1:nsex) {
+    for (m in 1:nmature) {
+      ig <- (s - 1) * nmature + m
+
+      namNatMortParam <- c(namNatMortParam, paste0(nam_sex[s], " (", nam_mat[m], ")"))
+
+      if (M_mirror[ig] == 0) {
+        # Change in natural mortality at size
+        if (M_size_breakpnts[ig] > 0) {
+          for (i in 1:M_size_breakpnts[ig]) {
+            namNatMortParam <- c(namNatMortParam, paste0("M_size_breakpnt_", i))
+          }
+        }
+
+        # Block adjustment
+        if (M_block[ig] > 0) {
+          for (b in 1:Block_struct[M_block[ig]]) {
+            limits <- blocklimits[, , M_block[ig] + 1]
+            limits <- apply(
+              limits,
+              MARGIN = 1,
+              FUN = function(X) {
+                paste0(X, collapse = "_")
+              }
+            )
+            limits <- limits[-1]
+            namNatMortParam <- c(namNatMortParam, paste0("Block_", b , "_", limits[b]))
+          }
+        }
+
+        # Environmental link
+        if (M_env_link[ig] != 0) {
+          Env_Link <- base::switch(
+            .ac(M_env_link[ig]),
+            "0" = "additive",
+            "1" = "multiplicative",
+            "2" = "exponential"
+          )
+          namNatMortParam <- c(namNatMortParam, c(paste0("Env_Link_", Env_Link)))
+        }
+
+        # Type-specific (knots)
+        if (M_type[ig] == 1) {
+          for (e in 1:M_extra[ig]) {
+            namNatMortParam <- c(namNatMortParam, c(
+              paste0("P1_Spline_extra", e),
+              paste0("P2_Spline_extra", e)
+            ))
+          }
+        }
+        # Random walk
+        # if (M_Rand_Walk[ig] != 0) {
+        #   n_devvars <- n_devvars + 1
+        # }
+      } #--Mirror
+    } #--m
+  } # -- sex
+  name1 <- c(name1, namNatMortParam)
+  # -------------------------------------------------------------------------
+
 
   # Vulnerability parameter names ----
   selname1 <- NULL
@@ -495,9 +644,7 @@ get_Param_name <- function(DatFile = NULL,
       hh <- 1 + CtlFile$slx_bsex_in[k]
       for (h in 1:hh) {
         for (i in 1:CtlFile$slx_nsel_period_in[k]) {
-          slx_type[kk]  <- base::switch (.ac(nsex),
-                                         "1" = CtlFile[["slx_type_in"]][k],
-                                         "2" = CtlFile[["slx_type_in"]][h, k])
+          slx_type[kk]  <- base::switch (.ac(nsex), "1" = CtlFile[["slx_type_in"]][k], "2" = CtlFile[["slx_type_in"]][h, k])
           kk <- kk + 1
         }
       }
@@ -507,9 +654,7 @@ get_Param_name <- function(DatFile = NULL,
 
       for (h in 1:hh)
         for (i in 1:CtlFile$ret_nret_period_in[k]) {
-          slx_type[kk]  <- base::switch (.ac(nsex),
-                                         "1" = CtlFile[["ret_type_in"]][k],
-                                         "2" = CtlFile[["ret_type_in"]][h, k])
+          slx_type[kk]  <- base::switch (.ac(nsex), "1" = CtlFile[["ret_type_in"]][k], "2" = CtlFile[["ret_type_in"]][h, k])
           kk <- kk + 1
         }
     }
@@ -603,33 +748,41 @@ get_Param_name <- function(DatFile = NULL,
     anystring <- NULL
     yearf <- Sum_fleet[Sum_fleet$fleet == f, "year"]
     seasf <- unique(Sum_fleet[Sum_fleet$fleet == f, "seas"])
-  #   for (y in yearf)
-  #     for (s in seasf)
-  #       if(!is.na(fhit[rownames(fhit)==y, s, f]) && fhit[rownames(fhit)==y, s, f]>0){
-  #         anystring <-
-  #           c(anystring,
-  #             paste0("Log_fdev_", fleetname[f], "_year_", y, "_season_", s))
-  #       } else {
-  #         anystring <- c(anystring, paste0("Log_fdev_", fleetname[f]))
-  #       }
-  #   out[[f]] <- anystring
-  #
-  #   if (!f %in% Sum_fleet$fleet)
-  #     out[[f]] <- paste0("Log_fdev_", fleetname[f])
-  # }
-    if (!f %in% Sum_fleet$fleet){
+    #   for (y in yearf)
+    #     for (s in seasf)
+    #       if(!is.na(fhit[rownames(fhit)==y, s, f]) && fhit[rownames(fhit)==y, s, f]>0){
+    #         anystring <-
+    #           c(anystring,
+    #             paste0("Log_fdev_", fleetname[f], "_year_", y, "_season_", s))
+    #       } else {
+    #         anystring <- c(anystring, paste0("Log_fdev_", fleetname[f]))
+    #       }
+    #   out[[f]] <- anystring
+    #
+    #   if (!f %in% Sum_fleet$fleet)
+    #     out[[f]] <- paste0("Log_fdev_", fleetname[f])
+    # }
+    if (!f %in% Sum_fleet$fleet) {
       anystring <- paste0("Log_fdev_", fleetname[f])
     } else {
-      for(s in seasf){
-        if(any(!is.na(fhit[, s, f]))){
+      for (s in seasf) {
+        if (any(!is.na(fhit[, s, f]))) {
           for (y in yearf) {
-            if(!is.na(fhit[rownames(fhit)==y, s, f]) && fhit[rownames(fhit)==y, s, f]>0){
+            if (!is.na(fhit[rownames(fhit) == y, s, f]) &&
+                fhit[rownames(fhit) == y, s, f] > 0) {
               anystring <-
                 c(anystring,
-                  paste0("Log_fdev_", fleetname[f], "_year_", y, "_season_", s))
+                  paste0(
+                    "Log_fdev_",
+                    fleetname[f],
+                    "_year_",
+                    y,
+                    "_season_",
+                    s
+                  ))
             }
           }
-        }else {
+        } else {
           anystring <- paste0("Log_fdev_", fleetname[f])
         }
       }
@@ -646,18 +799,6 @@ get_Param_name <- function(DatFile = NULL,
     anystring <- c(anystring, paste0("Log_foff_", fleetname[f]))
   nameFoff <- anystring
 
-
-
-
-
-
-
-
-
-
-
-
-
   # Extract the female F deviation offset parameters
   out <- list()
   nameFdov <- NULL
@@ -665,30 +806,38 @@ get_Param_name <- function(DatFile = NULL,
     anystring <- NULL
     yearf <- Sum_fleet[Sum_fleet$fleet == f, "year"]
     seasf <- unique(Sum_fleet[Sum_fleet$fleet == f, "seas"])
-      # for (y in yearf) {
-      #   for (s in seasf) {
-      #     if(!is.na(yhit[rownames(yhit)==y, s, f]) && yhit[rownames(yhit)==y, s, f]>0){
-      #       anystring <-
-      #         c(anystring,
-      #           paste0("Log_fdov_", fleetname[f], "_year_", y, "_season_", s))
-      #     } else {
-      #       anystring <- c(anystring, paste0("Log_fdov_", fleetname[f]))
-      #     }
-      #   }
-      # }
-    if (!f %in% Sum_fleet$fleet){
+    # for (y in yearf) {
+    #   for (s in seasf) {
+    #     if(!is.na(yhit[rownames(yhit)==y, s, f]) && yhit[rownames(yhit)==y, s, f]>0){
+    #       anystring <-
+    #         c(anystring,
+    #           paste0("Log_fdov_", fleetname[f], "_year_", y, "_season_", s))
+    #     } else {
+    #       anystring <- c(anystring, paste0("Log_fdov_", fleetname[f]))
+    #     }
+    #   }
+    # }
+    if (!f %in% Sum_fleet$fleet) {
       anystring <- paste0("Log_fdov_", fleetname[f])
     } else {
-      for(s in seasf){
-        if(any(!is.na(yhit[, s, f]))){
+      for (s in seasf) {
+        if (any(!is.na(yhit[, s, f]))) {
           for (y in yearf) {
-            if(!is.na(yhit[rownames(yhit)==y, s, f]) && yhit[rownames(yhit)==y, s, f]>0){
+            if (!is.na(yhit[rownames(yhit) == y, s, f]) &&
+                yhit[rownames(yhit) == y, s, f] > 0) {
               anystring <-
                 c(anystring,
-                  paste0("Log_fdov_", fleetname[f], "_year_", y, "_season_", s))
+                  paste0(
+                    "Log_fdov_",
+                    fleetname[f],
+                    "_year_",
+                    y,
+                    "_season_",
+                    s
+                  ))
             }
           }
-        }else {
+        } else {
           anystring <- paste0("Log_fdov_", fleetname[f])
         }
       }
@@ -699,30 +848,6 @@ get_Param_name <- function(DatFile = NULL,
   nameFdov <- out
   name1 <- c(name1, nameFbar, nameFdev, nameFoff, nameFdov)
   # -------------------------------------------------------------------------
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
   # Extract Recruitment parameters ----
   # Extract the initial values of recruitment
@@ -769,27 +894,95 @@ get_Param_name <- function(DatFile = NULL,
   # -------------------------------------------------------------------------
 
   #Extract the catchability coefficient parameters ----
-  nameCatchability <- NULL
-  for (n in 1:DatFile$N_SurveyDF)
-    nameCatchability <-
-    c(nameCatchability, paste0("Log_vn_comp_", n))
-  name1 <- c(name1, nameCatchability)
+  nameCatchabilityCtl <-
+    nameCatchabilityParam <- NULL
+
+  SurvIndex <- lapply(1:length(DatFile$Surveys),
+                      FUN = function(x, data){out <- data[[x]] %>% dplyr::select(Index,fleet,sex) %>% unique()},
+                      data = DatFile$Surveys)
+  SurvIndex <- do.call(rbind, SurvIndex)
+  SurvIndex <- SurvIndex[order(SurvIndex[,"Index"]),]
+
+  for (n in 1:dim(SurvIndex)[1]){
+
+    nameCatchabilityCtl <-
+      c(nameCatchabilityCtl, paste0("Survey_q ", n,
+                                    " ", fleetname[SurvIndex[n, "fleet"]],
+                                    " ", nam_sex[SurvIndex[n, "sex"]]))
+    nameCatchabilityParam <-
+      c(nameCatchabilityParam, paste0("Log_vn_comp_", n, "_",fleetname[SurvIndex[n, "fleet"]],
+                                      "_", nam_sex[SurvIndex[n, "sex"]]))
+  }
+
+  name1 <- c(name1, nameCatchabilityParam)
   # -------------------------------------------------------------------------
 
   # Extract the addtional CV for surveys/indices parameters ----
-  nameAddCV <- NULL
-  for (n in 1:DatFile$N_SurveyDF)
-    nameAddCV <- c(nameAddCV, paste0("Log_add_cvt_survey_", n))
-  name1 <- c(name1, nameAddCV)
+  nameAddCVCtl <-
+    nameAddCVParam <- NULL
+  for (n in 1:dim(SurvIndex)[1]){
+    nameAddCVCtl <- c(nameAddCVCtl, paste0("era ", n,
+                                           " ", fleetname[SurvIndex[n, "fleet"]],
+                                           " ", nam_sex[SurvIndex[n, "sex"]])
+    )
+    nameAddCVParam <- c(nameAddCVParam, paste0("Log_add_cvt_survey_", n))
+  }
+  name1 <- c(name1, nameAddCVParam)
+  # -------------------------------------------------------------------------
+
+  # Extract the deviation parameters for the random walks----
+  nameRWparam <- NULL
+
+  if (!is.null(CtlFile[["Dev_settings"]])) {
+    n_devvars <- CtlFile[["Dev_settings"]][["n_devvars"]]
+    n_deviations <- CtlFile[["Dev_settings"]][["n_deviations"]]
+    devpoints <- CtlFile[["Dev_settings"]][["devpoints"]]
+
+    if (n_deviations > 0) {
+      ndev_cnt <- 0
+      IDvar <- devpoints[which(devpoints[, "Update_N_deviations"] > 0), "RW_nam"]
+
+      for (v in 1:length(IDvar)) {
+        # v<-1
+        # Which block
+        id_block <- devpoints %>%
+          dplyr::filter(RW_nam == IDvar[v]) %>%
+          dplyr::select(ID_Block_Struct) %>% as.numeric
+        blocklimits_var <- CtlFile[["blocklimits"]][,,id_block]
+        RW_nam <- devpoints[devpoints[, "RW_nam"] == IDvar[v], "RW_ctl"]
+
+        nam_var <- base::switch(
+          .ac(RW_nam),
+          "M_control" = "M_RW_",
+          "q_controls" = "Q_RW_",
+          "add_cv_controls" = "Add_CV_survey_RW_"
+        )
+        for (iblk in 1:nrow(blocklimits_var)) {
+          for (iyr in blocklimits_var[iblk, 1]:blocklimits_var[iblk, 2]) {
+            ndev_cnt <- ndev_cnt + 1
+            nameRWparam <- c(nameRWparam,
+                             paste0(nam_var, IDvar[v], "_par_1_dev_for_year_", iyr))
+          } # End iyr
+        } # End iblk
+      } # end var
+    } else {
+      nameRWparam <- "Dummy_dev_RW_par"
+    }
+  } # End is.null(Dev_settings)
+
+  name1 <- c(name1, nameRWparam)
   # -------------------------------------------------------------------------
 
   return(
     list(
       nameTot = unlist(name1),
+      nameComp = nameComp,
       nameTheta = parname1,
       nameGrwth = nameGrwth,
       selname1 = selname1,
       Asymptname = Asymptname,
+      namNatMortCtl = namNatMortCtl,
+      namNatMortParam = namNatMortParam,
       selenvnames1 = selenvnames1,
       seldevnames1 = seldevnames1,
       nameFbar = nameFbar,
@@ -802,8 +995,11 @@ get_Param_name <- function(DatFile = NULL,
       nameMortality = nameMortality,
       nameMat_NatMort = nameMat_NatMort,
       nameEffSamp = nameEffSamp,
-      nameCatchability = nameCatchability,
-      nameAddCV = nameAddCV
+      nameCatchabilityCtl = nameCatchabilityCtl,
+      nameCatchabilityParam = nameCatchabilityParam,
+      nameAddCVCtl = nameAddCVCtl,
+      nameAddCVParam = nameAddCVParam,
+      nameRWparam = nameRWparam
     )
   )
 }

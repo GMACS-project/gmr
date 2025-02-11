@@ -29,7 +29,7 @@ clean_files <- function(path = ".",
     }
     if (length(fns) > 0) {
       if (verbose)
-        cat("--Removing files:\n", paste0("\t-", basename(fns), collapse = "\n"))
+        cat("--Removing files:\n", paste0("\t-", basename(fns), collapse = "\n"), "\n")
 
       res[[name]] <- 1
       while (res[[name]] == 1) {
@@ -226,6 +226,7 @@ clean_Inputfiles <- function(path = ".", verbose = FALSE) {
       "\n Deleting the following files:\n",
       paste("\t-", To_del, collapse = "\n")
     )
+  cat("\n")
 
   res <- NULL
   for (f in To_del) {

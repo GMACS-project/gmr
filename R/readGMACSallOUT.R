@@ -54,20 +54,19 @@
 #'      \item \code{Fdev} - The fishing fleet-specific weights for male.
 #'      \item \code{Foff} - The female fishing mortality offset to male F.
 #'      \item \code{Fdov} - The fishing fleet-specific weights for female.
-#'      \item \code{rec_ini} - The initial recruitment by size-class.
 #'      \item \code{rec_dev_est} - The year-specific recruitment deviations.
 #'      \item \code{logit_rec_prop_est} - The year-specific sex-ratio recruitment.
 #'      \item \code{Mdev} - The natural mortality deviation.
 #'      \item \code{EffSamp_size} - The effective sample size.
 #'      \item \code{survey_Q} - The survey-specific catchability.
 #'      \item \code{log_add_cvt} - The survey-specific additional CV.
+#'      \item \code{RW_dev} - The deviations for random walk.
 #'    }
 #'   \item \code{Management_Quantities} - The estimated management quantities
 #'   (SPR; MSY, OFL, ...) and recruitment.
 #'   \item \code{Overall_Summ} - Overall summary per year (SSB, SSA, Dynamic B0,
 #'   Recruitment, mortality, ...).
-#'   \item \code{mean_weight} - The sex-specific mean weight per size-class for
-#'   each year and the mid-point used in the model.
+#'   \item \code{mean_weight} - Mean weight with mid points.
 #'   \item \code{maturity} - The sex-specific proportion of mature per size-class.
 #'   \item \code{dCatchData} - The catch data with predicted values.
 #'   \item \code{log_q_catch} - The estimated catchability (log space).
@@ -501,7 +500,7 @@ readGMACSallOUT <- function(FileName = NULL,
   # Read the Gmacsall.out file and find the first line containing numeric data
 
   if (verbose) {
-    cat("\n====================================================\n")
+    cat("====================================================\n")
     cat("-> Reading GmacsAll.out \n")
     cat("====================================================")
     cat("\n")
@@ -515,6 +514,7 @@ readGMACSallOUT <- function(FileName = NULL,
   N_fleet <- DatFile$N_fleet
   nmature <- DatFile$N_maturity
   nshell <- DatFile$N_shell_cdt
+  name_fleet <- c(DatFile$F_Fleet_names, DatFile$Survey_names)
 
   nam_sex <- base::switch(
     .ac(nsex),
@@ -532,14 +532,32 @@ readGMACSallOUT <- function(FileName = NULL,
   # Read Report file
   dat <- readLines(FileName, warn = FALSE)
 
-  # start <- which(stringr::str_detect(dat, "#Likelihoods_by_type") == T)[1]
+  # Get the comments
+  Com <- NULL
+
   start <-
     which(stringr::str_detect(dat, "#Stock being assessed") == T)[1]
 
-  Com <-
+  Com[["GmacsVersion"]] <-
     grep(x = dat[seq_len(start - 1)],
          pattern = "^#",
          value = TRUE)
+  Com[["Start_time"]] <-
+    stringr::str_split_fixed(string = dat[which(stringr::str_detect(dat, "Start time:") == T)[1]],
+                             pattern = ":",
+                             n = 2)[, 2]
+  Com[["Finish_time"]] <-
+    stringr::str_split_fixed(string = dat[which(stringr::str_detect(dat, "Finish time:") == T)[1]],
+                             pattern = ":",
+                             n = 2)[, 2]
+  Com[["Runtime"]] <-
+    stringr::str_split_fixed(string = dat[which(stringr::str_detect(dat, "Runtime:") == T)[1]],
+                             pattern = ":",
+                             n = 2)[, 2]
+  Com[["Nb_Eval_fn"]] <-
+    stringr::str_split_fixed(string = dat[which(stringr::str_detect(dat, "Number of function evaluations") == T)[1]],
+                             pattern = ":",
+                             n = 2)[, 2]
   Stock <-
     stringr::str_split_fixed(string = dat[start],
                              pattern = ":",
@@ -552,6 +570,8 @@ readGMACSallOUT <- function(FileName = NULL,
   dat <- gsub("^[[:blank:]]+", "", dat)
   # Remove all comments.
   dat <- gsub("#.*", "", dat)
+  dat <- gsub("--.*", "", dat)
+  dat <- gsub('[****]', '', dat)
   # Remove trailing whitespace on all lines
   dat <- gsub("[[:blank:]]+$", "", dat)
   # Remove blank lines.
@@ -634,13 +654,29 @@ readGMACSallOUT <- function(FileName = NULL,
   DoMultLine(dat, DatOut, Loc, LocDatOut, row_nam, var_DatOut)
 
   # Index
-  row_nam <- unique(names(DatFile$Surveys))
-  row_nam <-
-    stringr::str_replace_na(string = row_nam, replacement = "")
-  if (length((unique(row_nam))) == 1 && unique(row_nam) == "") {
+  # row_nam <- unique(names(DatFile$Surveys))
+  # row_nam <-
+  #   stringr::str_replace_na(string = row_nam, replacement = "")
+  # if (length((unique(row_nam))) == 1 && unique(row_nam) == "") {
+  #   row_nam <- paste0("Cpue_", 1:DatFile$N_SurveyDF)
+  # } else {
+  #   row_nam[which(row_nam == "")] <- paste0("Cpue_", which(row_nam == ""))
+  # }
+  #
+
+  if (DatFile$do_Index) {
     row_nam <- paste0("Cpue_", 1:DatFile$N_SurveyDF)
   } else {
-    row_nam[which(row_nam == "")] <- paste0("Cpue_", which(row_nam == ""))
+    tmp <- do.call(rbind, DatFile$Surveys)
+    tmpDef <- unique(tmp[, c('Index', 'fleet', 'sex')])
+    if (min(table(tmpDef$Index)) > 1) {
+      row_nam <- DatFile$Survey_names
+    } else {
+      tmpDef <- unique(tmp[, c('Index', 'fleet')])
+
+      tmpDef$names_fleet <- name_fleet[tmpDef$fleet]
+      row_nam <- unique(tmpDef$names_fleet)
+    }
   }
   DoMultLine(dat, DatOut, Loc, LocDatOut, row_nam, var_DatOut)
 
@@ -693,7 +729,7 @@ readGMACSallOUT <- function(FileName = NULL,
       "Mean_Fbar",
       "MeanF_dev",
       "M_devs",
-      "Rec_ini",
+      # "Rec_ini",
       "Rec_dev",
       "Sex_ratio",
       "Molt_Prob",
@@ -729,8 +765,12 @@ readGMACSallOUT <- function(FileName = NULL,
   if (verbose)
     cat("\t-> Read Maximum gradient \n")
   # -------------------------------------------------------------------------
-  # Extract theta parameters
+
+  # Extract theta parameters ----
   # -------------------------------------------------------------------------
+  parnam <- get_Param_name(CtlFile = CtlFile,
+                           DatFile = DatFile,
+                           nyrRetro = GmacsFile[["N_Year_Retro"]])
 
   nam_para <-
     c(
@@ -752,7 +792,7 @@ readGMACSallOUT <- function(FileName = NULL,
 
   theta <- fill_para(dat, Loc, nrow = CtlFile$ntheta, n_split = 2)
   theta <-
-    as.data.frame(cbind(paste("theta", 1:CtlFile$ntheta, sep = "_"), theta))
+    as.data.frame(cbind(paste("theta[", 1:CtlFile$ntheta, "]", sep = ""), theta))
   colnames(theta) <- nam_para
   Param[["theta"]] <- theta # theta parameters
 
@@ -774,13 +814,37 @@ readGMACSallOUT <- function(FileName = NULL,
     )
   Grwth <-
     as.data.frame(cbind(paste(
-      "Grwth", 1:(CtlFile$nGrwth + CtlFile$nSizeIncPar), sep = "_"
+      "Grwth[", 1:(CtlFile$nGrwth + CtlFile$nSizeIncPar), "]", sep = ""
     ), Grwth))
   colnames(Grwth) <- nam_para
   Param[["Grwth"]] <- Grwth # growth parameters
 
   if (verbose)
     cat("\t-> Read growth parameters \n")
+  # -------------------------------------------------------------------------
+
+
+  # Extract the Natural mortality rates parameters
+  # -------------------------------------------------------------------------
+  if (nrow(CtlFile$NatMort_param) > 0) {
+    if (verbose)
+      cat("-- Reading Natural mortality rates parameters \n")
+
+    NatMortality_rates <-
+      fill_para(dat,
+                Loc,
+                nrow = dim(CtlFile$NatMort_param)[1],
+                n_split = 2)
+    NatMortality_rates <-
+      as.data.frame(cbind(paste("MPar[", 1:(
+        nrow(CtlFile$NatMort_param)
+      ), "]", sep = ""), NatMortality_rates))
+    colnames(NatMortality_rates) <- nam_para
+    Param[["NatMortality_rates"]] <- NatMortality_rates # growth parameters
+
+    if (verbose)
+      cat("\t-> Read Natural mortality rates parameters \n")
+  }
   # -------------------------------------------------------------------------
 
   # Extract vulnerability parameters
@@ -790,16 +854,16 @@ readGMACSallOUT <- function(FileName = NULL,
 
   Vul <- fill_para(dat, Loc, nrow = CtlFile$nslx_pars, n_split = 2)
   Vul <-
-    as.data.frame(cbind(paste(
-      "log_slx_pars", 1:CtlFile$nslx_pars, sep = "_"
-    ), Vul))
+    as.data.frame(cbind(
+      paste("log_slx_pars[", 1:CtlFile$nslx_pars, "]", sep = ""),
+      Vul
+    ))
   colnames(Vul) <- nam_para
   Param[["Vul"]] <- Vul # vulnerability parameters
 
   if (verbose)
     cat("\t-> Read vulnerability parameters \n")
   # -------------------------------------------------------------------------
-
 
   # Extract the asymptotic retention parameters
   # -------------------------------------------------------------------------
@@ -809,9 +873,10 @@ readGMACSallOUT <- function(FileName = NULL,
 
     Asympt <- fill_para(dat, Loc, nrow = CtlFile$NumAsympRet)
     Asympt <-
-      as.data.frame(cbind(paste(
-        "Asymret", 1:CtlFile$NumAsympRet, sep = "_"
-      ), Asympt))
+      as.data.frame(cbind(
+        paste("Asymret[", 1:CtlFile$NumAsympRet, "]", sep = ""),
+        Asympt
+      ))
     colnames(Asympt) <- nam_para
     Param[["Asympt"]] <- Asympt # asymptotic retention parameters
 
@@ -828,13 +893,13 @@ readGMACSallOUT <- function(FileName = NULL,
     Envpar_Slx <- fill_para(dat, Loc, nrow = CtlFile$nslx_envpars)
     Envpar_Slx <-
       as.data.frame(cbind(
-        paste("Envpar_Slx", 1:CtlFile$nslx_envpars, sep = "_"),
+        paste("Envpar_Slx[", 1:CtlFile$nslx_envpars, "]", sep = ""),
         Envpar_Slx
       ))
   } else {
     Envpar_Slx <- fill_para(dat, Loc, nrow = 1)
     Envpar_Slx <-
-      as.data.frame(cbind(paste("Envpar_Slx", 0, sep = "_"), Envpar_Slx))
+      as.data.frame(cbind(paste("Envpar_Slx[", 0, "]", sep = ""), Envpar_Slx))
   }
   colnames(Envpar_Slx) <- nam_para
   Param[["Envpar_Slx"]] <-
@@ -854,13 +919,13 @@ readGMACSallOUT <- function(FileName = NULL,
     Slx_Devs <- fill_para(dat, Loc, nrow = CtlFile$NSlx_devs_param)
     Slx_Devs <-
       as.data.frame(cbind(
-        paste("Slx_Devs", 1:CtlFile$NSlx_devs_param, sep = "_"),
+        paste("Slx_Devs[", 1:CtlFile$NSlx_devs_param, "]", sep = ""),
         Slx_Devs
       ))
   } else {
     Slx_Devs <- fill_para(dat, Loc, nrow = 1)
     Slx_Devs <-
-      as.data.frame(cbind(paste("Slx_Devs", 0, sep = "_"), Slx_Devs))
+      as.data.frame(cbind(paste("Slx_Devs[", 0, "]", sep = ""), Slx_Devs))
   }
   colnames(Slx_Devs) <- nam_para
   Param[["Slx_Devs"]] <- Slx_Devs # Estimated selectivty deviations
@@ -876,7 +941,7 @@ readGMACSallOUT <- function(FileName = NULL,
 
   Fbar <- fill_para(dat, Loc, nrow = N_fleet)
   Fbar <-
-    as.data.frame(cbind(paste("log_fbar", 1:N_fleet, sep = "_"), Fbar))
+    as.data.frame(cbind(paste("log_fbar[", 1:N_fleet, "]", sep = ""), Fbar))
   colnames(Fbar) <- nam_para
   Param[["Fbar"]] <- Fbar # mean F parameters
 
@@ -917,7 +982,7 @@ readGMACSallOUT <- function(FileName = NULL,
       Fdev[[f]] <- fill_para(dat, Loc, nrow = nrow_F)
       ID <- findnPara[findnPara$fleet == f, "nam"]
       Fdev[[f]] <-
-        as.data.frame(cbind(paste("log_Fdev", ID, sep = ""), Fdev[[f]]))
+        as.data.frame(cbind(paste("log_Fdev[", ID, "]", sep = ""), Fdev[[f]]))
       colnames(Fdev[[f]]) <- nam_para
     }
   }
@@ -938,7 +1003,7 @@ readGMACSallOUT <- function(FileName = NULL,
 
   Foff <- fill_para(dat, Loc, nrow = N_fleet)
   Foff <-
-    as.data.frame(cbind(paste("log_foff_", 1:N_fleet, sep = ""), Foff))
+    as.data.frame(cbind(paste("log_foff[", 1:N_fleet, "]", sep = ""), Foff))
   colnames(Foff) <- nam_para
   Param[["Foff"]] <- Foff # female F offset parameters
 
@@ -966,7 +1031,7 @@ readGMACSallOUT <- function(FileName = NULL,
       for (f in 1:N_fleet) {
         Fdov[[f]] <- fill_para(dat, Loc, nrow = nYparams[f])
         Fdov[[f]] <-
-          as.data.frame(cbind(paste("log_Fdov_", f, sep = ""), Fdov[[f]]))
+          as.data.frame(cbind(paste("log_Fdov[", f, "]", sep = ""), Fdov[[f]]))
         colnames(Fdov[[f]]) <- nam_para
       }
     } else {
@@ -995,13 +1060,13 @@ readGMACSallOUT <- function(FileName = NULL,
           Fdov[[f]] <- fill_para(dat, Loc, nrow = nrow_F)
           ID <- findnPara[findnPara$fleet == f, "nam"]
           Fdov[[f]] <-
-            as.data.frame(cbind(paste("log_Fdov", ID, sep = ""), Fdov[[f]]))
+            as.data.frame(cbind(paste("log_Fdov", ID, "", sep = ""), Fdov[[f]]))
           colnames(Fdov[[f]]) <- nam_para
         }
       }
     }
     Fdov <- vctrs::list_drop_empty(Fdov)
-    names(Fdov) <- paste0("log_Fdov_Fl_", nYparams$fleet)
+    names(Fdov) <- paste0("log_Fdov_Fl[", nYparams$fleet, "]", sep = "")
     Param[["Fdov"]] <- Fdov # female F deviation offset
 
     if (verbose)
@@ -1009,22 +1074,22 @@ readGMACSallOUT <- function(FileName = NULL,
   }
   # -------------------------------------------------------------------------
 
-  # Extract the initial values of recruitment
-  # -------------------------------------------------------------------------
-  if (verbose)
-    cat("-- Reading the initial values for recruitment \n")
-
-  rec_ini <-
-    fill_para(dat, Loc, nrow = DatFile$N_sizeC, n_split = 2) # Initial values for recruitment
-
-  rec_ini <-
-    as.data.frame(cbind(paste("SizeC_", 1:DatFile$N_sizeC, sep = ""), rec_ini))
-  colnames(rec_ini) <- nam_para
-  Param[["rec_ini"]] <- rec_ini # female F offset parameters
-
-  if (verbose)
-    cat("\t-> Read the initial values for recruitment \n")
-  # -------------------------------------------------------------------------
+  # # Extract the initial values of recruitment
+  # # -------------------------------------------------------------------------
+  # if (verbose)
+  #   cat("-- Reading the initial values for recruitment \n")
+  #
+  # rec_ini <-
+  #   fill_para(dat, Loc, nrow = DatFile$N_sizeC, n_split = 2) # Initial values for recruitment
+  #
+  # rec_ini <-
+  #   as.data.frame(cbind(paste("SizeC_", 1:DatFile$N_sizeC, sep = ""), rec_ini))
+  # colnames(rec_ini) <- nam_para
+  # Param[["rec_ini"]] <- rec_ini # female F offset parameters
+  #
+  # if (verbose)
+  #   cat("\t-> Read the initial values for recruitment \n")
+  # # -------------------------------------------------------------------------
 
   # Extract the recruitment deviation estimates
   # -------------------------------------------------------------------------
@@ -1134,6 +1199,27 @@ readGMACSallOUT <- function(FileName = NULL,
     cat("\t-> Read the addtional CV for surveys/indices parameters \n")
   # -------------------------------------------------------------------------
 
+  # Extract the deviation (Random walk) parameters
+  # -------------------------------------------------------------------------
+  if (verbose)
+    cat("-- Reading the deviation (Random walk) parameters \n")
+
+  ndev <- ifelse(
+    test = CtlFile$Dev_settings$n_deviations == 0,
+    yes = 1,
+    no = CtlFile$Dev_settings$n_deviations
+  )
+
+  RW_dev <- fill_para(dat, Loc, nrow = ndev)
+  RW_dev <-
+    as.data.frame(cbind(paste("par_devs[", 1:ndev, "]", sep = ""), RW_dev))
+  colnames(RW_dev) <- nam_para
+  Param[["RW_dev"]] <- RW_dev # addtional CV parameters
+
+  if (verbose)
+    cat("\t-> Read the deviation (Random walk)  parameters \n")
+  # -------------------------------------------------------------------------
+
   # Fill in DatOut with the parameters
   DatOut[["Param"]] <- Param
 
@@ -1177,7 +1263,6 @@ readGMACSallOUT <- function(FileName = NULL,
   #
   # if(GmacsFile$OutVar_DynB0 == 1)
   #   nam <- c(nam, paste0("Log_DynB0_", Start_Y:End_Y))
-  # Loc<- 604
 
   if (!is.null(nam)) {
     nrow_DQ <- length(nam)
@@ -1301,21 +1386,23 @@ readGMACSallOUT <- function(FileName = NULL,
 
   if (verbose)
     cat("\t-> Read overall summary \n")
+  # -------------------------------------------------------------------------
 
   # Mean weight at size ----
   if (verbose)
     cat("-- Reading mean weight at size \n")
 
   mean_weight <- NULL
-  mean_weight$mid_points <-
-    get.vec(dat = dat, Loc = Loc, num = TRUE)
-  # mean_weight$values <- get.df(dat = dat,Loc = Loc, nrow = nsex * nmature * length(Start_Y:End_Y))
-  mean_weight$mean_wt <-
-    get.df(dat,
-           Loc = Loc,
-           nrow = nsex * nmature * length(Start_Y:End_Y))
-
   .new <- paste0("SizeC_", 1:nclass)
+  if (stringr::str_detect(string = dat[Loc], pattern = "midpoints")) {
+    dat[Loc] <- stringr::str_squish(stringr::str_remove(string = dat[Loc], "midpoints"))
+    mean_weight$mid_points <- get.vec(dat = dat, Loc = Loc, num = 1)
+    mean_weight$mid_points <- data.frame(Size_Class = 1:nclass,
+                                         mid_points =  mean_weight$mid_points)
+  }
+
+  mean_weight$mean_wt <-
+    get.df(dat, Loc, nrow = nsex * nmature * length(Start_Y:End_Y))
   colnames(mean_weight$mean_wt) <-
     c("Sex", "Maturity", "Year", .new)
   DatOut[["mean_weight"]] <- mean_weight
@@ -1327,32 +1414,27 @@ readGMACSallOUT <- function(FileName = NULL,
   # Maturity ----
   if (verbose)
     cat("-- Reading maturity \n")
-
-  # DatOut <-
+  # DatOut[["maturity"]] <-
   #   base::switch(
   #     .ac(nsex),
   #     "1" = do.vec(dat, DatOut, Loc, LocDatOut),
-  #     "2" = do.df(dat, DatOut, Loc, LocDatOut, nrow = nclass, varname = 'maturity')
+  #     "2" = get.df(dat = dat, Loc = Loc, nrow = nclass*nsex)
   #   )
-  # colnames(DatOut$maturity) <- .new
-  # rownames(DatOut$maturity) <- nam_sex
-
-  DatOut <-
-    do.df(dat,
-          DatOut,
-          Loc,
-          LocDatOut,
-          nrow = nclass * nsex,
-          varname = 'maturity')
-  rownames(DatOut$maturity) <-
-    paste0(rep(nam_sex, each = nclass), "_", .new)
-  # if(nsex != 1){
-  #   DatOut$maturity <- DatOut$maturity %>%
-  #     dplyr::mutate(sex = nam_sex) %>%
-  #     dplyr::select(sex, dplyr::everything()) %>%
-  #     dplyr::rename_with(~ .new, dplyr::all_of(.old))
+  # if(nsex == 1){
+  #   colnames(DatOut$maturity) <- .new
+  #   rownames(DatOut$maturity) <- nam_sex
+  # } else {
+  #   DatOut[["maturity"]] <- cbind(sex = rep(nam_sex, each=nclass), sizeC = rep(paste0("Size_Class_", 1:nclass), nsex),
+  #                                 maturity = DatOut[["maturity"]])
   # }
-
+  DatOut[["maturity"]] <- get.df(dat = dat,
+                                 Loc = Loc,
+                                 nrow = nclass * nsex)
+  DatOut[["maturity"]] <- cbind(
+    sex = rep(nam_sex, each = nclass),
+    sizeC = rep(paste0("Size_Class_", 1:nclass), nsex),
+    maturity = DatOut[["maturity"]]
+  )
   if (verbose)
     cat("\t-> Read maturity \n")
   # -------------------------------------------------------------------------
@@ -1392,7 +1474,7 @@ readGMACSallOUT <- function(FileName = NULL,
 
   # log_q_catch
   DatOut <- do.vec(dat, DatOut, Loc, LocDatOut)
-
+  DatOut[["log_q_catch"]] <- data.frame(Catch = names(DatFile$Catch), log_q_catch = DatOut[["log_q_catch"]])
   if (verbose)
     cat("\t-> Read catch data and derivates \n")
   # -------------------------------------------------------------------------
@@ -1430,9 +1512,9 @@ readGMACSallOUT <- function(FileName = NULL,
     do.df(dat, DatOut, Loc, LocDatOut, nrow = DatFile$N_SurveyDF)
   if (length(DatFile$Survey_names) == 1 &&
       DatFile$Survey_names == "") {
-    rownames(DatOut$sdnr_MAR_cpue) <- rownames(DatOut$survey_q)
+    rownames(DatOut$sdnr_MAR_cpue) <- rownames(DatOut$survey_Q)
   } else {
-    rownames(DatOut$sdnr_MAR_cpue) <- DatFile$Survey_names
+    rownames(DatOut$sdnr_MAR_cpue) <- names(DatFile$Survey_names)
   }
   colnames(DatOut$sdnr_MAR_cpue) <- c("sdnr", "MAR")
 
@@ -1457,10 +1539,6 @@ readGMACSallOUT <- function(FileName = NULL,
       'Maturity',
       'Stage1_EffN'
     )
-
-
-  # Loc <- 1145
-
   # First table combines size_comp_sample_size / d3_obs_size_comps / d3_pre_size_comps
   # Size_data_summary
   tmp <- get.namVar(dat, Loc, LocDatOut)
@@ -1515,9 +1593,6 @@ readGMACSallOUT <- function(FileName = NULL,
   # Size data: standard deviation and median
   DatOut <-
     do.df(dat, DatOut, Loc, LocDatOut, nrow = length(unique(CtlFile$iCompAggregator)))
-  # eval(parse(text = paste0(
-  #   "rownames(DatOut$sdnr_MAR_lf) <- na.omit(names(DatOut$",tmp,")[unique(CtlFile$iCompAggregator)])"
-  # )))
   rownames(DatOut$sdnr_MAR_lf) <- spc_nam
   colnames(DatOut$sdnr_MAR_lf) <- c("sdnr", "MAR")
 
@@ -1531,12 +1606,13 @@ readGMACSallOUT <- function(FileName = NULL,
   # Selectivity ----
   if (verbose)
     cat("-- Reading selectivity \n")
+  LastYrforSlx <- nyrRetro + 1
 
   tmp <- get.namVar(dat, Loc, LocDatOut)
   eval(parse(text = paste0("DatOut$", tmp, " <- list()")))
 
   # slx_capture
-  nRowSlx <- length(Start_Y:End_Y) * nsex * N_fleet
+  nRowSlx <- length(Start_Y:LastYrforSlx) * nsex * N_fleet
   eval(parse(
     text = paste0(
       "DatOut$",
@@ -1546,7 +1622,7 @@ readGMACSallOUT <- function(FileName = NULL,
   ))
 
   # slx_retaind
-  nRowRet <- length(Start_Y:End_Y) * nsex * N_fleet
+  nRowRet <- length(Start_Y:LastYrforSlx) * nsex * N_fleet
   eval(parse(
     text = paste0(
       "DatOut$",
@@ -1555,7 +1631,7 @@ readGMACSallOUT <- function(FileName = NULL,
     )
   ))
   # slx_discard
-  nRowDis <- length(Start_Y:End_Y) * nsex * N_fleet
+  nRowDis <- length(Start_Y:LastYrforSlx) * nsex * N_fleet
   eval(parse(
     text = paste0(
       "DatOut$",
@@ -1629,6 +1705,14 @@ readGMACSallOUT <- function(FileName = NULL,
 
   if (verbose)
     cat("-- Reading natural, fishing and total mortality \n")
+
+  # > Loc
+  # [1] 2366
+  # > LocDatOut
+  # [1] 59
+
+
+
   # m_prop
   DatOut <-
     do.df(
@@ -1702,11 +1786,10 @@ readGMACSallOUT <- function(FileName = NULL,
   # Fully_F
   vname <- "Fully_F"
   colnam <-
-    c("Sex",
-      "Year",
-      "Season",
-      DatFile$F_Fleet_names,
-      DatFile$Survey_names)
+    c("Sex", "Year", "Season", DatFile$F_Fleet_names)
+  if (!DatFile$do_Index) {
+    colnam <- c(colnam, DatFile$Survey_names)
+  }
   colnam <- stringr::str_subset(string = colnam, pattern = ".+")
   nF <- length(Start_Y:nyrRetro) * nsex * DatFile$N_seasons
   DatOut <-
@@ -1808,6 +1891,11 @@ readGMACSallOUT <- function(FileName = NULL,
   if (verbose)
     cat("-- Reading Numbers at size \n")
 
+  LastYrforN <- nyrRetro
+  if (DatFile$N_Season == 1)
+    LastYrforN <- nyrRetro + 1
+
+
   DatOut[["N_at_size"]] <- NULL
   colnam <- c("Year", .new)
   # N_total
@@ -1815,7 +1903,7 @@ readGMACSallOUT <- function(FileName = NULL,
     F_function(
       DatOut = DatOut[["N_at_size"]],
       vname = "N_total",
-      nrow = length(Start_Y:nyrRetro),
+      nrow = length(Start_Y:LastYrforN),
       colnam = colnam
     )
   # N_males
@@ -1823,7 +1911,7 @@ readGMACSallOUT <- function(FileName = NULL,
     F_function(
       DatOut = DatOut[["N_at_size"]],
       vname = "N_males",
-      nrow = length(Start_Y:nyrRetro),
+      nrow = length(Start_Y:LastYrforN),
       colnam = colnam
     )
   # N_females
@@ -1832,7 +1920,7 @@ readGMACSallOUT <- function(FileName = NULL,
     F_function(
       DatOut = DatOut[["N_at_size"]],
       vname = "N_females",
-      nrow = length(Start_Y:nyrRetro),
+      nrow = length(Start_Y:LastYrforN),
       colnam = colnam
     )
   # N_males_new
@@ -1840,7 +1928,7 @@ readGMACSallOUT <- function(FileName = NULL,
     F_function(
       DatOut = DatOut[["N_at_size"]],
       vname = "N_males_new",
-      nrow = length(Start_Y:nyrRetro),
+      nrow = length(Start_Y:LastYrforN),
       colnam = colnam
     )
   # N_females_new
@@ -1849,7 +1937,7 @@ readGMACSallOUT <- function(FileName = NULL,
     F_function(
       DatOut = DatOut[["N_at_size"]],
       vname = "N_females_new",
-      nrow = length(Start_Y:nyrRetro),
+      nrow = length(Start_Y:LastYrforN),
       colnam = colnam
     )
   # N_males_old
@@ -1857,7 +1945,7 @@ readGMACSallOUT <- function(FileName = NULL,
     F_function(
       DatOut = DatOut[["N_at_size"]],
       vname = "N_males_old",
-      nrow = length(Start_Y:nyrRetro),
+      nrow = length(Start_Y:LastYrforN),
       colnam = colnam
     )
   # N_females_old
@@ -1866,7 +1954,7 @@ readGMACSallOUT <- function(FileName = NULL,
     F_function(
       DatOut = DatOut[["N_at_size"]],
       vname = "N_females_old",
-      nrow = length(Start_Y:nyrRetro),
+      nrow = length(Start_Y:LastYrforN),
       colnam = colnam
     )
   # N_males_mature
@@ -1874,7 +1962,7 @@ readGMACSallOUT <- function(FileName = NULL,
     F_function(
       DatOut = DatOut[["N_at_size"]],
       vname = "N_males_mature",
-      nrow = length(Start_Y:nyrRetro),
+      nrow = length(Start_Y:LastYrforN),
       colnam = colnam
     )
   # N_females_mature
@@ -1883,7 +1971,7 @@ readGMACSallOUT <- function(FileName = NULL,
     F_function(
       DatOut = DatOut[["N_at_size"]],
       vname = "N_females_mature",
-      nrow = length(Start_Y:nyrRetro),
+      nrow = length(Start_Y:LastYrforN),
       colnam = colnam
     )
   # N_males_imature
@@ -1891,7 +1979,7 @@ readGMACSallOUT <- function(FileName = NULL,
     F_function(
       DatOut = DatOut[["N_at_size"]],
       vname = "N_males_imature",
-      nrow = length(Start_Y:nyrRetro),
+      nrow = length(Start_Y:LastYrforN),
       colnam = colnam
     )
   # N_females_imature
@@ -1900,7 +1988,7 @@ readGMACSallOUT <- function(FileName = NULL,
     F_function(
       DatOut = DatOut[["N_at_size"]],
       vname = "N_females_imature",
-      nrow = length(Start_Y:nyrRetro),
+      nrow = length(Start_Y:LastYrforN),
       colnam = colnam
     )
 
@@ -1908,9 +1996,9 @@ readGMACSallOUT <- function(FileName = NULL,
   n_gp <- nsex * nshell * nmature
   ptn_sex <- ptn_shell <- ptn_mature <- NULL
   ptn_count <- 1
-  for(s in 1:nsex){
-    for(m in 1:nmature){
-      for(c in 1:nshell){
+  for (s in 1:nsex) {
+    for (m in 1:nmature) {
+      for (c in 1:nshell) {
         ptn_sex[ptn_count] <- s
         ptn_shell[ptn_count] <- c
         ptn_mature[ptn_count] <- m
@@ -1920,54 +2008,58 @@ readGMACSallOUT <- function(FileName = NULL,
   }
 
   # N_males_imature_new
-  for(g in 1:n_gp)
-    if(ptn_sex[g] == 1 && ptn_shell[g] == 1 && ptn_mature[g] == 2){
+  for (g in 1:n_gp)
+    if (ptn_sex[g] == 1 &&
+        ptn_shell[g] == 1 && ptn_mature[g] == 2) {
       # print("N_males_imature_new")
 
       DatOut[["N_at_size"]] <-
         F_function(
           DatOut = DatOut[["N_at_size"]],
           vname = "N_males_imature_new",
-          nrow = length(Start_Y:nyrRetro),
+          nrow = length(Start_Y:LastYrforN),
           colnam = colnam
         )
     }
   # N_males_imature_old
-  for(g in 1:n_gp)
-    if(ptn_sex[g] == 1 && ptn_shell[g] == 2 && ptn_mature[g] == 2){
+  for (g in 1:n_gp)
+    if (ptn_sex[g] == 1 &&
+        ptn_shell[g] == 2 && ptn_mature[g] == 2) {
       # print("N_males_imature_old")
 
       DatOut[["N_at_size"]] <-
         F_function(
           DatOut = DatOut[["N_at_size"]],
           vname = "N_males_imature_old",
-          nrow = length(Start_Y:nyrRetro),
+          nrow = length(Start_Y:LastYrforN),
           colnam = colnam
         )
     }
   # N_males_mature_new
-  for(g in 1:n_gp)
-    if(ptn_sex[g] == 1 && ptn_shell[g] == 1 && ptn_mature[g] == 1){
+  for (g in 1:n_gp)
+    if (ptn_sex[g] == 1 &&
+        ptn_shell[g] == 1 && ptn_mature[g] == 1) {
       # print("N_males_mature_new")
 
       DatOut[["N_at_size"]] <-
         F_function(
           DatOut = DatOut[["N_at_size"]],
           vname = "N_males_mature_new",
-          nrow = length(Start_Y:nyrRetro),
+          nrow = length(Start_Y:LastYrforN),
           colnam = colnam
         )
     }
   # N_males_mature_old
-  for(g in 1:n_gp)
-    if(ptn_sex[g] == 1 && ptn_shell[g] == 2 && ptn_mature[g] == 1){
+  for (g in 1:n_gp)
+    if (ptn_sex[g] == 1 &&
+        ptn_shell[g] == 2 && ptn_mature[g] == 1) {
       # print("N_males_mature_old")
 
       DatOut[["N_at_size"]] <-
         F_function(
           DatOut = DatOut[["N_at_size"]],
           vname = "N_males_mature_old",
-          nrow = length(Start_Y:nyrRetro),
+          nrow = length(Start_Y:LastYrforN),
           colnam = colnam
         )
     }
@@ -2147,7 +2239,7 @@ readGMACSallOUT <- function(FileName = NULL,
   # -------------------------------------------------------------------------
 
   # Mature Probability ----
-  if(nmature == 2){
+  if (nmature == 2) {
     if (verbose)
       cat("-- Reading mature probability \n")
     tmp <- "mature_probability"
@@ -2188,7 +2280,8 @@ readGMACSallOUT <- function(FileName = NULL,
            Loc = Loc,
            nrow = DatFile$N_seasons)
   colnames(DatOut[["fhitfut"]]) <-
-    c("Season", paste0("Fleet_", 1:N_fleet))
+    # c("Season", paste0("Fleet_", 1:N_fleet))
+    c("Season", DatFile$F_Fleet_names)
 
   # spr_syr
   DatOut <- do.num(dat, DatOut, Loc, LocDatOut)
@@ -2330,7 +2423,7 @@ readGMACSallOUT <- function(FileName = NULL,
   # -------------------------------------------------------------------------
   if (verbose) {
     cat("====================================================\n")
-    cat("Read of gmacsAll.out file complete.")
+    cat("Read of gmacsAll.out file complete.\n")
     cat("\n")
   }
 

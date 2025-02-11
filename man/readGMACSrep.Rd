@@ -52,16 +52,19 @@ by size class.
 \item \code{spr_fofl} - The fishing mortality relative to MSY for the OFL.
 \item \code{spr_cofl_ret} - The retained portion of the OFL.
 \item \code{spr_yield} - The yield summary (SSB/SSB_F0; SSB/spr_Bmsy; Fbar; OFL).
+\item \code{nloglike} - A list containing the negative log-likelihood for all
+data sources (catch, survey, size composition, growth data (tagging data),
+and recruitment)
+\item \code{nlogPenalty} - The log penalties.
+\item \code{priorDensity} - The values of the prior densities.
 \item \code{Catches_like} - The likelihood for each catch data frame.
 \item \code{Index_like} - The likelihood for each survey data frame.
 \item \code{Size_comp_like} - The likelihood for each size composition data frame.
 \item \code{Recruit_pen} - The recruitment penalties.
 \item \code{Growth_like} - The likelihood for the growth data.
-
 \item \code{MeanF_pen} - The penalty for the mean fishing mortality.
 \item \code{MeanF_dev} - The penalty for the fishing mortality deviations.
 \item \code{M_devs} - The penalty for the natural mortality.
-\item \code{Rec_ini} - The penalty for the initial recruitment.
 \item \code{Rec_dev} - The penalty for the recruitment deviations.
 \item \code{Sex_ratio} - The penalty for the sex-ratio.
 \item \code{Molt_prob_smooth} - The penalty for the smoother of the probability

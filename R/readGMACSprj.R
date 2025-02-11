@@ -147,6 +147,7 @@ readGMACSprj <- function(FileName = NULL, verbose =TRUE) {
   # 2- Read the projection file and find the first line containing numeric data
   # -------------------------------------------------------------------------
   if (verbose) {
+    cat("====================================================\n")
     cat("-- Reading projection file \n")
     cat("====================================================\n")
   }

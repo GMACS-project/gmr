@@ -22,8 +22,11 @@
 #' @param LastAssDat Logical. If TRUE, the latest available data will be used for
 #' the analysis i.e. the model will be executed using the data stored in the
 #' the "Assessment_data" folder.
-#' @param ADMBpaths string name of 2-column text file that details the relevant
-#' paths for the R variables admbpath, gccpath, and editor.
+#' @param ADMBpaths Path to the repertory holding the ADMBpath file. This file
+#' is a string name of 2-column text file that details the relevant paths for the
+#' R variables admbpath, gccpath, and editor. By default the function detect the
+#' name of this file based on the OS of the machine (windows OS
+#' \code{"ADpaths_Windows.txt"} and Mac OS \code{"ADpaths_MacOS.txt"}).
 #' @param make.comp Logical. If TRUE, comparisons will be made between the various
 #' \code{GMACS_version} considered in the analysis.
 #' @param out.pdf Logical. Do you want to get the table of comparison in a pdf format?

@@ -80,12 +80,7 @@ get_nam <- function(filenames) {
 # Get file names without extension
 read_GMACS.dat <- function(path) {
   tmp <- readLines(path)
-  # Inddat <- which(stringr::str_detect(tmp, "data"))
-  # namdat <- tmp[Inddat + 1]
-  # Indctl <- which(stringr::str_detect(tmp, "controlfile"))
-  # namctl <- tmp[Indctl + 1]
-  # Indprj <- which(stringr::str_detect(tmp, "project"))
-  # namprj <- tmp[Indprj + 1]
+  tmp <- stringr::str_squish(tmp) # remove all blank
   Inddat <- which(stringr::str_detect(tmp, ".dat$"))
   namdat <- tmp[Inddat]
   Indctl <- which(stringr::str_detect(tmp, ".ctl$"))

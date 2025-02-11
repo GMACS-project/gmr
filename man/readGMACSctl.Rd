@@ -20,8 +20,24 @@ of the \code{\link[=readGMACSdat]{readGMACSdat()}} function.}
 A list with the content of the model.ctl file.
 \itemize{
 \item \code{sourcefile} - The file source.
-\item \code{Comments} - Specifications about the GMACS version used and the stock
-assessed.
+\item \code{Comments} - Specifications about the GMACS version used and the
+stock assessed.
+\item \code{nblocks} - The number of blocks.
+\item \code{Block_struct} - Use blocks in the model.
+\item \code{blocks} - The block structure.
+\item \code{rdv_syr} - The first year of recruitment estimation deviations.
+\item \code{rdv_eyr} - The last year of recruitment estimation deviations.
+\item \code{Term_molt} - Consider terminal molting in the model?
+\item \code{rdv_phz} - The phase for recruitment estimation.
+\item \code{rec_prop_phz} - The phase for recruitment sex-ratio estimation.
+\item \code{init_sex_ratio} - The initial value for expected sex-ratio.
+\item \code{bInitializeUnfished} - The specification for the initial conditions
+(unfished, steady-state, free params, free params revised)
+\item \code{spr_lambda} - The proportion of mature male biomass for SPR reference points.
+\item \code{nSRR_flag} - The stock-Recruit-Relationship (none, Beverton-Holt)
+\item \code{BRP_rec_sexR} - Use years specified to computed average sex ratio in
+the calculation of average recruitment for reference points.
+\item \code{NyrEquil} - The year to compute equilibrium.
 \item \code{ntheta} - The number of key parameters control.
 \item \code{theta_control} - The matrix pf teh key parameters control.
 \item \code{lw_type} - The type of length-weight (LW) relationship.
@@ -30,12 +46,13 @@ assessed.
 \item \code{mean_wt_in} - The vector/matrix of mean weight-at-size (if \code{lw_type = 2,3}).
 \item \code{maturity} - The proportion of mature at size by sex.
 \item \code{legal_maturity} - The legal definition of the proportion of mature at size by sex.
-\item \code{Func_maturity_TermMolting} - Use functional maturity for terminally molting animals?
 \item \code{bUseCustomGrowthMatrix} - The selected option for the growth matrix.
 \item \code{bUseGrowthIncrementModel} - The selected option for the growth increment model.
 \item \code{bUseCustomMoltProbability} - The selected molt probability function.
 \item \code{bUseCustomMatureProbability} - The selected option for the maturity probability
 (only applicable if nmature = 2)
+\item \code{use_func_mat} - Use functional maturity for terminally molting
+animals (\code{use_func_mat = 0}: no; \code{use_func_mat = 1}: yes).
 \item \code{nSizeClassRec} - The maximum size-class for recruitment
 \item \code{nSizeIncVaries} - The number of size increment periods
 \item \code{iYrsSizeIncChanges} - The year(s) for which the size increment change.
@@ -53,6 +70,11 @@ assessed.
 \item \code{CustomGrowthMatrix} - The custom growth-increment matrix or size-transition
 matrix.
 \item \code{CustomMoltProbabilityMatrix} - The custom molt probability matrix.
+\item \code{CustomMatureProbabilityMatrix} - The custom mature probability matrix.
+\item \code{M_control} - the matrix of natural mortality control.
+\item \code{n_Mpar} - the number of natural mortality parameters.
+\item \code{blocklimits} - the block limits.
+\item \code{NatMort_param} - the natural mortality parameters.
 \item \code{slx_nsel_period_in} - The number of selectivity time period per fleet.
 \item \code{slx_bsex_in} - The number of sex specific selectivity.
 \item \code{slx_type_in} - The sex-specific selectivity type.
@@ -77,8 +99,9 @@ forced to be 1?
 \item \code{devParPhase} - The estimation phase for the deviation parameter
 (when a random walk is considered).
 \item \code{q_controls} - The catchability control parameters.
-\item \code{add_cv_controls} - Additional CV control parameters for catchability.
-\item \code{add_cv_links} - Use of additional variance for each survey (0: ignore; >0 use).
+\item \code{q_param} - The catchability parameters.
+\item \code{add_cv_controls} - Additional CV control for catchability.
+\item \code{add_cv_controls_param} - Additional CV control parameters for catchability.
 \item \code{f_controls} - The fishing mortality control.
 \item \code{nAgeCompType} - The size composition likelihood type.
 \item \code{bTailCompression} - The auto tail compression specification.
@@ -103,23 +126,12 @@ natural mortality by size class.
 \item \code{tag_emphasis} - The emphasis (weight) for the tagging likelihood.
 \item \code{m_maturity} - Is there any maturity-specific natural mortality?
 \item \code{m_mat_controls} - Immature/mature natural mortality control if any.
-\item \code{rdv_syr} - The first year of recruitment estimation deviations.
-\item \code{rdv_eyr} - The last year of recruitment estimation deviations.
-\item \code{Term_molt} - Consider terminal molting in the model?
-\item \code{rdv_phz} - The phase for recruitment estimation.
-\item \code{rec_prop_phz} - The phase for recruitment sex-ratio estimation.
-\item \code{init_sex_ratio} - The initial value for expected sex-ratio.
-\item \code{rec_ini_phz} - The phase for initial recruitment estimation.
-\item \code{bInitializeUnfished} - The specification for the initial conditions
-(unfished, steady-state, free params, free params revised)
-\item \code{spr_lambda} - The proportion of mature male biomass for SPR reference points.
-\item \code{nSRR_flag} - The stock-Recruit-Relationship (none, Beverton-Holt)
-\item \code{BRP_rec_sexR} - Use years specified to computed average sex ratio in
-the calculation of average recruitment for reference points.
-\item \code{NyrEquil} - The year to compute equilibrium.
 \item \code{catch_emphasis} - The weight on catch for the likelihood component.
 \item \code{Penalty_fdevs} - Penalties on deviations.
 \item \code{Penalty_emphasis} - Penalties on priors
+\item \code{Dev_settings} - named list with the deviation settings for the random walk for
+each potential variable (Growth_increment; Molt_probability;Probability_mature
+;Natural mortality rates;selectivity;catchability;add_cv for Q).
 \item \code{eof} - Logical indicating the end of the file (used for checking the reading).
 }
 }

@@ -83,6 +83,7 @@ readGMACSsimdat <- function(Dir = NULL,
   # 2- Read the simdata.out file and find the first line containing numeric data
   # -------------------------------------------------------------------------
   if (verbose) {
+    cat("====================================================\n")
     cat("-- Reading simulated data file \n")
     cat("====================================================")
     cat("\n")
@@ -196,7 +197,7 @@ readGMACSsimdat <- function(Dir = NULL,
   # -------------------------------------------------------------------------
   if (verbose) {
     cat("====================================================\n")
-    cat("Read of simulated data file complete.")
+    cat("Read of simulated data file complete.\n")
     cat("\n")
   }
   return(DatOut)

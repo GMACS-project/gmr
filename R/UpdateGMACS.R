@@ -78,6 +78,92 @@
 #' details about the version of GMACS that is updating, including the last
 #' implementations.
 #'
+#' @examples
+#' \dontrun{
+#' # 1. set up ----
+#' fsep <- .Platform$file.sep
+#'
+#' # Load packages ----
+#' library(gmr)
+#' library(magrittr)
+#'
+#' # Name of the Testing_Version folder of the version being developed
+#' Gmacs_Ver <- "Gmacs_2_10_01"
+#'
+#' # Set directories ----
+#' dir_test <- file.path(here::here(), "Testing_Versions", Gmacs_Ver)
+#' dir_Last_Ver <- file.path(here::here(), "Latest_Version", "build", fsep = fsep)
+#' dir_Ass_data <- file.path(dirname(here::here()), "Assessment_data", fsep = fsep)
+#'
+#' # 2. local functions ----
+#'
+#' # 3. Specify the stock input files names ----
+#' # This also includes the model name ($model_name) and the year of
+#' # assessment ($Ass_year)
+#' EAG <- list(
+#'   datfileName_New = "EAG_21_1.dat",
+#'   ctlfileName_New = "EAG_21_1.ctl",
+#'   prjfileName_New = "EAG_21_1.prj",
+#'   model_name = "model_21_1e",
+#'   Ass_year = 2021
+#' )
+#' WAG <- list(
+#'   datfileName_New = "WAG_21_1.dat",
+#'   ctlfileName_New = "WAG_21_1.ctl",
+#'   prjfileName_New = "WAG_21_1.prj",
+#'   model_name = "model_21_1e",
+#'   Ass_year = 2021
+#' )
+#' SNOW_crab <- list(
+#'   datfileName_New = "snow_21.dat",
+#'   ctlfileName_New = "snow_21.ctl",
+#'   prjfileName_New = "snow_21.prj",
+#'   model_name = "model_21_g",
+#'   Ass_year = 2021
+#' )
+#' BBRKC <- list(
+#'   datfileName_New = "bbrkc_21_1.dat",
+#'   ctlfileName_New = "bbrkc_21_1.ctl",
+#'   prjfileName_New = "bbrkc_21_1.prj",
+#'   model_name = "model_21_1",
+#'   Ass_year = 2021
+#' )
+#' SMBKC <- list(
+#'   datfileName_New = "sm_22.dat",
+#'   ctlfileName_New = "sm_22.ctl",
+#'   prjfileName_New = "sm_22.prj",
+#'   model_name = "model_16_0",
+#'   Ass_year = 2021
+#' )
+#' # Make a list of these stock-specific lists ----
+#' Stock_models <- list(
+#'   EAG = EAG,
+#'   WAG = WAG,
+#'   SNOW_crab = SNOW_crab,
+#'   BBRKC = BBRKC,
+#'   SMBKC = SMBKC
+#' )
+#' # 4. Run the UpdateGMACS function ----
+#' UpdateGMACS(
+#'   stock = "all",
+#'   dirSrc = dir_test,
+#'   dirNew = dir_Last_Ver,
+#'   dir_Assdata = dir_Ass_data,
+#'   dir_Supp = NULL,
+#'   ADMBpaths = NULL,
+#'   UpdateInputFiles = TRUE,
+#'   Stock_models_names = Stock_models,
+#'   Update_LastAss_file = TRUE,
+#'   UpdateLast_GmacsVer = TRUE,
+#'   verbose = TRUE,
+#'   cleanStockFolder = TRUE,
+#'   cleanInputFiles = TRUE,
+#'   cleanTest = TRUE
+#' )
+#' }
+#'
+#'
+#'
 #' @export
 #' @md
 #
@@ -253,8 +339,16 @@ UpdateGMACS <- function(dirSrc = NULL,
         stock = StockNamesUpdate,
         Stock_NameFiles = Stock_models_names,
         verbose = FALSE,
-        dir_InputFiles = dirSrc,
-        dir_WriteFiles = c(dir_InputFiles,dirSrc),
+        dir_InputFiles = ifelse(
+          basename(dirSrc) == "build",
+          yes = dirSrc,
+          no = file.path(dirSrc, "build", fsep = fsep)
+        ),
+        dir_WriteFiles = c(dir_InputFiles,ifelse(
+          basename(dirSrc) == "build",
+          yes = dirSrc,
+          no = file.path(dirSrc, "build", fsep = fsep)
+        )),
         CatchDF_format = NULL,
         SurveyDF_format = NULL,
         SizeFreqDF_format = NULL,
@@ -295,7 +389,11 @@ UpdateGMACS <- function(dirSrc = NULL,
     }
 
     # Clean the dirSrc directory
-    dirSrcStock <- file.path(dirSrc, StockNames[nm], fsep = fsep)
+    dirSrcStock <- file.path(ifelse(
+      basename(dirSrc) == "build",
+      yes = dirSrc,
+      no = file.path(dirSrc, "build", fsep = fsep)
+    ), StockNames[nm], fsep = fsep)
     clean_bat(path = dirSrcStock, verbose = verbose)
 
     # Get the names of the available files in the dirSrcStock repertory
@@ -388,9 +486,9 @@ UpdateGMACS <- function(dirSrc = NULL,
     dir_new_run <- ifelse(basename(dirNew) == "build",
                           yes = dirname(dirNew),
                           no = dirNew)
-    # if(is.null(ADMBpaths)){
-    #   ADMBpaths <- dir_new_run
-    # }
+    if(is.null(ADMBpaths)){
+      ADMBpaths <- dirname(dir_new_run)
+    }
     res <- GMACS(
       Spc = StockNames,
       GMACS_version = "Latest_Version",
@@ -399,11 +497,12 @@ UpdateGMACS <- function(dirSrc = NULL,
       compile = FALSE,
       run = TRUE,
       LastAssDat = FALSE,
-      ADMBpaths = ifelse(
-        isWindowsOS(),
-        "ADpaths_Windows.txt",
-        "ADpaths_MacOS.txt"
-      ),
+      # ADMBpaths = ifelse(
+      #   isWindowsOS(),
+      #   "ADpaths_Windows.txt",
+      #   "ADpaths_MacOS.txt"
+      # ),
+      ADMBpaths = ADMBpaths,
       make.comp = FALSE,
       cleanOut = TRUE,
       verbose = FALSE
@@ -413,7 +512,7 @@ UpdateGMACS <- function(dirSrc = NULL,
   # Remove the Gmacs version specific folder used to run the test
   if(cleanTest){
     if(verbose){
-      cat(paste0("Deleting folder:\n", dirSrc, "\n"))
+      cat(paste0("-- Deleting folder:\n", dirSrc, "\n"))
     }
     unlink(dirSrc, recursive=TRUE)
   }
@@ -422,8 +521,10 @@ UpdateGMACS <- function(dirSrc = NULL,
     dir_InputFiles <- file.path(dirname(dirSrc), "Stock_Input_files", basename(dirSrc), fsep = fsep)
     if(dir.exists(dir_InputFiles)){
       if(verbose){
-        cat(paste0("Deleting folder:\n", dir_InputFiles, "\n"))
+        # cat(paste0("-- Zipping folder:\n", dir_InputFiles, "\n"))
+        cat(paste0("-- Deleting folder:\n", dir_InputFiles, "\n"))
       }
+      # utils::zip(zipfile = 'testZip', files = 'testDir/test.csv')
       unlink(dir_InputFiles, recursive=TRUE)
     }
   }

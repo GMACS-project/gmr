@@ -37,18 +37,19 @@
 #'   \item \code{spr_fofl} - The fishing mortality relative to MSY for the OFL.
 #'   \item \code{spr_cofl_ret} - The retained portion of the OFL.
 #'   \item \code{spr_yield} - The yield summary (SSB/SSB_F0; SSB/spr_Bmsy; Fbar; OFL).
+#'   \item \code{nloglike} - A list containing the negative log-likelihood for all
+#'   data sources (catch, survey, size composition, growth data (tagging data),
+#'   and recruitment)
+#'   \item \code{nlogPenalty} - The log penalties.
+#'   \item \code{priorDensity} - The values of the prior densities.
 #'   \item \code{Catches_like} - The likelihood for each catch data frame.
 #'   \item \code{Index_like} - The likelihood for each survey data frame.
 #'   \item \code{Size_comp_like} - The likelihood for each size composition data frame.
 #'   \item \code{Recruit_pen} - The recruitment penalties.
 #'   \item \code{Growth_like} - The likelihood for the growth data.
-#'
-#'
-#'
 #'   \item \code{MeanF_pen} - The penalty for the mean fishing mortality.
 #'   \item \code{MeanF_dev} - The penalty for the fishing mortality deviations.
 #'   \item \code{M_devs} - The penalty for the natural mortality.
-#'   \item \code{Rec_ini} - The penalty for the initial recruitment.
 #'   \item \code{Rec_dev} - The penalty for the recruitment deviations.
 #'   \item \code{Sex_ratio} - The penalty for the sex-ratio.
 #'   \item \code{Molt_prob_smooth} - The penalty for the smoother of the probability
@@ -307,21 +308,35 @@ readGMACSrep <- function(FileName = NULL,
   .year <- rep(Start_Y:(End_Y + 1), nsex)
   .sizeC <- paste0("SizeC_", 1:nclass)
 
+  # # Maturity
+  # if (verbose)
+  #   cat("-- Reading maturity \n")
+  # .new <- paste0("SizeC_", 1:nclass)
+  # DatOut <-
+  #   base::switch(
+  #     .ac(nsex),
+  #     "1" = do.vec(dat, DatOut, Loc, LocDatOut),
+  #     "2" = do.df(dat = dat, Loc = Loc, DatOut = DatOut, LocDatOut = LocDatOut, nrow = 2)
+  #   )
+  # colnames(DatOut$maturity) <- .new
+  # rownames(DatOut$maturity) <- nam_sex
+
   # Catch data ----
   if (verbose)
     cat("-- Reading catch / survey specifications (q, sdnr, francis weights) \n")
 
   # log_q_catch
   DatOut <- do.vec(dat, DatOut, Loc, LocDatOut)
-
+  DatOut[["log_q_catch"]] <- data.frame(Index = names(DatFile$Catch),
+                                        log_q_catch = DatOut[["log_q_catch"]])
   # sdnr_MAR_cpue
   DatOut <-
     do.df(dat, DatOut, Loc, LocDatOut, nrow = DatFile$N_SurveyDF)
   if (length(DatFile$Survey_names) == 1 &&
       DatFile$Survey_names == "") {
-    rownames(DatOut$sdnr_MAR_cpue) <- rownames(DatOut$survey_q)
+    rownames(DatOut$sdnr_MAR_cpue) <- rownames(DatOut$survey_Q)
   } else {
-    rownames(DatOut$sdnr_MAR_cpue) <- DatFile$Survey_names
+    rownames(DatOut$sdnr_MAR_cpue) <- names(DatFile$Survey_names)
   }
   colnames(DatOut$sdnr_MAR_cpue) <- c("sdnr", "MAR")
 
@@ -359,15 +374,16 @@ readGMACSrep <- function(FileName = NULL,
   # Selectivity ----
   if (verbose)
     cat("-- Reading selectivity \n")
+  LastYrforSlx <- nyrRetro + 1
 
   # slx_capture
-  nRowSlx <- length(Start_Y:End_Y) * nsex * N_fleet
+  nRowSlx <- length(Start_Y:LastYrforSlx) * nsex * N_fleet
   DatOut <- do.df(dat, DatOut, Loc, LocDatOut, nrow = nRowSlx)
   # slx_retaind
-  nRowRet <- length(Start_Y:End_Y) * nsex * N_fleet
+  nRowRet <- length(Start_Y:LastYrforSlx) * nsex * N_fleet
   DatOut <- do.df(dat, DatOut, Loc, LocDatOut, nrow = nRowRet)
   # slx_discard
-  nRowDis <- length(Start_Y:End_Y) * nsex * N_fleet
+  nRowDis <- length(Start_Y:LastYrforSlx) * nsex * N_fleet
   DatOut <- do.df(dat, DatOut, Loc, LocDatOut, nrow = nRowDis)
   # Colnames
   colnames(DatOut$slx_capture) <-
@@ -457,6 +473,99 @@ readGMACSrep <- function(FileName = NULL,
   DatOut <-
     do.df(dat, DatOut, Loc, LocDatOut, nrow = 101) #Number of rows defines in the .tpl
   colnames(DatOut$spr_yield) <- c("SSB/SSB_F0", "SSB/spr_Bmsy", "Fbar", "OFL")
+
+
+  # neg loglikelihoods
+  nam_likes <-
+    c("Catch_data",
+      "Index_data",
+      "Size_data",
+      "Stock_Recruit",
+      "Tagging_data")
+
+  nam_rowsdf <- c("CatchDF", "SurveyDF", "SizeFreq_df")
+  nam_rowsR <- c("FirstYearDevs", "InitDevs", "SexRatioDevs")
+  nam_rowsG <-
+    if (CtlFile$bUseGrowthIncrementModel == 1 &
+        DatFile$GrowthObsType == 1) {
+      paste(nam_sex, "Growth_IncDat", sep = "_")
+    } else if (DatFile$GrowthObsType == 2 ||
+               DatFile$GrowthObsType == 3) {
+      paste(nam_sex, "SizeClass_change", sep = "_")
+    }
+
+  nlikes <- length(nam_likes)
+  tmp <- get.namVar(dat, Loc, LocDatOut)
+  eval(parse(text = paste0("DatOut$", tmp, " <- list()")))
+
+  for (l in 1:nlikes) {
+    namRows <-
+      if (nam_likes[l] %in% c("Catch_data", "Index_data", "Size_data")) {
+        eval(parse(
+          text = paste0(
+            "paste0('",
+            nam_rowsdf[l],
+            "', 1:DatFile$N_",
+            nam_rowsdf[l],
+            ")"
+          )
+        ))
+      } else if (nam_likes[l] == "Stock_Recruit") {
+        nam_rowsR
+      } else {
+        nam_rowsG
+      }
+    if (nam_likes[l] == "Size_data")
+      namRows <- namRows[unique(CtlFile$iCompAggregator)]
+    if (nam_likes[l] == "Tagging_data")
+      namRows <- paste0("Growth_like", "_", nam_sex)
+
+
+    eval(parse(
+      text = paste0("DatOut$", tmp, "$", nam_likes[l], " <- get.vec(dat, Loc)")
+    ))
+
+    eval(parse(
+      text = paste0(
+        "DatOut$",
+        tmp,
+        "$",
+        nam_likes[l],
+        " <- as.data.frame(DatOut$",
+        tmp,
+        "$",
+        nam_likes[l],
+        ", row.names = namRows)"
+      )
+    ))
+    eval(parse(
+      text = paste0("colnames(DatOut$", tmp, "$", nam_likes[l], ") <- 'nloglike'")
+    ))
+  }
+  # nlogPenalty
+  DatOut <- do.vec(dat, DatOut, Loc, LocDatOut)
+  namPenal <- c(
+    "Log_fdevs",
+    "meanF",
+    "Mdevs",
+    "Rec_devs",
+    "Initial_devs",
+    "Fst_dif_dev",
+    "Mean_sex-Ratio",
+    "Molt_prob",
+    "Free_selectivity",
+    "Init_n_at_len",
+    "Fvecs",
+    "Fdovs",
+    "Vul_devs"
+  )
+  DatOut$nlogPenalty <-
+    as.data.frame(DatOut$nlogPenalty, row.names = namPenal)
+  colnames(DatOut$nlogPenalty) <- "nlogPenalty"
+  # priorDensity
+  # priorDensity for each estimated parameters
+  # NVarpar values - Need to implement with the names
+  DatOut <- do.vec(dat, DatOut, Loc, LocDatOut)
   # Catches_like
   DatOut <- do.vec(dat, DatOut, Loc, LocDatOut)
   # Index_like
@@ -473,8 +582,8 @@ readGMACSrep <- function(FileName = NULL,
   DatOut <- do.num(dat, DatOut, Loc, LocDatOut)
   # M_devs
   DatOut <- do.num(dat, DatOut, Loc, LocDatOut)
-  # Rec_ini
-  DatOut <- do.vec(dat, DatOut, Loc, LocDatOut)
+  # # Rec_ini
+  # DatOut <- do.vec(dat, DatOut, Loc, LocDatOut)
   # Rec_dev
   DatOut <- do.vec(dat, DatOut, Loc, LocDatOut)
   # Sex_ratio
@@ -1415,7 +1524,7 @@ readGMACSrep <- function(FileName = NULL,
   # -------------------------------------------------------------------------
   if (verbose) {
     cat("====================================================\n")
-    cat("Read of gmacs.rep file complete.")
+    cat("Read of gmacs.rep file complete.\n")
     cat("\n")
   }
 

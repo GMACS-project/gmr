@@ -2,6 +2,7 @@
 % Please edit documentation in R/gmr-package.R
 \docType{package}
 \name{gmr-package}
+\alias{gmr}
 \alias{gmr-package}
 \title{**gmr**: R code for GMACS}
 \description{
@@ -11,4 +12,31 @@ The **gmr** package is a set of tools for running GMACS, a statistical size-stru
 assessment modeling framework for molting crustaceans species. The package 
 allows analysing data and outputs related to GMACS stock assessment model
 in the purpose of building stock assesmsent reports.
+}
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://gmacs-project.github.io/gmr/}
+  \item \url{https://github.com/GMACS-project/gmr}
+  \item Report bugs at \url{https://github.com/GMACS-project/gmr/issues}
+}
+
+}
+\author{
+\strong{Maintainer}: Matthieu Veron \email{mveron@uw.edu}
+
+Authors:
+\itemize{
+  \item Cody Szuwalski \email{cody.szuwalski@noaa.gov} [contributor]
+}
+
+Other contributors:
+\itemize{
+  \item Andre Punt \email{aepunt@uw.edu} [contributor]
+  \item Darcy Webber \email{darcy@quantifish.co.nz} [contributor]
+  \item Steve Martell [contributor]
+  \item Jim Ianelli \email{jim.ianelli@noaa.gov} [contributor]
+  \item William Stockhausen \email{william.stockhausen@noaa.gov} [contributor]
+}
+
 }

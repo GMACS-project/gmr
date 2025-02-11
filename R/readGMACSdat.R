@@ -22,7 +22,7 @@
 #'   \item \code{Recr_Season} - The season recruitment occurs.
 #'   \item \code{Grwth_Season} - The season growth occurs.
 #'   \item \code{SSB_Season} - The season to calculate the Spawning Stock Biomass.
-#'   \item \code{N_Season} - The seaspn for the number (N) output.
+#'   \item \code{N_Season} - The season for the number (N) output.
 #'   \item \code{Max_sizeC} - The maximum size class in the model.
 #'   \item \code{Size_breaks} - The size breaks considered in the population.
 #'   \item \code{M_in_Type} - The natural mortality per season input type (vector or matrix).
@@ -42,7 +42,7 @@
 #'   \item \code{Sv_type} - The data type for each abundance index
 #'   (1: total selectivity; 2:retention*selectivity).
 #'   \item \code{Nrows_SvDF} - The number of rows in each survey data frame.
-#'   \item \code{Surveys} - Teh survey data.
+#'   \item \code{Surveys} - The survey data.
 #'   \item \code{SizeFreqDF_format} - The input format for size composition data
 #'   (0: old format; 1: new format).
 #'   \item \code{N_SizeFreq_df} - The number of size composition data frame.
@@ -55,7 +55,7 @@
 #'   \item \code{GrowthData} - The growth data.
 #'   \item \code{NenvIndics} - The number of environmental indices considered.
 #'   \item \code{EnvYrs} - The years cover for each environmental index.
-#'   \item \code{EnvData} - Teh environmental data.
+#'   \item \code{EnvData} - The environmental data.
 #'   \item \code{eof} - Logical indicating the end of the file (used for checking the reading).
 #' }
 #'
@@ -83,8 +83,6 @@
 #' @md
 #
 readGMACSdat <- function(FileName = NULL, verbose = TRUE) {
-  DatOut <- list()
-
   # 1- Internal functions
   # -------------------------------------------------------------------------
   # @title get.num
@@ -376,6 +374,7 @@ readGMACSdat <- function(FileName = NULL, verbose = TRUE) {
   # 2- Read the data file and find the first line containing numeric data
   # -------------------------------------------------------------------------
   if (verbose) {
+    cat("====================================================\n")
     cat("-- Reading data file \n")
     cat("====================================================\n")
   }
@@ -390,7 +389,7 @@ readGMACSdat <- function(FileName = NULL, verbose = TRUE) {
   if (verbose)
     cat(
       "-> The start year of the assessment that has been detected is:",
-      sub("\\D*(\\d+).*", "\\1", dat[Startdat])[1],
+      sub("\\D*(\\d+).*", "\\1", dat[Startdat - 2])[1],
       "\n\n"
     )
   # -------------------------------------------------------------------------
@@ -406,6 +405,7 @@ readGMACSdat <- function(FileName = NULL, verbose = TRUE) {
   # Remove blank lines.
   dat <- dat[dat != ""]
 
+  DatOut <- list()
   DatOut[["sourcefile"]] <- FileName
   DatOut[["Comments"]] <- Com
 
@@ -414,7 +414,6 @@ readGMACSdat <- function(FileName = NULL, verbose = TRUE) {
   # -------------------------------------------------------------------------
 
   # Model dimensions
-  # ======================================================================= #
   # -------------------------------------------------------------------------
   DatOut[["Start_Y"]] <- get.num(dat, Loc) # Start year
   DatOut[["End_Y"]] <- get.num(dat, Loc) # End year
@@ -439,7 +438,6 @@ readGMACSdat <- function(FileName = NULL, verbose = TRUE) {
 
   if (verbose)
     cat("-> Read model dimensions. \n")
-  # ======================================================================= #
   # -------------------------------------------------------------------------
 
   # Size classes definition
@@ -483,8 +481,9 @@ readGMACSdat <- function(FileName = NULL, verbose = TRUE) {
   DatOut[["F_Fleet_names"]] <- ifelse(DatOut$N_fleet == 1,
                                       get.num(dat, Loc, num = FALSE),
                                       get.vec(dat, Loc, num = FALSE))[[1]] # Fishing fleet names
-
+  do_Index <- FALSE
   if (length(DatOut[["F_Fleet_names"]]) == DatOut$N_fleet) {
+    do_Index <- TRUE
     DatOut[["Survey_names"]] <- ""
   } else {
     DatOut[["Survey_names"]] <-
@@ -585,11 +584,13 @@ readGMACSdat <- function(FileName = NULL, verbose = TRUE) {
 
   if (verbose) {
     if (DatOut$N_SurveyDF != length(DatOut$Survey_names)) {
-      cat(
-        "The number of relative abundance indices does not correspond to the\nnumber of survey names. GMACS will consider CPUE index"
+      warning(
+        "The number of relative abundance indices does not correspond to the\nnumber of survey names. These are considered as index for the given fishing fleet.\n"
       )
     }
   }
+  if (do_Index)
+    nam_index <- paste0("Index_", 1:DatOut[["N_SurveyDF"]])
 
   if (DatOut$SurveyDF_format == 0) {
     if (DatOut$N_SurveyDF == 0) {
@@ -624,11 +625,29 @@ readGMACSdat <- function(FileName = NULL, verbose = TRUE) {
         "units",
         "Timing"
       )
-      for (n in 1:DatOut$N_SurveyDF) {
-        # n <- 1
+
+      # Check the number of survey and the number of indices
+      tmpDef <- unique(tmp[, c('Index', 'fleet', 'sex')])
+      Fleet_names <- c(DatOut$F_Fleet_names, DatOut$Survey_names)
+
+      for (n in 1:nrow(tmpDef)) {
         DatOut[["Surveys"]][[n]] <-
-          tmp[which(tmp[, 'fleet'] == unique(tmp[, 'fleet'])[n]), ]
-        names(DatOut[["Surveys"]])[n] <- DatOut$Survey_names[n]
+          tmp %>% dplyr::filter(Index == tmpDef$Index[n],
+                                fleet == tmpDef$fleet[n],
+                                sex == tmpDef$sex[n])
+        isex <- base::switch(
+          .ac(tmpDef$sex[n]),
+          "0" = "Both",
+          "1" = "Males",
+          "2" = "Females"
+        )
+        fleet <- Fleet_names[tmpDef$fleet[n]]
+        if (do_Index) {
+          names(DatOut[["Surveys"]])[n] <- paste0(c(fleet, isex, nam_index[n]), collapse = "_")
+          DatOut[["Survey_names"]] <- names(DatOut[["Surveys"]])
+        } else {
+          names(DatOut[["Surveys"]])[n] <- paste0(c(fleet, isex), collapse = "_")
+        }
       }
     }
   } else if (DatOut$SurveyDF_format == 1) {
@@ -793,6 +812,10 @@ readGMACSdat <- function(FileName = NULL, verbose = TRUE) {
   if (verbose)
     cat("-> Read environmental data. \n")
   # -------------------------------------------------------------------------
+
+
+  # Add some stuff to DatOut
+  DatOut[["do_Index"]] <- do_Index
 
   # End of data file
   # -------------------------------------------------------------------------

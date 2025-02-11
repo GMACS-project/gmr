@@ -10,7 +10,8 @@ readGMACSpar(
   verbose = NULL,
   DatFile = NULL,
   CtlFile = NULL,
-  GMACSdat = NULL
+  GMACSdat = NULL,
+  Do_comp = FALSE
 )
 }
 \arguments{
@@ -28,6 +29,10 @@ of the \code{\link[=readGMACSctl]{readGMACSctl()}} function.}
 
 \item{GMACSdat}{(list)- Object containing the gmacs.dat file - This is the output
 of the \code{\link[=readGMACS.dat]{readGMACS.dat()}} function.}
+
+\item{Do_comp}{(logical) - flag to specify if a comparison has to be done betwenn
+the expected parameters and those provided in the \code{.par} file. This is mainly
+use in developement mode. Default, \code{Do_comp = FALSE}.}
 }
 \value{
 the gmacs.par file as a named list. Where data frame are used, the
@@ -39,14 +44,14 @@ columns are parameter_ID/value.
 \item \code{MaxGradComp} - The maximum gradient component.
 \item \code{theta} - The key parameter controls (core parameters - theta parameters).
 \item \code{Grwth} - The growth parameters.
+\item \code{Nat_Mortality_rates} - The natural mortality rates.
 \item \code{Vul} - The vulnerability (selectivity and retention) parameters.
-\item \code{Envpar_Slx}
+\item \code{Envpar_Slx} - The environmental parameters for selectivity.
 \item \code{Slx_Devs} - The selectivity deviations.
 \item \code{Fbar} - The mean fishing mortality parameters.
 \item \code{Fdev} - The fishing fleet-specific weights for male.
 \item \code{Foff} - The female fishing mortality offset to male F.
 \item \code{Fdov} - The fishing fleet-specific weights for female.
-\item \code{rec_ini} - The initial recruitment by size-class.
 \item \code{rec_dev_est} - The year-specific recruitment deviations.
 \item \code{logit_rec_prop_est} - The year-specific sex-ratio recruitment.
 \item \code{Mdev} - The natural mortality deviation.
@@ -55,6 +60,7 @@ maturity state.
 \item \code{EffSamp_size} - The effective sample size.
 \item \code{survey_Q} - The survey-specific catchability.
 \item \code{add_cv} - The survey-specific additional CV.
+\iten \code{RW_dev} - the randmo walk deviations.
 }
 }
 \description{

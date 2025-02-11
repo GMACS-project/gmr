@@ -966,7 +966,11 @@ writeGmacsdatfile <- function(Dir = NULL,
   cat("#_Fishing fleet	names (delimited with a space - no spaces in names)\n")
   cat(obj$F_Fleet_names, "\n")
   cat("#_Survey names (delimited with a space - no spaces in names)\n")
-  cat(obj$Survey_names, "\n")
+  if(obj$do_Index){
+    cat("\n")
+  } else {
+    cat(obj$Survey_names, "\n")
+  }
   cat("#_Are the seasons: 0 = instantaneous or 1 = continuous\n")
   cat(obj$F_Season_Type, "\n")
   cat("#_-------------------------------------- #\n")
@@ -1127,7 +1131,7 @@ writeGmacsdatfile <- function(Dir = NULL,
     )
     cat("#_************************************** #\n")
     if (obj$N_SurveyDF > 0) {
-      for (n in 1:obj$N_SurveyDF) {
+      for (n in 1:length(obj$Surveys)) {
         cat("\n")
         cat("# **", names(obj$Surveys)[n], " ** #\n")
         cat("# Index | Year | Season | Fleet | Sex | Maturity | Obs | CV | Units | CPUE_time\n")

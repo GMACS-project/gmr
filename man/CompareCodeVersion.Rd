@@ -12,6 +12,7 @@ CompareCodeVersion(
   dir_Gmacs_Exe = NULL,
   dir_InputFiles = NULL,
   usePin = NULL,
+  writePin = TRUE,
   Run_old_version = TRUE,
   compareWithPin = NULL,
   Threshold = 1e-05,
@@ -48,6 +49,12 @@ each stock for the newly developed version of Gmacs are saved.}
 parameter values when running the new version. This assumes that the \code{gmacs.par}
 file structure remained the same between the two versions.}
 
+\item{writePin}{(logical)- When \code{usePin = TRUE}, if \code{writePin = TRUE},
+then the \code{'gmacs.par'} file that exists in the stock-specific repertory of
+the old version of Gmacs will be used to write the \code{'gmacs.pin'}. If
+\code{writePin = FALSE}, this assumes that a \code{'gmacs.pin'} file already
+exist in that repertory.}
+
 \item{Run_old_version}{(logical)- flag to re run the old version of Gmacs using
 the estimated values for the parameters as a pin file. This will allow to get
 a new \code{gmacs.par} file that will be then used for comparison. Default,
@@ -58,7 +65,7 @@ instead of the gmacs.par file obtained with the version to be compared with.}
 
 \item{Threshold}{(numeric)- Threshold to test if the comparison between the
 two versions passed. It is used to compared parameter values between the two
-version. by default, \code{Threshold = 1.0e-5}.}
+version. By default, \code{Threshold = 1.0e-5}.}
 
 \item{Clean_Files}{(logical)- flag to delete Gmacs files in stock specific folder
 after running the new version. See the \code{\link[=clean_bat]{clean_bat()}} function for more details.}
@@ -67,10 +74,11 @@ after running the new version. See the \code{\link[=clean_bat]{clean_bat()}} fun
 and shell output. Default, \code{verbose;verbose_shell = TRUE}.}
 }
 \value{
-A list with the results of the comparison. This list is also saved
-as a \code{.Rdata} file under the name \code{Results_testing_version_XXX_[runDate]} in
-the relative folder of the \code{dir_test} repertory, i.e., in the \code{Testing_Versions}
-folder if the workflow to update/upgrade Gmacs has been followed.
+A list with the results of the comparison.
+This list is also saved as a \code{.Rdata} file under the name
+\code{Results_testing_version_XXX_[runDate]} in the relative folder of the \code{dir_test}
+repertory, i.e., in the \code{Testing_Versions} folder if the workflow to update/upgrade
+Gmacs has been followed.
 }
 \description{
 Function to run test of comparison between two code versions of

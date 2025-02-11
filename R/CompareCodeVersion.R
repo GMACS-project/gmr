@@ -20,20 +20,25 @@
 #' new Gmacs version is saved. If empty, this is set equal to \code{dir_test}.
 #' @param dir_InputFiles (path)- path to the repertory where the input files for
 #' each stock for the newly developed version of Gmacs are saved.
-#' @param usePin (logical)- flag to use the `gmacs.pin` as pin file to initialize
-#' parameter values when running the new version. This assumes that the `gmacs.par`
-#' file structure remained the same between the two versions.
 #' @param Run_old_version (logical)- flag to re run the old version of Gmacs using
 #' the estimated values for the parameters as a pin file. This will allow to get
 #' a new `gmacs.par` file that will be then used for comparison. Default,
 #' \code{Run_old_version = TRUE}.
+#' @param usePin (logical)- flag to use the `gmacs.pin` as pin file to initialize
+#' parameter values when running the new version. This assumes that the `gmacs.par`
+#' file structure remained the same between the two versions.
+#' @param writePin (logical)- When \code{usePin = TRUE}, if \code{writePin = TRUE},
+#' then the \code{'gmacs.par'} file that exists in the stock-specific repertory of
+#' the old version of Gmacs will be used to write the \code{'gmacs.pin'}. If
+#' \code{writePin = FALSE}, this assumes that a \code{'gmacs.pin'} file already
+#' exist in that repertory.
 #' @param compareWithPin (logical)- flag to make comparison with the .pin file
 #' instead of the gmacs.par file obtained with the version to be compared with.
 #' @param verbose;verbose_shell (logical)- flag to print processing information
 #' and shell output. Default, \code{verbose;verbose_shell = TRUE}.
 #' @param Threshold (numeric)- Threshold to test if the comparison between the
 #' two versions passed. It is used to compared parameter values between the two
-#' version. by default, \code{Threshold = 1.0e-5}.
+#' version. By default, \code{Threshold = 1.0e-5}.
 #' @param Clean_Files (logical)- flag to delete Gmacs files in stock specific folder
 #' after running the new version. See the [clean_bat()] function for more details.
 #'
@@ -57,10 +62,11 @@
 #' pin file against a par file from the old code that was the result of using the
 #' same pin file to initialize that model run.
 #'
-#' @return A list with the results of the comparison. This list is also saved
-#' as a `.Rdata` file under the name `Results_testing_version_XXX_[runDate]` in
-#' the relative folder of the `dir_test` repertory, i.e., in the `Testing_Versions`
-#' folder if the workflow to update/upgrade Gmacs has been followed.
+#' @return A list with the results of the comparison.
+#' This list is also saved as a `.Rdata` file under the name
+#' `Results_testing_version_XXX_[runDate]` in the relative folder of the `dir_test`
+#' repertory, i.e., in the `Testing_Versions` folder if the workflow to update/upgrade
+#' Gmacs has been followed.
 #'
 #' @author W. Stockhausen; M. Veron
 #'
@@ -101,12 +107,34 @@ CompareCodeVersion <- function(stock = NULL,
                                dir_Gmacs_Exe = NULL,
                                dir_InputFiles = NULL,
                                usePin = NULL,
+                               writePin = TRUE,
                                Run_old_version = TRUE,
                                compareWithPin = NULL,
                                Threshold = 1.0e-5 ,
                                verbose = TRUE,
                                verbose_shell = TRUE,
                                Clean_Files = NULL) {
+
+  # Debug section --
+  # stock = "all"
+  # # stock = "WAG",
+  # # stock = "SNOW_crab",
+  # dir_test = dir_test
+  # dir_old_version = Dir_Last_vers
+  # dir_Gmacs_Exe = dir_Gmacs_Exe
+  # dir_InputFiles = dir_InputFiles
+  # dir_OLD_Gmacs_Exe = NULL
+  # Run_old_version = FALSE
+  # usePin = TRUE
+  # compareWithPin = TRUE
+  # verbose = TRUE
+  # verbose_shell = FALSE
+  # Threshold = 1.0e-5
+  # Clean_Files = FALSE
+  # ----------------
+
+
+
   Out <- NULL
 
   # Internal functions ----
@@ -155,6 +183,10 @@ CompareCodeVersion <- function(stock = NULL,
   # Check input and set useful stuff
   # verbose <- .an(verbose)
 
+  # Set the inputfiles folder as dirtest if missing argument
+  if(base::missing(dir_InputFiles))
+    dir_InputFiles <- dir_test
+
   # Check if the test have to be ran over all stocks
   if (length(stock) == 1 && stock == "all") {
     stock <- list.files(dir_InputFiles)
@@ -183,7 +215,6 @@ CompareCodeVersion <- function(stock = NULL,
       ADMBpaths = file.path(dir_Gmacs_Exe, ADMBpaths, fsep = fsep),
       verbose = verbose_shell
     )
-
   }
 
   # Run Gmacs for each stock ----
@@ -199,7 +230,7 @@ CompareCodeVersion <- function(stock = NULL,
     dir_oldver_stock <- file.path(dir_old_version, stock[s], fsep = fsep)
     dir_InputFiles_stock <- file.path(dir_InputFiles, stock[s], fsep = fsep)
 
-    # Create repertory for the current stock
+    # Create repertory for the current stock if applicable
     if (!dir.exists(dirTest_Stock)) {
       dir.create(dirTest_Stock, recursive = TRUE)
       if (verbose)
@@ -214,14 +245,14 @@ CompareCodeVersion <- function(stock = NULL,
     if (verbose)
       cat(
         paste0(
-          '\t--> Copying input files from : \n\t',
+          '--> Copying input files from : \n\t',
           dir_InputFiles_stock,
           "\nto:\n\t",
           dirTest_Stock,
           "\n"
         )
       )
-    copy_GMACSinputs(
+    test1 <- copy_GMACSinputs(
       fromDir = dir_InputFiles_stock,
       toDir = dirTest_Stock,
       GMACS_files = "all",
@@ -233,84 +264,234 @@ CompareCodeVersion <- function(stock = NULL,
     # Used in the following to write the .par/pin file
     Stock_files <- getInpOutFiles(Dir = dirTest_Stock, verbose = verbose_shell)
 
-    # Check if the pin file created using the old version is used ----
-    # This .pin file corresponds to the parameter file and is used to run the two
-    # version of Gmacs. The .pin file is created based on the .par file obtained
-    # with the old version, assuming that the model converged.
-    if (usePin) {
-      # Run the old version using the estimated parameters as a pin file?
-      if (Run_old_version) {
-        # Check if the gmacs.exe exists in the relative folder of dir_old_version
-        if (is.null(dir_OLD_Gmacs_Exe)) {
-          dir_OLD_Gmacs_Exe <- dirname(dir_old_version)
-        }
-        if (!file.exists(file.path(dir_OLD_Gmacs_Exe, gmacs_exe, fsep = fsep))) {
+    # Test if a .par file exist for the old version - This is need whatever the option chose
+    # to
+    if (!file.exists(file.path(dir_oldver_stock, "gmacs.par", fsep = fsep))) {
+      test0 <- paste0(
+        "The .par file does not exist in:\n",
+        dir_oldver_stock,
+        "\n\t-> Can't create make the comaprison for ",
+        stock[s],
+        ".\n"
+      )
+      cat('\n\n')
+      war(test0)
+      Compare <- FALSE
+      tmp_Out <- paste0(
+        "No comparison made because the 'gmacs.par' file does not exist in: ",
+        dir_oldver_stock
+      )
+    } else {
+      # Read the gmacs.par file and check if the number of parameter is the same
+      # as the one expected. This assumes that the gmr package has been updated
+      # before doing the comparison. Specifically the get_Param_name function
+      old_gmacs_par <- readGMACSpar(
+        Dir = dir_oldver_stock,
+        FileName = "gmacs.par",
+        verbose = FALSE,
+        DatFile = Stock_files$datFile,
+        CtlFile = Stock_files$ctlFile,
+        GMACSdat = Stock_files$GMACSdat,
+        Do_comp = TRUE
+      )
+      if (!old_gmacs_par$Do_comp) {
+        # Check the number of parameters
+
+        New_nb_Param <- Stock_files[["gmacs_par"]]$Nparams
+        old_nb_Param <- old_gmacs_par[["Nparams"]]
+
+        test3 <- paste0(
+          "Comparing new, old par files: number of parameters differ! ",
+          New_nb_Param,
+          " ",
+          old_nb_Param,
+          "\n"
+        )
+        tmp_Out <- list(new_Param = Stock_files[["gmacs_par"]], old_Parm = old_gmacs_par)
+        cat(
+          "-> The names of the parameters that differ between the new version of Gmacs AND the old one are store in the 'old_Parm' object of the returned list.\n"
+        )
+        Compare <- FALSE
+      } else {
+        # do the comparison
+
+        Compare <- TRUE
+
+
+        # Run the old version using the estimated parameters as a pin file?
+        if (Run_old_version) {
+          # Check if the gmacs.exe exists in the relative folder of dir_old_version
+          if (is.null(dir_OLD_Gmacs_Exe)) {
+            dir_OLD_Gmacs_Exe <- dirname(dir_old_version)
+          }
+          if (!file.exists(file.path(dir_OLD_Gmacs_Exe, gmacs_exe, fsep = fsep))) {
+            if (verbose)
+              cat(
+                "-- Building the exe for the old version of Gmacs in the following repertory:\n\t",
+                dir_OLD_Gmacs_Exe,
+                "\n"
+              )
+            ADMBpaths <- ifelse(isWindowsOS(),
+                                "ADpaths_Windows.txt",
+                                "ADpaths_MacOS.txt")
+            createGmacsExe(
+              vv = 1,
+              Dir = dir_OLD_Gmacs_Exe,
+              ADMBpaths = file.path(dir_Gmacs_Exe, ADMBpaths, fsep = fsep),
+              verbose = verbose_shell
+            )
+          } # End file.exists gmacs_exe
+
+          # Copy the exe in the stock folder
+          test1 <- file.copy(
+            file.path(dir_OLD_Gmacs_Exe, gmacs_exe),
+            to = dir_oldver_stock,
+            overwrite = TRUE,
+            recursive = TRUE
+          )
+          if (!test1) {
+            txt1 <- paste0(
+              "The gmacs.exe from the old version was not copied to:\n",
+              dir_oldver_stock,
+              "\n\t-> the old Gmacs version won't be run for :",
+              stock[s]
+            )
+            cat('\n\n')
+            war(text = txt1)
+          }
+          # Create the .pin file from the .par file that is assumed
+          # to hold the parameter estimates from the old version
+          old_gmacs_par <- readGMACSpar(
+            Dir = dir_oldver_stock,
+            FileName = "gmacs.par",
+            verbose = FALSE,
+            DatFile = Stock_files$datFile,
+            CtlFile = Stock_files$ctlFile,
+            GMACSdat = Stock_files$GMACSdat,
+            Do_comp = TRUE
+          )
+          # Write the .pin file in the old version folder
           if (verbose)
             cat(
-              "-- Building the exe for the old version of Gmacs in the following repertory:\n\t",
-              dir_OLD_Gmacs_Exe,
+              "\t--> Using the parameter estimates to write the 'gmacs.pin' file in the following directory:\n\t",
+              dir_oldver_stock,
               "\n"
-
             )
-          ADMBpaths <- ifelse(isWindowsOS(),
-                              "ADpaths_Windows.txt",
-                              "ADpaths_MacOS.txt")
-          createGmacsExe(
-            vv = 1,
-            Dir = dir_OLD_Gmacs_Exe,
-            ADMBpaths = file.path(dir_Gmacs_Exe, ADMBpaths, fsep = fsep),
-            verbose = verbose_shell
+          writeGmacsPAR(Dir = dir_oldver_stock,
+                        FileName = "gmacs.pin",
+                        gmacsPar = old_gmacs_par)
+          # Run Gmacs without estimation using the gmacs.pin file
+          # Set the command to run the model
+          # This accounts for the OS system, the verbose and if the .pin file is used
+          command <- paste(
+            ifelse(
+              .Platform$OS.type == "windows",
+              gmacs_exe,
+              paste0("./", gmacs_exe)
+            ),
+            "-rs -nox -nohess"
           )
-        } # End file.exists gmacs_exe
+          if (usePin) {
+            command <- paste(command, "-phase 10 -pin gmacs.pin ")
+          }
+          if (verbose > 0) {
+            command <- paste(command, "-verbose", verbose)
+          }
+          if (verbose)
+            cat("Running the old Gmacs version using the gmacs.pin file\n")
+          ExeCommand(Com = command,
+                     dir = dir_oldver_stock,
+                     verbose = verbose_shell)
+          clean_bat(path = dir_oldver_stock, verbose = verbose)
 
-        # Copy the exe in the stock folder
-        test0 <- file.copy(
-          file.path(dir_OLD_Gmacs_Exe, gmacs_exe),
-          to = dir_oldver_stock,
+        } # End if(Run_old_version)
+
+        # Check if the pin file created using the old version is used ----
+        # This .pin file corresponds to the parameter file and is used to run the two
+        # version of Gmacs. The .pin file is created based on the .par file obtained
+        # with the old version, assuming that the model converged.
+        if (usePin) {
+          # Test if a gmacs.pin file exist for the old version
+          if (!writePin &&
+              !file.exists(file.path(dir_oldver_stock, "gmacs.pin", fsep = fsep))) {
+            test2 <- paste(
+              "The 'gmacs.pin' file does not exist in:\n",
+              dir_oldver_stock,
+              "\n\t-> Can't make the comparison for ",
+              stock[s],
+              " .\n"
+            )
+            cat('\n\n')
+            war(test2)
+            Compare <- FALSE
+            tmp_Out <- paste0(
+              "No comparison made because the 'gmacs.pin' file does not exist in: ",
+              dir_oldver_stock
+            )
+
+          } else if (writePin) {
+            # Delete the pin file created to run the old version
+            if (Run_old_version) {
+              unlink(file.path(dir_oldver_stock, "gmacs.pin", fsep = fsep))
+            }
+            # Create the .pin file from the .par file obtained after running the old
+            # Gmacs version WITHOUT estimation using the parameter estimates.
+            # Caution we use the datFile and CtlFile from the new version to read the
+            # old .par file, since the new version may have implied changes in these
+            # input file. This assumes that the structure of the .par has not been
+            # chnaged between the two Gmacs versions
+            # read the .par file obtained from the old version without estimation
+            gmacs_par <- readGMACSpar(
+              Dir = dir_oldver_stock,
+              FileName = "gmacs.par",
+              verbose = FALSE,
+              DatFile = Stock_files$datFile,
+              CtlFile = Stock_files$ctlFile,
+              GMACSdat = Stock_files$GMACSdat
+            )
+            # 3. Write the .pin file in the old version folder
+            if (verbose)
+              cat(
+                "\n\t--> Writing the 'gmacs.pin' file in the following directory:\n\t",
+                dir_oldver_stock,
+                "\n"
+              )
+            writeGmacsPAR(Dir = dir_oldver_stock,
+                          FileName = "gmacs.pin",
+                          gmacsPar = gmacs_par)
+          }
+
+          # 4. Copy the .pin file to the Test folder
+          if (verbose)
+            cat(
+              "\t--> Copying the 'gmacs.pin' file from:\n\t",
+              dir_oldver_stock,
+              "\nto\n\t",
+              dirTest_Stock,
+              "\n"
+            )
+          copy_GMACSinputs(
+            fromDir = dir_oldver_stock,
+            toDir = dirTest_Stock,
+            GMACS_files = "gmacs.pin",
+            overwrite = TRUE,
+            verbose = FALSE
+          )
+        } # End usePin
+      } # End do_comp
+
+
+      if (Compare) {
+        # Get the Gmacs exe from dir_test/dir_Gmacs_Exe ----
+        # This Exe is the one from the new version
+        file.copy(
+          file.path(dir_Gmacs_Exe, gmacs_exe),
+          to = dirTest_Stock,
           overwrite = TRUE,
           recursive = TRUE
         )
-        if (!test0) {
-          txt0 <- paste0(
-            "The gmacs.exe from the old version was not copied to:\n",
-            dir_oldver_stock,
-            "\n\t-> the old Gmacs version won't be run for :",
-            stock[s]
-          )
-          war(text = txt0)
-        }
-        # Create the .pin file from the .par file that is assumed
-        # to hold the parameter estimates from the old version
 
-        # Test if the .par file exist for the old version
-        if (!file.exists(file.path(dir_oldver_stock, "gmacs.par", fsep = fsep))) {
-          test1 <- paste(
-            "The .par file does not exist in:\n",
-            dir_oldver_stock,
-            "\n\t-> Can't create the .pin file.\n"
-          )
-          stop(test1)
-        }
-        gmacs_par <- readGMACSpar(
-          Dir = dir_oldver_stock,
-          FileName = "gmacs.par",
-          verbose = FALSE,
-          DatFile = Stock_files$datFile,
-          CtlFile = Stock_files$ctlFile,
-          GMACSdat = Stock_files$GMACSdat
-        )
-        # 3. Write the .pin file in the old version folder
-        if (verbose)
-          cat(
-            "\t--> Using the parameter estimates to write the 'gmacs.pin' file in the following directory:\n\t",
-            dir_oldver_stock,
-            "\n"
-          )
-        writeGmacsPAR(Dir = dir_oldver_stock,
-                      FileName = "gmacs.pin",
-                      gmacsPar = gmacs_par)
-        # Run Gmacs without estimation using the gmacs.pin file
-        # Set the command to run the model
+        # Set the command to run the model ----
         # This accounts for the OS system, the verbose and if the .pin file is used
         command <- paste(
           ifelse(
@@ -326,189 +507,157 @@ CompareCodeVersion <- function(stock = NULL,
         if (verbose > 0) {
           command <- paste(command, "-verbose", verbose)
         }
-        if (verbose)
-          cat("Running the old Gmacs version using the gmacs.pin file\n")
         ExeCommand(Com = command,
-                   dir = dir_oldver_stock,
+                   dir = dirTest_Stock,
                    verbose = verbose_shell)
-        clean_bat(path = dir_oldver_stock, verbose = verbose)
 
-      } # End if(Run_old_version)
+        # Compare the output with either the .pin file or the .par file from the
+        # old version
+        if (compareWithPin) {
+          old_par <- readGMACSpar(
+            Dir = dirTest_Stock,
+            FileName = "gmacs.pin",
+            verbose = FALSE,
+            DatFile = Stock_files$datFile,
+            CtlFile = Stock_files$ctlFile,
+            GMACSdat = Stock_files$GMACSdat
+          )
+        } else {
+          # Test if the .par file exist for the old version
+          if (!file.exists(file.path(dir_oldver_stock, "gmacs.par", fsep = fsep))) {
+            test3 <- paste(
+              "The .par file does not exist in:\n",
+              dir_oldver_stock,
+              "\n\t-> Can't make the comparison.\n\n"
+            )
+            cat('\n\n')
+            war(text = test3)
+          } else {
+            old_par <- readGMACSpar(
+              Dir = dir_oldver_stock,
+              FileName = "gmacs.par",
+              verbose = FALSE,
+              DatFile = Stock_files$datFile,
+              CtlFile = Stock_files$ctlFile,
+              GMACSdat = Stock_files$GMACSdat
+            )
+          }
+        }
+        old_par <- getPar_dataFrame(parData = old_par)
 
-      # Test if the .par file exist for the old version
-      if (!file.exists(file.path(dir_oldver_stock, "gmacs.par", fsep = fsep))) {
-        test1 <- paste(
-          "The .par file does not exist in:\n",
-          dir_oldver_stock,
-          "\n\t-> Can't create the .pin file.\n"
-        )
-        stop(test1)
-      }
-
-      # Create the .pin file from the .par file obtained after running the old
-      # Gmacs version WITHOUT estimation using the parameter estimates.
-      # Caution we use the datFile and CtlFile from the new version to read the
-      # old .par file, since the new version may have implied changes in these
-      # input file. This assumes that the structure of the .par has not been
-      # chnaged between the two Gmacs versions
-      # read the .par file obtained from the old version without estimation
-      gmacs_par <- readGMACSpar(
-        Dir = dir_oldver_stock,
-        FileName = "gmacs.par",
-        verbose = FALSE,
-        DatFile = Stock_files$datFile,
-        CtlFile = Stock_files$ctlFile,
-        GMACSdat = Stock_files$GMACSdat
-      )
-      # 3. Write the .pin file in the old version folder
-      if (verbose)
-        cat(
-          "\n\t--> Writing the 'gmacs.pin' file in the following directory:\n\t",
-          dir_oldver_stock,
-          "\n"
-        )
-      writeGmacsPAR(Dir = dir_oldver_stock,
-                    FileName = "gmacs.pin",
-                    gmacsPar = gmacs_par)
-
-      # 4. Copy the .pin file to the Test folder
-      if (verbose)
-        cat(
-          "\t--> Copying the 'gmacs.pin' file from:\n\t",
-          dir_oldver_stock,
-          "\nto\n\t",
-          dirTest_Stock,
-          "\n"
-        )
-      copy_GMACSinputs(
-        fromDir = dir_oldver_stock,
-        toDir = dirTest_Stock,
-        GMACS_files = "gmacs.pin",
-        overwrite = TRUE,
-        verbose = FALSE
-      )
-    } # End usePin
-
-    # Get the Gmacs exe from dir_test/dir_Gmacs_Exe ----
-    # This Exe is the one from the new version
-    file.copy(
-      file.path(dir_Gmacs_Exe, gmacs_exe),
-      to = dirTest_Stock,
-      overwrite = TRUE,
-      recursive = TRUE
-    )
-
-    # Set the command to run the model ----
-    # This accounts for the OS system, the verbose and if the .pin file is used
-    command <- paste(ifelse(
-      .Platform$OS.type == "windows",
-      gmacs_exe,
-      paste0("./", gmacs_exe)
-    ),
-    "-rs -nox -nohess")
-    if (usePin) {
-      command <- paste(command, "-phase 10 -pin gmacs.pin ")
-    }
-    if (verbose > 0) {
-      command <- paste(command, "-verbose", verbose)
-    }
-    ExeCommand(Com = command,
-               dir = dirTest_Stock,
-               verbose = verbose_shell)
-
-    # Compare the output with either the .pin file or the .par file from the
-    # old version
-    if (compareWithPin) {
-      old_par <- readGMACSpar(
-        Dir = dirTest_Stock,
-        FileName = "gmacs.pin",
-        verbose = FALSE,
-        DatFile = Stock_files$datFile,
-        CtlFile = Stock_files$ctlFile,
-        GMACSdat = Stock_files$GMACSdat
-      )
-    } else {
-      # Test if the .par file exist for the old version
-      if (!file.exists(file.path(dir_oldver_stock, "gmacs.par", fsep = fsep))) {
-        test2 <- paste(
-          "The .par file does not exist in:\n",
-          dir_oldver_stock,
-          "\n\t-> Can't make the comparison.\n\n"
-        )
-        # warning(test2, flush=TRUE)
-        war(text = test2)
-      } else {
-        old_par <- readGMACSpar(
-          Dir = dir_oldver_stock,
+        # Read the parameters from the new version
+        new_par <- readGMACSpar(
+          Dir = dirTest_Stock,
           FileName = "gmacs.par",
           verbose = FALSE,
           DatFile = Stock_files$datFile,
           CtlFile = Stock_files$ctlFile,
           GMACSdat = Stock_files$GMACSdat
         )
-      }
-    }
-    old_par <- getPar_dataFrame(parData = old_par)
+        new_par <- getPar_dataFrame(parData = new_par)
 
-    # Read the parameters from the new version
-    new_par <- readGMACSpar(
-      Dir = dirTest_Stock,
-      FileName = "gmacs.par",
-      verbose = FALSE,
-      DatFile = Stock_files$datFile,
-      CtlFile = Stock_files$ctlFile,
-      GMACSdat = Stock_files$GMACSdat
+        # Make comparison
+        tmp_Out <- merge(
+          x = new_par,
+          y = old_par,
+          by = 'Param_name',
+          all = TRUE
+        )
+        colnames(tmp_Out) <- c("Param_name", "new_Param", "old_Param")
+        tmp_Out <- tmp_Out %>%
+          dplyr::mutate(abs_dif = abs(.an(new_Param) - .an(old_Param))) %>%
+          dplyr::mutate(Over = ifelse(.an(abs_dif) > Threshold, TRUE, FALSE))
+        if (any(as.logical(tmp_Out$Over))) {
+          test4 <- paste0(
+            "Detected differences for: \n\t-",
+            paste(new_par$Param_name[which(tmp_Out$Over)], collapse = "\n\t-")
+          )
+          cat('\n\n')
+          war(text = test4)
+          cat(
+            "\n\nRange of differences:\n",
+            range(
+              tmp_Out %>% dplyr::filter(Over == TRUE) %>% dplyr::select(abs_dif)
+            ),
+            "\n"
+          )
+        } else {
+          test4 = paste0("'", stock[s], "' passed!\n")
+          cat(test4)
+        }
+      } # End Compare
+    } # End comparison for stock[s]
+
+
+    # Get management quantities to make comparison
+    # These are stored in the Gmacsall.out files
+    oldMngt <- readLines(file.path(dir_oldver_stock, "Gmacsall.out"))
+    newMngt <- readLines(file.path(dirTest_Stock, "Gmacsall.out"))
+    Mngt <- list(oldMngt = oldMngt, newMngt = newMngt)
+    nam <-
+      c(
+        "Male_Spr_Rbar",
+        "Female_Spr_Rbar",
+        "SSB_R_ratio_F0",
+        "BMSY",
+        "Bcurr_BMSY_ratio",
+        "OFL_tot"
+      )
+    getMng <- function(x) {
+      out <- NULL
+      start <- which(stringr::str_detect(string = x, pattern = "Male Spr_rbar")) - 1
+      for (l in 1:6) {
+        values  <- .an(stringr::str_extract_all(x[start + l], "[-+.e0-9]*\\d", simplify = T))
+        if (length(values) == 4 && values[1] == 0) {
+          values <- values[c(2, 3)]
+        } else {
+          values <- values[c(1, 2)]
+        }
+        out <- rbind(out,
+                     data.frame(
+                       Param = nam[l],
+                       Estimate = values[1],
+                       sd_Estimate = values[2]
+                     ))
+      }
+      return(out)
+    }
+    MngtQuant <- lapply(Mngt, FUN = getMng)
+    MngtQuant <- list(
+      Estimate = data.frame(
+        Param = nam,
+        old_Version = MngtQuant[["oldMngt"]]$Estimate,
+        new_Verion = MngtQuant[["newMngt"]]$Estimate,
+        abs_diff_Version = abs(MngtQuant[["oldMngt"]]$Estimate - MngtQuant[["newMngt"]]$Estimate)
+      ),
+      SD_Estimate = data.frame(
+        Param = nam,
+        old_Version = MngtQuant[["oldMngt"]]$sd_Estimate,
+        new_Verion = MngtQuant[["newMngt"]]$sd_Estimate,
+        abs_diff_Version = abs(MngtQuant[["oldMngt"]]$sd_Estimate - MngtQuant[["newMngt"]]$sd_Estimate)
+      )
     )
-    new_par <- getPar_dataFrame(parData = new_par)
+    tmp_Out[["Mngt_Quant"]] <- MngtQuant
+    cat("\n")
+    mess0 <- paste0("-- Comparison of management quantities for: ", stock[s], "\n")
+    message(mess0)
+    cat("\t","old_Version","\t", "new_Verion","\t","abs_diff_Version","\t","# Parameter","\n")
 
-    # Make comparison
-    if (nrow(new_par) != nrow(old_par)) {
-      test3 <- paste0(
-        "Comparing new, old par files: number of rows differ! ",
-        nrow(new_par),
-        " ",
-        nrow(old_par)
-      )
-      tmp_Out <- list(new_Param = new_par, old_Parm = old_par)
-
-      if (length(which(!new_par$Param_name %in% old_par$Param_name)) > 0) {
-        if (verbose)
-          cat("The 'diff_par' object holds the names of the parameters that are not in 'old_par'")
-        tmp_Out[["diff_par"]] <-
-          new_par[which(!new_par$Param_name %in% old_par$Param_name), "Param_name"]
-      }
-      # warning(test3, flush=TRUE)
-      war(text = test3)
-    } else {
-      tmp_Out <- merge(
-        x = new_par,
-        y = old_par,
-        by = 'Param_name',
-        all = TRUE
-      )
-      colnames(tmp_Out) <- c("Param_name", "new_Param", "old_Param")
-      tmp_Out <- tmp_Out %>%
-        dplyr::mutate(abs_dif = abs(.an(new_Param) - .an(old_Param))) %>%
-        dplyr::mutate(Over = ifelse(.an(abs_dif) > Threshold, TRUE, FALSE))
-      if (any(as.logical(tmp_Out$Over))) {
-        test4 <- paste0(
-          "Detected differences for: \n\t-",
-          paste(new_par$Param_name[which(tmp_Out$Over)], collapse = "\n\t-")
-        )
-        # warning(test4, flush=TRUE)
-        war(text = test4)
-        cat(
-          "\n\nRange of differences:\n",
-          range(
-            tmp_Out %>% dplyr::filter(Over == TRUE) %>% dplyr::select(abs_dif)
-          ),
-          "\n"
-        )
-      } else {
-        test4 = paste0("'", stock[s], "' passed!\n")
-        cat(test4)
-      }
+    # Specific option to cat the table
+    opt <- options()
+    options("digits"=4,"scipen"=-100)
+    for(i in 1:6){
+      tmp<-unlist(MngtQuant[["Estimate"]][i,c(2:4)])
+      cat("\t",
+          tmp[1],ifelse(tmp[1]==0,yes = "\t\t",no ="\t"),
+          tmp[2],ifelse(tmp[2]==0,yes = "\t\t",no ="\t"),
+          tmp[3],
+          paste0("\t\t# ", MngtQuant[["Estimate"]][i,"Param"]), "\n")
     }
+    cat("\n")
+    # reset all initial options
+    options(opt)
+
     Out[[stock[s]]] <- tmp_Out
 
     # Check if cleaning after running
@@ -524,7 +673,7 @@ CompareCodeVersion <- function(stock = NULL,
     dirname(dir_test),
     paste0(
       "Results_testing_version_",
-      basename(dir_test),
+      basename(dirname(dir_test)),"_",
       RunDate,
       ".Rdata"
     ),

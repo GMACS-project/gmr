@@ -4,7 +4,12 @@
 \alias{get_Param_name}
 \title{Get the name of all parameters}
 \usage{
-get_Param_name(DatFile = NULL, CtlFile = NULL, nyrRetro = NULL)
+get_Param_name(
+  DatFile = NULL,
+  CtlFile = NULL,
+  nyrRetro = NULL,
+  Do_comp = FALSE
+)
 }
 \arguments{
 \item{DatFile}{(list)- Object containing the .dat file - This is the output
@@ -14,9 +19,13 @@ of the \code{\link[=readGMACSdat]{readGMACSdat()}} function.}
 of the \code{\link[=readGMACSctl]{readGMACSctl()}} function.}
 
 \item{nyrRetro}{(integer)- Number of year for the retrospective analysis}
+
+\item{Do_comp}{(logical) - flag to specify if a comparison has to be done betwenn
+the expected parameters and those provided in the \code{.par} file. This is mainly
+use in developement mode. Default, \code{Do_comp = FALSE}.}
 }
 \value{
-the name as the parameters as a named list.
+the name of the parameters as a named list.
 }
 \description{
 This functions returns the name of each parameter based on the

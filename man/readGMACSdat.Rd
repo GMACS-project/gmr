@@ -29,7 +29,7 @@ assessed.
 \item \code{Recr_Season} - The season recruitment occurs.
 \item \code{Grwth_Season} - The season growth occurs.
 \item \code{SSB_Season} - The season to calculate the Spawning Stock Biomass.
-\item \code{N_Season} - The seaspn for the number (N) output.
+\item \code{N_Season} - The season for the number (N) output.
 \item \code{Max_sizeC} - The maximum size class in the model.
 \item \code{Size_breaks} - The size breaks considered in the population.
 \item \code{M_in_Type} - The natural mortality per season input type (vector or matrix).
@@ -49,7 +49,7 @@ assessed.
 \item \code{Sv_type} - The data type for each abundance index
 (1: total selectivity; 2:retention*selectivity).
 \item \code{Nrows_SvDF} - The number of rows in each survey data frame.
-\item \code{Surveys} - Teh survey data.
+\item \code{Surveys} - The survey data.
 \item \code{SizeFreqDF_format} - The input format for size composition data
 (0: old format; 1: new format).
 \item \code{N_SizeFreq_df} - The number of size composition data frame.
@@ -62,7 +62,7 @@ change in size-class)
 \item \code{GrowthData} - The growth data.
 \item \code{NenvIndics} - The number of environmental indices considered.
 \item \code{EnvYrs} - The years cover for each environmental index.
-\item \code{EnvData} - Teh environmental data.
+\item \code{EnvData} - The environmental data.
 \item \code{eof} - Logical indicating the end of the file (used for checking the reading).
 }
 }

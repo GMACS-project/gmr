@@ -12,6 +12,9 @@
 #' of the [readGMACSctl()] function.
 #' @param GMACSdat (list)- Object containing the gmacs.dat file - This is the output
 #' of the [readGMACS.dat()] function.
+#' @param Do_comp (logical) - flag to specify if a comparison has to be done betwenn
+#' the expected parameters and those provided in the `.par` file. This is mainly
+#' use in developement mode. Default, \code{Do_comp = FALSE}.
 #'
 #' @return the gmacs.par file as a named list. Where data frame are used, the
 #' columns are parameter_ID/value.
@@ -22,14 +25,14 @@
 #'   \item \code{MaxGradComp} - The maximum gradient component.
 #'   \item \code{theta} - The key parameter controls (core parameters - theta parameters).
 #'   \item \code{Grwth} - The growth parameters.
+#'   \item \code{Nat_Mortality_rates} - The natural mortality rates.
 #'   \item \code{Vul} - The vulnerability (selectivity and retention) parameters.
-#'   \item \code{Envpar_Slx}
+#'   \item \code{Envpar_Slx} - The environmental parameters for selectivity.
 #'   \item \code{Slx_Devs} - The selectivity deviations.
 #'   \item \code{Fbar} - The mean fishing mortality parameters.
 #'   \item \code{Fdev} - The fishing fleet-specific weights for male.
 #'   \item \code{Foff} - The female fishing mortality offset to male F.
 #'   \item \code{Fdov} - The fishing fleet-specific weights for female.
-#'   \item \code{rec_ini} - The initial recruitment by size-class.
 #'   \item \code{rec_dev_est} - The year-specific recruitment deviations.
 #'   \item \code{logit_rec_prop_est} - The year-specific sex-ratio recruitment.
 #'   \item \code{Mdev} - The natural mortality deviation.
@@ -38,6 +41,7 @@
 #'   \item \code{EffSamp_size} - The effective sample size.
 #'   \item \code{survey_Q} - The survey-specific catchability.
 #'   \item \code{add_cv} - The survey-specific additional CV.
+#'   \iten \code{RW_dev} - the randmo walk deviations.
 #' }
 #'
 #' @examples
@@ -83,18 +87,38 @@ readGMACSpar <- function(Dir = NULL,
                          verbose = NULL,
                          DatFile = NULL,
                          CtlFile = NULL,
-                         GMACSdat = NULL) {
+                         GMACSdat = NULL,
+                         Do_comp = FALSE) {
+
+
+  # ============================================
+  # Dir = dir_oldver_stock
+  # FileName = "gmacs.par"
+  # verbose = FALSE
+  # DatFile = Stock_files$datFile
+  # CtlFile = Stock_files$ctlFile
+  # GMACSdat = Stock_files$GMACSdat
+  # Do_comp = TRUE
+  # ============================================
+
   parnam <- get_Param_name(
     CtlFile = CtlFile,
     DatFile = DatFile,
-    nyrRetro = GMACSdat$N_Year_Retro
+    nyrRetro = GMACSdat$N_Year_Retro,
+    Do_comp = Do_comp
   )
 
   N_fleet <- DatFile$N_fleet
   Nyears <- DatFile$End_Y - DatFile$Start_Y + 1
   nsex <- DatFile$N_sexes
-  fleetname <-
-    stringi::stri_remove_empty(c(DatFile$F_Fleet_names, DatFile$Survey_names))
+  if(DatFile$do_Index){
+    fleetname <-
+      stringi::stri_remove_empty(DatFile$F_Fleet_names)
+  } else {
+    fleetname <-
+      stringi::stri_remove_empty(c(DatFile$F_Fleet_names, DatFile$Survey_names))
+  }
+
 
   # 1- Internal functions
   # -------------------------------------------------------------------------
@@ -164,6 +188,7 @@ readGMACSpar <- function(Dir = NULL,
   # 2- Read the parameters file and find the first line containing numeric data
   # -------------------------------------------------------------------------
   if (verbose) {
+    cat("====================================================\n")
     cat("-- Reading parameters file \n")
     cat("====================================================")
     cat("\n")
@@ -177,7 +202,7 @@ readGMACSpar <- function(Dir = NULL,
   # Get the number of parameters, the value of the objective function and the
   # Maximum gradient component
   Specs <- dat[1]
-  if(stringr::str_detect(string = Specs, pattern = "# Number of parameters")){
+  if (stringr::str_detect(string = Specs, pattern = "# Number of parameters")) {
     getSpecs <-
       stringr::str_extract_all(Specs, "[-+.e0-9]*\\d", simplify = T)
     DatOut[["Nparams"]] <- getSpecs[1]
@@ -198,376 +223,451 @@ readGMACSpar <- function(Dir = NULL,
 
   # 3- Prepare the data to work on
   # -------------------------------------------------------------------------
-  # Remove any preceeding whitespace on all lines.
-  dat <- gsub("^[[:blank:]]+", "", dat)
-  # Remove all comments.
-  dat <- gsub("#.*", "", dat)
-  # Remove trailing whitespace on all lines
-  dat <- gsub("[[:blank:]]+$", "", dat)
-  # Remove blank lines.
-  dat <- dat[dat != ""]
+  MissingParam <- NULL
 
-  # Initialize the location index
-  Loc <- 1
-  # -------------------------------------------------------------------------
+  # Check the available parameters:
+  if (Do_comp) {
+    availParam <- dat[which(stringr::str_detect(string = dat, pattern = "#.*"))]
+    availParam <- availParam[-1]
+    availParam <- gsub("# |:", "", availParam)
+    # availParam <- gsub("# |\\[|\\]|:|[[:digit:]]+", "", availParam)#Remove all numeric, square braket
 
-  # Extract theta parameters
-  # -------------------------------------------------------------------------
-  if (verbose)
-    cat("-- Reading theta parameters \n")
-
-  theta <- get.df(dat, Loc, nrow = CtlFile$ntheta)
-  theta <-
-    as.data.frame(cbind(
-      paste("theta[", 1:CtlFile$ntheta, "]", sep = ""),
-      parnam$nameTheta,
-      theta
-    ))
-  colnames(theta) <- c("Param_ID", "Param_name", "value")
-  DatOut[["theta"]] <- theta # theta parameters
-
-  if (verbose)
-    cat("\t-> Read theta parameters \n")
-  # -------------------------------------------------------------------------
-
-  # Extract growth parameters
-  # -------------------------------------------------------------------------
-  if (verbose)
-    cat("-- Reading growth parameters \n")
-
-  Grwth <-
-    get.df(dat, Loc, nrow = (CtlFile$nGrwth + CtlFile$nSizeIncPar))
-  Grwth <-
-    as.data.frame(cbind(paste(
-      "Grwth[", 1:(CtlFile$nGrwth + CtlFile$nSizeIncPar), "]", sep = ""
-    ),
-    parnam$nameGrwth,
-    Grwth))
-  colnames(Grwth) <- c("Param_ID", "Param_name", "value")
-  DatOut[["Grwth"]] <- Grwth # growth parameters
-
-  if (verbose)
-    cat("\t-> Read growth parameters \n")
-  # -------------------------------------------------------------------------
-
-  # Extract vulnerability parameters
-  # -------------------------------------------------------------------------
-  if (verbose)
-    cat("-- Reading vulnerability parameters \n")
-
-  Vul <- get.df(dat, Loc, nrow = CtlFile$nslx_pars)
-  Vul <-
-    as.data.frame(cbind(
-      paste("log_slx_pars[", 1:CtlFile$nslx_pars, "]", sep = ""),
-      parnam$selname1,
-      Vul
-    ))
-  colnames(Vul) <- c("Param_ID", "Param_name", "value")
-  DatOut[["Vul"]] <- Vul # vulnerability parameters
-
-  if (verbose)
-    cat("\t-> Read vulnerability parameters \n")
-  # -------------------------------------------------------------------------
-
-  # Extract the asymptotic retention parameters
-  # -------------------------------------------------------------------------
-  if (CtlFile$NumAsympRet > 0) {
-    if (verbose)
-      cat("-- Reading the number of asymptotic retention parameters \n")
-
-    Asympt <- get.df(dat, Loc, nrow = CtlFile$NumAsympRet)
-    Asympt <-
-      as.data.frame(cbind(
-        paste("Asymret[", 1:CtlFile$NumAsympRet, "]", sep = ""),
-        parnam$Asymptname,
-        Asympt
-      ))
-    colnames(Asympt) <- c("Param_ID", "Param_name", "value")
-    DatOut[["Asympt"]] <- Asympt # asymptotic retention parameters
-
-    if (verbose)
-      cat("\t-> Read the asymptotic retention parameters \n")
-  } else {
-    DatOut[["Asympt"]] <- NULL
+    # Name of the parameters to compare with
+    nameParamComp <- parnam[["nameComp"]]
+    if (!setequal(availParam, nameParamComp)) {
+      MissingParam <- which(!nameParamComp %in% availParam)
+      MissingParam <- nameParamComp[MissingParam]
+    } else {
+      MissingParam <- NULL
+    }
   }
-  # -------------------------------------------------------------------------
+  if (!is.null(MissingParam)) {
+    DatOut[["MissingParam"]] <- MissingParam
+    warn1 <- "-> Some parameters are missing in the new '.par' file compared to what is expected.\n Check the output of the function to identify those parameters"
+    cat('\n\n')
+    warning(warn1)
+    DatOut[["Do_comp"]] <- FALSE
+  } else {
+    if(Do_comp)
+      DatOut[["Do_comp"]] <- TRUE
 
-  # Extract the time-varying parameters for the vulnerability
-  # -------------------------------------------------------------------------
-  if (verbose)
-    cat("-- Reading environmental parameters for vulnerability  \n")
-  if (CtlFile$nslx_envpars > 0) {
-    Envpar_Slx <- get.df(dat, Loc, nrow = CtlFile$nslx_envpars)
-    Envpar_Slx <-
+    # Remove any preceeding whitespace on all lines.
+    dat <- gsub("^[[:blank:]]+", "", dat)
+    # Remove all comments.
+    dat <- gsub("#.*", "", dat)
+    # Remove trailing whitespace on all lines
+    dat <- gsub("[[:blank:]]+$", "", dat)
+    # Remove blank lines.
+    dat <- dat[dat != ""]
+
+    # Initialize the location index
+    Loc <- 1
+    # -------------------------------------------------------------------------
+
+    # Extract theta parameters
+    # -------------------------------------------------------------------------
+    if (verbose)
+      cat("-- Reading theta parameters \n")
+
+    theta <- get.df(dat, Loc, nrow = CtlFile$ntheta)
+    theta <-
       as.data.frame(cbind(
-        paste("Envpar_Slx", 1:CtlFile$nslx_envpars, sep = "_"),
+        paste("theta[", 1:CtlFile$ntheta, "]", sep = ""),
+        parnam$nameTheta,
+        theta
+      ))
+    colnames(theta) <- c("Param_ID", "Param_name", "value")
+    DatOut[["theta"]] <- theta # theta parameters
+
+    if (verbose)
+      cat("\t-> Read theta parameters \n")
+    # -------------------------------------------------------------------------
+
+    # Extract growth parameters
+    # -------------------------------------------------------------------------
+    if (verbose)
+      cat("-- Reading growth parameters \n")
+
+    Grwth <-
+      get.df(dat, Loc, nrow = (CtlFile$nGrwth + CtlFile$nSizeIncPar))
+    Grwth <-
+      as.data.frame(cbind(paste(
+        "Grwth[",
+        1:(CtlFile$nGrwth + CtlFile$nSizeIncPar),
+        "]",
+        sep = ""
+      ), parnam$nameGrwth, Grwth))
+    colnames(Grwth) <- c("Param_ID", "Param_name", "value")
+    DatOut[["Grwth"]] <- Grwth # growth parameters
+
+    if (verbose)
+      cat("\t-> Read growth parameters \n")
+    # -------------------------------------------------------------------------
+
+    # Extract Natural mortality parameters
+    # -------------------------------------------------------------------------
+    if (verbose)
+      cat("-- Reading Natural mortality parameters \n")
+
+    Nat_Mortality_rates <-
+      get.df(dat, Loc, nrow = nrow(CtlFile$NatMort_param))
+
+    Nat_Mortality_rates <-
+      as.data.frame(cbind(
+        paste("M_pars_est[", 1:nrow(CtlFile$NatMort_param), "]", sep = ""),
+        parnam$namNatMortParam,
+        Nat_Mortality_rates
+      ))
+    colnames(Nat_Mortality_rates) <- c("Param_ID", "Param_name", "value")
+    DatOut[["Nat_Mortality_rates"]] <- Nat_Mortality_rates # growth parameters
+
+    if (verbose)
+      cat("\t-> Read Natural mortality parameters \n")
+    # -------------------------------------------------------------------------
+
+    # Extract vulnerability parameters
+    # -------------------------------------------------------------------------
+    if (verbose)
+      cat("-- Reading vulnerability parameters \n")
+
+    Vul <- get.df(dat, Loc, nrow = CtlFile$nslx_pars)
+    Vul <-
+      as.data.frame(cbind(
+        paste("log_slx_pars[", 1:CtlFile$nslx_pars, "]", sep = ""),
+        parnam$selname1,
+        Vul
+      ))
+    colnames(Vul) <- c("Param_ID", "Param_name", "value")
+    DatOut[["Vul"]] <- Vul # vulnerability parameters
+
+    if (verbose)
+      cat("\t-> Read vulnerability parameters \n")
+    # -------------------------------------------------------------------------
+
+    # Extract the asymptotic retention parameters
+    # -------------------------------------------------------------------------
+    if (CtlFile$NumAsympRet > 0) {
+      if (verbose)
+        cat("-- Reading the number of asymptotic retention parameters \n")
+
+      Asympt <- get.df(dat, Loc, nrow = CtlFile$NumAsympRet)
+      Asympt <-
+        as.data.frame(cbind(
+          paste("Asymret[", 1:CtlFile$NumAsympRet, "]", sep = ""),
+          parnam$Asymptname,
+          Asympt
+        ))
+      colnames(Asympt) <- c("Param_ID", "Param_name", "value")
+      DatOut[["Asympt"]] <- Asympt # asymptotic retention parameters
+
+      if (verbose)
+        cat("\t-> Read the asymptotic retention parameters \n")
+    } else {
+      DatOut[["Asympt"]] <- NULL
+    }
+    # -------------------------------------------------------------------------
+
+    # Extract the time-varying parameters for the vulnerability
+    # -------------------------------------------------------------------------
+    if (verbose)
+      cat("-- Reading environmental parameters for vulnerability  \n")
+    if (CtlFile$nslx_envpars > 0) {
+      Envpar_Slx <- get.df(dat, Loc, nrow = CtlFile$nslx_envpars)
+      Envpar_Slx <-
+        as.data.frame(cbind(
+          paste("Envpar_Slx", 1:CtlFile$nslx_envpars, sep = "_"),
+          parnam$selenvnames1,
+          Envpar_Slx
+        ))
+    } else {
+      Envpar_Slx <- get.df(dat, Loc, nrow = 1)
+      Envpar_Slx <- as.data.frame(cbind(
+        paste("Envpar_Slx", 0, sep = "_"),
         parnam$selenvnames1,
         Envpar_Slx
       ))
-  } else {
-    Envpar_Slx <- get.df(dat, Loc, nrow = 1)
-    Envpar_Slx <- as.data.frame(cbind(
-      paste("Envpar_Slx", 0, sep = "_"),
-      parnam$selenvnames1,
-      Envpar_Slx
-    ))
-  }
-  colnames(Envpar_Slx) <- c("Param_ID", "Param_name", "value")
-  DatOut[["Envpar_Slx"]] <-
-    Envpar_Slx # Estimated environmental parameters
+    }
+    colnames(Envpar_Slx) <- c("Param_ID", "Param_name", "value")
+    DatOut[["Envpar_Slx"]] <-
+      Envpar_Slx # Estimated environmental parameters
 
-  if (verbose)
-    cat("\t-> Read the environmental parameters for vulnerability \n")
-  # -------------------------------------------------------------------------
+    if (verbose)
+      cat("\t-> Read the environmental parameters for vulnerability \n")
+    # -------------------------------------------------------------------------
 
-  # Extract vulnerability deviations
-  # -------------------------------------------------------------------------
-  # These deviations include the environmental impacts if applicable
-  if (verbose)
-    cat("-- Reading vulnerabity deviations  \n")
+    # Extract vulnerability deviations
+    # -------------------------------------------------------------------------
+    # These deviations include the environmental impacts if applicable
+    if (verbose)
+      cat("-- Reading vulnerabity deviations  \n")
 
-  if (CtlFile$NSlx_devs_param > 0) {
-    Slx_Devs <- get.df(dat, Loc, nrow = CtlFile$NSlx_devs_param)
-    Slx_Devs <-
-      as.data.frame(cbind(
-        paste("Slx_Devs", 1:CtlFile$NSlx_devs_param, sep = "_"),
+    if (CtlFile$NSlx_devs_param > 0) {
+      Slx_Devs <- get.df(dat, Loc, nrow = CtlFile$NSlx_devs_param)
+      Slx_Devs <-
+        as.data.frame(cbind(
+          paste("Slx_Devs", 1:CtlFile$NSlx_devs_param, sep = "_"),
+          parnam$seldevnames1,
+          Slx_Devs
+        ))
+    } else {
+      Slx_Devs <- get.df(dat, Loc, nrow = 1)
+      Slx_Devs <- as.data.frame(cbind(
+        paste("Slx_Devs", 0, sep = "_"),
         parnam$seldevnames1,
         Slx_Devs
       ))
-  } else {
-    Slx_Devs <- get.df(dat, Loc, nrow = 1)
-    Slx_Devs <- as.data.frame(cbind(
-      paste("Slx_Devs", 0, sep = "_"),
-      parnam$seldevnames1,
-      Slx_Devs
-    ))
-  }
-  colnames(Slx_Devs) <- c("Param_ID", "Param_name", "value")
-  DatOut[["Slx_Devs"]] <- Slx_Devs # Estimated selectivty deviations
+    }
+    colnames(Slx_Devs) <- c("Param_ID", "Param_name", "value")
+    DatOut[["Slx_Devs"]] <- Slx_Devs # Estimated selectivty deviations
 
-  if (verbose)
-    cat("\t-> Read the deviations for vulnerability \n")
-  # -------------------------------------------------------------------------
-
-  # Extract the mean fishing mortality rate parameters
-  # -------------------------------------------------------------------------
-  if (verbose)
-    cat("-- Reading the mean fishing mortality rate parameters \n")
-
-  Fbar <- get.df(dat, Loc, nrow = N_fleet)
-  Fbar <-
-    as.data.frame(cbind(
-      paste("log_fbar[", 1:N_fleet, "]", sep = ""),
-      parnam$nameFbar,
-      Fbar
-    ))
-  colnames(Fbar) <- c("Param_ID", "Param_name", "value")
-  DatOut[["Fbar"]] <- Fbar # mean F parameters
-
-  if (verbose)
-    cat("\t-> Read the mean fishing mortality rate parameters \n")
-  # -------------------------------------------------------------------------
-
-  # Extract the male mean fishing mortality rate deviations
-  # -------------------------------------------------------------------------
-  if (verbose)
-    cat("-- Reading the male mean fishing mortality rate deviations \n")
-  Fdev <- list()
-  for (d in 1:N_fleet) {
-    Fdev[[d]] <-
-      as.data.frame(cbind(parnam$nameFdev[[d]], get.vec(dat, Loc)))
-    colnames(Fdev[[d]]) <- c("Param_name", "value")
-  }
-  names(Fdev) <- fleetname
-  DatOut[["Fdev"]] <-
-    Fdev # deviations of the male mean F parameters
-
-  if (verbose)
-    cat("\t-> Read the male mean fishing mortality rate deviations \n")
-  # -------------------------------------------------------------------------
-
-  # Extract the female F offset to male fishing mortality parameters
-  # -------------------------------------------------------------------------
-  if (verbose)
-    cat("-- Reading the female F offset to male fishing mortality parameters \n")
-
-  Foff <- get.df(dat, Loc, nrow = N_fleet)
-  Foff <-
-    as.data.frame(cbind(
-      paste("log_foff[", 1:N_fleet, "]", sep = ""),
-      parnam$nameFoff,
-      Foff
-    ))
-  colnames(Foff) <- c("Param_ID", "Param_name", "value")
-  DatOut[["Foff"]] <- Foff # female F offset parameters
-
-  if (verbose)
-    cat("\t-> Read the female F offset to male fishing mortality parameters \n")
-  # -------------------------------------------------------------------------
-
-  # Extract the female F deviation offset parameters
-  # -------------------------------------------------------------------------
-  if (verbose)
-    cat("-- Reading the female F deviation offset parameters \n")
-  Fdov <- list()
-  for (d in 1:N_fleet) {
-    Fdov[[d]] <- data.frame(Param_name = parnam$nameFdov[[d]],
-                            value = get.vec(dat, Loc))
-    # colnames(Fdov[[d]]) <- c("Param_name","value")
-  }
-  names(Fdov) <- fleetname
-  DatOut[["Fdov"]] <- Fdov # female F deviation offset
-
-  if (verbose)
-    cat("\t-> Read the female F deviation offset parameters \n")
-  # -------------------------------------------------------------------------
-
-  # Extract the initial values of recruitment
-  # -------------------------------------------------------------------------
-  if (verbose)
-    cat("-- Reading the initial values for recruitment \n")
-
-  # rec_ini <- get.vec(dat, Loc)
-  DatOut[["rec_ini"]] <-
-    data.frame(Param_name = parnam$nameRecrInit,
-               value = get.vec(dat, Loc)) # Initial values for recruitment
-
-  if (verbose)
-    cat("\t-> Read the initial values for recruitment \n")
-  # -------------------------------------------------------------------------
-
-  # Extract the recruitment deviation estimates
-  # -------------------------------------------------------------------------
-  if (verbose)
-    cat("-- Reading the recruitment deviation estimates \n")
-
-  DatOut[["rec_dev_est"]] <-
-    data.frame(Param_name = parnam$nameRecrDev,
-               value = get.vec(dat, Loc)) # recruitment deviation
-
-  if (verbose)
-    cat("\t-> Read the recruitment deviation estimates \n")
-  # -------------------------------------------------------------------------
-
-  # Extract the sex-ratio recruitment deviation estimates
-  # -------------------------------------------------------------------------
-  if (verbose)
-    cat("-- Reading the sex-ratio recruitment deviation estimates \n")
-
-  DatOut[["logit_rec_prop_est"]] <-
-    data.frame(Param_name = parnam$nameRecrLogitProp,
-               value = get.vec(dat, Loc))  # sex-ratio recruitment deviation
-
-  if (verbose)
-    cat("\t-> Read the sex-ratio recruitment deviation estimates \n")
-  # -------------------------------------------------------------------------
-
-  # Extract the natural mortality deviation parameters
-  # -------------------------------------------------------------------------
-  if (CtlFile$nMdev > 0) {
     if (verbose)
-      cat("-- Reading the natural mortality deviation parameters \n")
-    Mdev <- get.df(dat, Loc, nrow = CtlFile$nMdev)
-    Mdev <- as.data.frame(cbind(
-      paste("m_dev_est[", 1:CtlFile$nMdev,
-            "]", sep = ""),
-      parnam$nameMortality,
-      Mdev
-    ))
-    colnames(Mdev) <- c("Param_ID", "Param_name", "value")
-    DatOut[["Mdev"]] <- Mdev # Natural mortality deviations
+      cat("\t-> Read the deviations for vulnerability \n")
+    # -------------------------------------------------------------------------
+
+    # Extract the mean fishing mortality rate parameters
+    # -------------------------------------------------------------------------
     if (verbose)
-      cat("\t-> Read the natural mortality deviation parameters \n")
-  } else {
-    DatOut[["Mdev"]] <- NULL
-  }
-  # -------------------------------------------------------------------------
+      cat("-- Reading the mean fishing mortality rate parameters \n")
 
-  # Extract the maturity specific natural mortality parameters
-  # -------------------------------------------------------------------------
-  if (verbose)
-    cat("-- Reading the maturity specific natural mortality parameters \n")
-  nM_mat <- dim(CtlFile$m_mat_controls)[1]
-  M_mat <- get.df(dat, Loc, nrow = nM_mat)
-  M_mat <-
-    as.data.frame(cbind(
-      paste("m_mat_mult[", 1:nM_mat, "]", sep = ""),
-      parnam$nameMat_NatMort,
-      M_mat
-    ))
-  colnames(M_mat) <- c("Param_ID", "Param_name", "value")
-  DatOut[["M_mat"]] <- M_mat # maturity specific natural mortality
+    Fbar <- get.df(dat, Loc, nrow = N_fleet)
+    Fbar <-
+      as.data.frame(cbind(
+        paste("log_fbar[", 1:N_fleet, "]", sep = ""),
+        parnam$nameFbar,
+        Fbar
+      ))
+    colnames(Fbar) <- c("Param_ID", "Param_name", "value")
+    DatOut[["Fbar"]] <- Fbar # mean F parameters
 
-  if (verbose)
-    cat("\t-> Read the maturity specific natural mortality parameters \n")
-  # -------------------------------------------------------------------------
+    if (verbose)
+      cat("\t-> Read the mean fishing mortality rate parameters \n")
+    # -------------------------------------------------------------------------
 
-  # Extract the effective sample size parameters
-  # -------------------------------------------------------------------------
-  if (verbose)
-    cat("-- Reading the effective sample size parameters \n")
+    # Extract the male mean fishing mortality rate deviations
+    # -------------------------------------------------------------------------
+    if (verbose)
+      cat("-- Reading the male mean fishing mortality rate deviations \n")
+    Fdev <- list()
+    for (d in 1:N_fleet) {
+      Fdev[[d]] <-
+        as.data.frame(cbind(parnam$nameFdev[[d]], get.vec(dat, Loc)))
+      colnames(Fdev[[d]]) <- c("Param_name", "value")
+    }
+    names(Fdev) <- fleetname
+    DatOut[["Fdev"]] <-
+      Fdev # deviations of the male mean F parameters
 
-  nVn <- max(CtlFile$iCompAggregator)
-  EffSamp_size <- get.df(dat, Loc, nrow = nVn)
-  EffSamp_size <-
-    as.data.frame(cbind(
-      paste("log_vn[", 1:nVn, "]", sep = ""),
-      parnam$nameEffSamp,
-      EffSamp_size
-    ))
-  colnames(EffSamp_size) <- c("Param_ID", "Param_name", "value")
-  DatOut[["EffSamp_size"]] <-
-    EffSamp_size # effective sample size parameters
+    if (verbose)
+      cat("\t-> Read the male mean fishing mortality rate deviations \n")
+    # -------------------------------------------------------------------------
 
-  if (verbose)
-    cat("\t-> Read the effective sample size parameters \n")
-  # -------------------------------------------------------------------------
+    # Extract the female F offset to male fishing mortality parameters
+    # -------------------------------------------------------------------------
+    if (verbose)
+      cat("-- Reading the female F offset to male fishing mortality parameters \n")
 
-  # Extract the catchability coefficient parameters
-  # -------------------------------------------------------------------------
-  if (verbose)
-    cat("-- Reading the catchability coefficient parameters \n")
+    Foff <- get.df(dat, Loc, nrow = N_fleet)
+    Foff <-
+      as.data.frame(cbind(
+        paste("log_foff[", 1:N_fleet, "]", sep = ""),
+        parnam$nameFoff,
+        Foff
+      ))
+    colnames(Foff) <- c("Param_ID", "Param_name", "value")
+    DatOut[["Foff"]] <- Foff # female F offset parameters
 
-  survey_Q <- get.df(dat, Loc, nrow = DatFile$N_SurveyDF)
-  survey_Q <-
-    as.data.frame(cbind(
-      paste("survey_q[", 1:DatFile$N_SurveyDF, "]", sep = ""),
-      parnam$nameCatchability,
-      survey_Q
-    ))
-  colnames(survey_Q) <- c("Param_ID", "Param_name", "value")
-  DatOut[["survey_Q"]] <-
-    survey_Q # catchability coefficient parameters
+    if (verbose)
+      cat("\t-> Read the female F offset to male fishing mortality parameters \n")
+    # -------------------------------------------------------------------------
 
-  if (verbose)
-    cat("\t-> Read the catchability coefficient parameters \n")
-  # -------------------------------------------------------------------------
+    # Extract the female F deviation offset parameters
+    # -------------------------------------------------------------------------
+    if (verbose)
+      cat("-- Reading the female F deviation offset parameters \n")
+    Fdov <- list()
+    for (d in 1:N_fleet) {
+      Fdov[[d]] <- data.frame(Param_name = parnam$nameFdov[[d]],
+                              value = get.vec(dat, Loc))
+      # colnames(Fdov[[d]]) <- c("Param_name","value")
+    }
+    names(Fdov) <- fleetname
+    DatOut[["Fdov"]] <- Fdov # female F deviation offset
 
-  # Extract the addtional CV for surveys/indices parameters
-  # -------------------------------------------------------------------------
-  if (verbose)
-    cat("-- Reading the addtional CV for surveys/indices parameters \n")
+    if (verbose)
+      cat("\t-> Read the female F deviation offset parameters \n")
+    # -------------------------------------------------------------------------
 
-  add_cv <- get.df(dat, Loc, nrow = DatFile$N_SurveyDF)
-  add_cv <-
-    as.data.frame(cbind(
-      paste("log_add_cv[", 1:DatFile$N_SurveyDF, "]", sep = ""),
-      parnam$nameAddCV,
-      add_cv
-    ))
-  colnames(add_cv) <- c("Param_ID", "Param_name", "value")
-  DatOut[["add_cv"]] <- add_cv # addtional CV parameters
+    # # Extract the initial values of recruitment
+    # # -------------------------------------------------------------------------
+    # if (verbose)
+    #   cat("-- Reading the initial values for recruitment \n")
+    #
+    # # rec_ini <- get.vec(dat, Loc)
+    # DatOut[["rec_ini"]] <-
+    #   data.frame(Param_name = parnam$nameRecrInit,
+    #              value = get.vec(dat, Loc)) # Initial values for recruitment
+    #
+    # if (verbose)
+    #   cat("\t-> Read the initial values for recruitment \n")
+    # # -------------------------------------------------------------------------
 
-  if (verbose)
-    cat("\t-> Read the addtional CV for surveys/indices parameters \n")
-  # -------------------------------------------------------------------------
+    # Extract the recruitment deviation estimates
+    # -------------------------------------------------------------------------
+    if (verbose)
+      cat("-- Reading the recruitment deviation estimates \n")
 
-  # End of data file
-  # -------------------------------------------------------------------------
-  if (verbose) {
-    cat("====================================================\n")
-    cat("Read of parameter file complete.")
-    cat("\n")
-  }
+    DatOut[["rec_dev_est"]] <-
+      data.frame(Param_name = parnam$nameRecrDev,
+                 value = get.vec(dat, Loc)) # recruitment deviation
+
+    if (verbose)
+      cat("\t-> Read the recruitment deviation estimates \n")
+    # -------------------------------------------------------------------------
+
+    # Extract the sex-ratio recruitment deviation estimates
+    # -------------------------------------------------------------------------
+    if (verbose)
+      cat("-- Reading the sex-ratio recruitment deviation estimates \n")
+
+    DatOut[["logit_rec_prop_est"]] <-
+      data.frame(Param_name = parnam$nameRecrLogitProp,
+                 value = get.vec(dat, Loc))  # sex-ratio recruitment deviation
+
+    if (verbose)
+      cat("\t-> Read the sex-ratio recruitment deviation estimates \n")
+    # -------------------------------------------------------------------------
+
+    # Extract the natural mortality deviation parameters
+    # -------------------------------------------------------------------------
+    if (CtlFile$nMdev > 0) {
+      if (verbose)
+        cat("-- Reading the natural mortality deviation parameters \n")
+      Mdev <- get.df(dat, Loc, nrow = CtlFile$nMdev)
+      Mdev <- as.data.frame(cbind(
+        paste("m_dev_est[", 1:CtlFile$nMdev, "]", sep = ""),
+        parnam$nameMortality,
+        Mdev
+      ))
+      colnames(Mdev) <- c("Param_ID", "Param_name", "value")
+      DatOut[["Mdev"]] <- Mdev # Natural mortality deviations
+      if (verbose)
+        cat("\t-> Read the natural mortality deviation parameters \n")
+    } else {
+      DatOut[["Mdev"]] <- NULL
+    }
+    # -------------------------------------------------------------------------
+
+    # Extract the maturity specific natural mortality parameters
+    # -------------------------------------------------------------------------
+    if (verbose)
+      cat("-- Reading the maturity specific natural mortality parameters \n")
+    nM_mat <- dim(CtlFile$m_mat_controls)[1]
+    M_mat <- get.df(dat, Loc, nrow = nM_mat)
+    M_mat <-
+      as.data.frame(cbind(
+        paste("m_mat_mult[", 1:nM_mat, "]", sep = ""),
+        parnam$nameMat_NatMort,
+        M_mat
+      ))
+    colnames(M_mat) <- c("Param_ID", "Param_name", "value")
+    DatOut[["M_mat"]] <- M_mat # maturity specific natural mortality
+
+    if (verbose)
+      cat("\t-> Read the maturity specific natural mortality parameters \n")
+    # -------------------------------------------------------------------------
+
+    # Extract the effective sample size parameters
+    # -------------------------------------------------------------------------
+    if (verbose)
+      cat("-- Reading the effective sample size parameters \n")
+
+    nVn <- max(CtlFile$iCompAggregator)
+    EffSamp_size <- get.df(dat, Loc, nrow = nVn)
+    EffSamp_size <-
+      as.data.frame(cbind(
+        paste("log_vn[", 1:nVn, "]", sep = ""),
+        parnam$nameEffSamp,
+        EffSamp_size
+      ))
+    colnames(EffSamp_size) <- c("Param_ID", "Param_name", "value")
+    DatOut[["EffSamp_size"]] <-
+      EffSamp_size # effective sample size parameters
+
+    if (verbose)
+      cat("\t-> Read the effective sample size parameters \n")
+    # -------------------------------------------------------------------------
+
+    # Extract the catchability coefficient parameters
+    # -------------------------------------------------------------------------
+    if (verbose)
+      cat("-- Reading the catchability coefficient parameters \n")
+
+    survey_Q <- get.df(dat, Loc, nrow = DatFile$N_SurveyDF)
+    survey_Q <-
+      as.data.frame(cbind(
+        paste("survey_q[", 1:DatFile$N_SurveyDF, "]", sep = ""),
+        parnam$nameCatchabilityParam,
+        survey_Q
+      ))
+    colnames(survey_Q) <- c("Param_ID", "Param_name", "value")
+    DatOut[["survey_Q"]] <-
+      survey_Q # catchability coefficient parameters
+
+    if (verbose)
+      cat("\t-> Read the catchability coefficient parameters \n")
+    # -------------------------------------------------------------------------
+
+    # Extract the addtional CV for surveys/indices parameters
+    # -------------------------------------------------------------------------
+    if (verbose)
+      cat("-- Reading the addtional CV for surveys/indices parameters \n")
+
+    add_cv <- get.df(dat, Loc, nrow = DatFile$N_SurveyDF)
+    add_cv <-
+      as.data.frame(cbind(
+        paste("log_add_cv[", 1:DatFile$N_SurveyDF, "]", sep = ""),
+        parnam$nameAddCVParam,
+        add_cv
+      ))
+    colnames(add_cv) <- c("Param_ID", "Param_name", "value")
+    DatOut[["add_cv"]] <- add_cv # addtional CV parameters
+
+    if (verbose)
+      cat("\t-> Read the addtional CV for surveys/indices parameters \n")
+    # -------------------------------------------------------------------------
+
+    # Extract the deviation (Random walk) parameters
+    # -------------------------------------------------------------------------
+    if (verbose)
+      cat("-- Reading the deviation (Random walk) parameters \n")
+
+    ndev <- ifelse(
+      test = CtlFile$Dev_settings$n_deviations == 0,
+      yes = 1,
+      no = CtlFile$Dev_settings$n_deviations
+    )
+
+    RW_dev <- get.df(dat, Loc, nrow = ndev)
+    RW_dev <-
+      as.data.frame(cbind(
+        paste("par_devs[", 1:ndev, "]", sep = ""),
+        parnam$nameRWparam,
+        RW_dev
+      ))
+    colnames(RW_dev) <- c("Param_ID", "Param_name", "value")
+    DatOut[["RW_dev"]] <- RW_dev # addtional CV parameters
+
+    if (verbose)
+      cat("\t-> Read the deviation (Random walk)  parameters \n")
+    # -------------------------------------------------------------------------
+
+    # End of data file
+    # -------------------------------------------------------------------------
+    if (verbose) {
+      cat("====================================================\n")
+      cat("Read of parameter file complete.\n")
+      cat("\n")
+    }
+  } # End Do_comp
   return(DatOut)
 }

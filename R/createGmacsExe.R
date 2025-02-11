@@ -53,7 +53,7 @@ createGmacsExe <-
     cat("\n Verifying the paths for ADMB, the C/C++ compiler and the editor ....\n")
     if (!PBSadmb::checkADopts())
       stop(
-        "The definition of the pathways to locate ADMB,the C/C++ compiler and/or the editer are wrong.\nPlease check the ADMBpaths file."
+        "The definition of the pathways to locate ADMB,the C/C++ compiler and/or the editer are wrong.\nPlease check the ADMBpaths file.\n"
       )
 
     oldWD <- getwd()
@@ -69,6 +69,7 @@ createGmacsExe <-
 
       # Clean directory from previous version
       clean_root(path = Dir[vv])
+      cat("\n")
 
       # Temporary folder to test the compilation
       DirTmp <- file.path(Dir[vv], "tmpComp", fsep = fsep)
@@ -77,7 +78,7 @@ createGmacsExe <-
         dir.create(file.path(DirTmp, "include", fsep = fsep), recursive = TRUE)
       }
       cat(
-        "--Setting working directory to: \n\t'",
+        "--Setting working directory to: \n\t\n'",
         DirTmp,
         "' \nto test the compilaiton of GMACS\n\n",
         sep = ""

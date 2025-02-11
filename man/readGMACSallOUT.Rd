@@ -71,20 +71,19 @@ including recruitment (deviations and sex-ratio).
 \item \code{Fdev} - The fishing fleet-specific weights for male.
 \item \code{Foff} - The female fishing mortality offset to male F.
 \item \code{Fdov} - The fishing fleet-specific weights for female.
-\item \code{rec_ini} - The initial recruitment by size-class.
 \item \code{rec_dev_est} - The year-specific recruitment deviations.
 \item \code{logit_rec_prop_est} - The year-specific sex-ratio recruitment.
 \item \code{Mdev} - The natural mortality deviation.
 \item \code{EffSamp_size} - The effective sample size.
 \item \code{survey_Q} - The survey-specific catchability.
 \item \code{log_add_cvt} - The survey-specific additional CV.
+\item \code{RW_dev} - The deviations for random walk.
 }
 \item \code{Management_Quantities} - The estimated management quantities
 (SPR; MSY, OFL, ...) and recruitment.
 \item \code{Overall_Summ} - Overall summary per year (SSB, SSA, Dynamic B0,
 Recruitment, mortality, ...).
-\item \code{mean_weight} - The sex-specific mean weight per size-class for
-each year and the mid-point used in the model.
+\item \code{mean_weight} - Mean weight with mid points.
 \item \code{maturity} - The sex-specific proportion of mature per size-class.
 \item \code{dCatchData} - The catch data with predicted values.
 \item \code{log_q_catch} - The estimated catchability (log space).
